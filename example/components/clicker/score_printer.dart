@@ -1,7 +1,7 @@
 
 class ScorePrinter extends ScriptComponent{
 
-  int _score;
+  int _score = 0;
 
   void init() {
     // Suscribing to a custom event, fired by DestroyOnClick.
