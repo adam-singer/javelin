@@ -8,7 +8,7 @@ dependencies:
     sdk: unittest
   markerprof:
     git: https://github.com/johnmccutchan/markerprof.git
-  DartVectorMath:
+  dartvectormath:
     git: https://github.com/johnmccutchan/DartVectorMath.git
   spectre:
     git: https://github.com/johnmccutchan/spectre.git
