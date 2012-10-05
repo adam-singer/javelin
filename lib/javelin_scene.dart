@@ -1,7 +1,7 @@
 #library('javelin_scene');
 #import('dart:html');
 #import('dart:math', prefix:'Math');
-#import('package:DartVectorMath/vector_math_html.dart');
+#import('package:dartvectormath/vector_math_html.dart');
 #import('package:spectre/handle.dart');
 #import('package:spectre/spectre.dart');
 #import('package:spectre/spectre_scene.dart');
