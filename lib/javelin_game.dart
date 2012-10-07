@@ -8,6 +8,7 @@
 #source('src/javelin_game/game_object.dart');
 #source('src/javelin_game/component.dart');
 #source('src/javelin_game/component_system.dart');
+#source('src/javelin_game/component_manager.dart');
 
 #source("src/javelin_game/library_components/keyboard_events.dart");
 #source("src/javelin_game/library_components/mouse_events.dart");

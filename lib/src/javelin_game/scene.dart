@@ -11,6 +11,9 @@ class Scene {
   Map<String, int> _idMap;
   Map<int, GameObject> _handleMap;
 
+  ComponentManager _components;
+  ComponentManager get components => _components;
+
   Scene() {
   	// TODO: remove me once we have proper support for multiple scenes.
   	_instance = this;
@@ -18,25 +21,47 @@ class Scene {
   	_idMap = new Map<String, int>();
   	_handleMap = new Map<int, GameObject>();
   	_root = new GameObject('root');
-  	_registerGameObject(root);
+  	registerGameObject(root, null);
   }
 
   /// Registers a game object with the scene.
-  /// This should be called by GameObject.addChild only.
-  void _registerGameObject(GameObject go) {
-    go._scene = this;
-
+  void registerGameObject(GameObject go, GameObject parent) {
     if(go.id != null) {
       assert(_idMap[go.id] == null);
-      _idMap[go.id] = go;
+      _idMap[go.id] = go.handle;
     }
     assert(_handleMap[go.handle] == null);
     _handleMap[go.handle] = go;
+
+    go._scene = this;
+    go._parent = parent;
+
+    if(go.id == 'root') {
+      return;
+    }
+
+    assert(parent.children.contains(go));
+    parent.children.add(go);
+  }
+
+  /// Registers a game object with the scene.
+  void reparentGameObject(GameObject go, GameObject parent) {
+    assert(go != root);  // Cannot reparent root!
+    assert(_handleMap[go.handle] != null);
+
+    assert(go.parent.children.contains(go));
+    go.parent.children.remove(go);
+
+    go._parent = parent;
+    assert(!parent.children.contains(go));
+    parent.children.add(go);
+
+    //TODO: Reparenting has implications on the Transform. Do math!
   }
 
   void destroyGameObject(GameObject go) {
   	// Never destroy root. That should never happen.
-  	assert(go != null);
+  	assert(go != root);
 
   	//Destroy it's children, recursively
   	for (var child in go.children) {
@@ -58,4 +83,18 @@ class Scene {
 
      // TODO: Notify Spectre that the resource with go.handle is gone.
   }
+
+  GameObject getGameObjectWithHandle(int handle) {
+  	return _handleMap[handle];
+  }
+
+  GameObject getGameObjectWithId(String id) {
+  	int handle = _idMap[id];
+  	if(handle == null) {
+  	  return null;
+  	}
+  	return getGameObjectWithHandle(handle);
+  }
+
+  // TODO: Tags for game objects.
 }

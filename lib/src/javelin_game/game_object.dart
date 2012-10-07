@@ -1,10 +1,10 @@
 class GameObjectComponents {
-  ComponentSystem _system;
-
   Map<String, List<int>> _componentLists;
   Map<int, String> _componentTypes;
+  GameObject _owner;
 
-  GameObjectComponents(ComponentSystem this._system) {
+  //TODO: Remove all the references to Scene.current here.
+  GameObjectComponents(this._owner) {
     _componentLists = new Map();
     _componentTypes = new Map();
   }
@@ -31,7 +31,7 @@ class GameObjectComponents {
     if (list == null || list.length == 0) {
       return null;
     }
-    return _system.get(type).withHandle(list[0]);
+    return Scene.current.components.get(type).getComponentWithHandle(list[0]);
   }
 
   List<Component> getComponents(String type) {
@@ -40,10 +40,10 @@ class GameObjectComponents {
       return new List<Component>();
     }
     else {
-      var system = _system.get(type);
+      var system = Scene.current.components.get(type);
       List<Component> output = [];
       for (var i in list) {
-        var component = system.withHandle(i);
+        var component = system.getComponentWithHandle(i);
         assert(component != null);
         output.add(component);
       }
@@ -60,7 +60,7 @@ class GameObjectComponents {
     if (list == null || list.length == 0) {
       return null;
     }
-    var system = _system.get(type);
+    var system = Scene.current.components.get(type);
     for (var i in list) {
       if(i == handle) {
         return system.withHandle(i);
@@ -72,10 +72,9 @@ class GameObjectComponents {
   void destroyAllComponents() {
     // Destroy every component we have, be extra careful to not modify the
     // lists of components as we iterate them.
-    var listOfLists = new List.from(_componentLists);
-    for (var list in List.from(listOfLists)) {
-      for (var component in list) {
-        destroyComponent(component);
+    for (var list in _componentLists.getValues()) {
+      for (var component in new List.from(list)) {
+        _owner.destroyComponent(component);
       }
     }
   }
@@ -114,7 +113,7 @@ class GameObject {
   // Set to false to prevent this from updating.
   bool enabled = true;
 
-  //TODO: actuavated / enabled mechanism?
+  //TODO: activated / enabled mechanism?
 
   // Private properties
 
@@ -129,7 +128,7 @@ class GameObject {
     parent = null;
     children = new Set<GameObject>();
     properties = new PropertyBag();
-    components = new GameObjectComponents();
+    _components = new GameObjectComponents(this);
     events = new EventListenerMap(this);
 
     // Initialize the transform
@@ -157,14 +156,29 @@ class GameObject {
   }
 
   void destroyComponent(Component component) {
+    // This is the suer defined callback.
+    component.free();
+
     _components.detachComponent(component.type, component.handle);
-    var system = _scene.components.get(type);
+    var system = _scene.components.get(component.type);
     system.destroyComponent(handle);
   }
 
-  /// Destroys this game obejct. Do not call this.
-  /// Call Scene.destroyGameObject instead.
+  void addChild(GameObject go) {
+    if(children.contains(go)) {
+      return;
+    }
+
+    if(go.parent != null) {
+      scene.reparentGameObject(go, this);
+    }
+    else {
+      scene.registerGameObject(go, this);
+    }
+  }
+
+  /// Do not manually call this. Call Scene.destroyGameObject instead.
   void _destroyAllComponents() {
-    _components._destroyAllComponents();
+    _components.destroyAllComponents();
   }
 }
