@@ -41,6 +41,9 @@ class Scene {
 
     assert(parent.children.contains(go));
     parent.children.add(go);
+
+    go.checkDependencies();
+    go._initializeComponents();
   }
 
   /// Registers a game object with the scene.

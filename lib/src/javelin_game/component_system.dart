@@ -7,6 +7,16 @@ class ComponentSystem<T extends Component> {
     _handleSystem = new HandleSystem(numComponents, 0);
   }
 
+  Component createComponent(GameObject owner, [List params]) {
+    // Not implemented yet.
+    return null;
+  }
+
+  void destroyComponent(int handle) {
+    // Not implemented yet.
+    return;
+  }
+
   Component getComponentWithHandle(int handle) {
     // Not implemented yet.
     return null;

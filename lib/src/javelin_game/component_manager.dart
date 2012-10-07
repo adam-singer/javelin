@@ -15,9 +15,4 @@ class ComponentManager {
     }
     return s;
   }
-
-  Component createComponent(String type, GameObject owner) {
-    // Not implemented yet.
-    return null;
-  }
 }

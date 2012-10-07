@@ -30,7 +30,7 @@ class Clicker extends Scene{
 
     // Also add a vanilla GameObject and manually add a component to it:
     _scoreManager = new GameObect();
-    components.create('ScorePrinter', _scoreManager);
+    components.get('ScorePrinter').createComponent(_scoreManager);
     root.addChild(_scoreManager);
   }
 }

@@ -19,7 +19,7 @@ class EvadeMouse extends ScriptComponent{
 
     // This throws an exception if MouseEvents component is not present on the
     // Game Object.
-    require('MouseEvents');
+    requireComponent('MouseEvents');
 
     // MouseEvents fires mouse events (duh!).
     events.on('mouseMove').add(captureMouse);

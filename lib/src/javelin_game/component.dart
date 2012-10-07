@@ -17,6 +17,9 @@ class Component {
   Transform get transform => owner.transform;
   Scene get scene => owner.scene;
 
+  // List of dependencies to be checked when this is initialized.
+  Set<String> _componentDependencies = new Set<String>();
+
   Component() {
   }
 
@@ -37,5 +40,29 @@ class Component {
   }
 
   void free() {
+  }
+
+  /**
+   *  Enforces that a component of type type must be present on the owner
+   *  of this component.
+   */
+  void requireComponent(String type) {
+    // We are not initialized yet. Just store this so we can check it later.
+    if (_componentDependencies.contains(type) == false) {
+      _componentDependencies.add(type);
+    }
+  }
+
+  /**
+   * Checks that all the dependencies on other components are satisfied.
+   */
+  bool checkDependencies() {
+    for(var c in _componentDependencies) {
+      if(owner.getComponent(c) == null) {
+        assert(false);
+        return false;
+      }
+    }
+    return true;
   }
 }

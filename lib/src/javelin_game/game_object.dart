@@ -1,6 +1,12 @@
 class GameObjectComponents {
   Map<String, List<int>> _componentLists;
   Map<int, String> _componentTypes;
+
+  // List of components to initialize (in case they are added before this
+  // game object is added to the scene). Maps Component handles to lists
+  // of arguments to be passed to their init function.
+  Map<int, List> _toInitialize = null;
+
   GameObject _owner;
 
   //TODO: Remove all the references to Scene.current here.
@@ -34,7 +40,7 @@ class GameObjectComponents {
     return Scene.current.components.get(type).getComponentWithHandle(list[0]);
   }
 
-  List<Component> getComponents(String type) {
+  List<Component> getComponents([String type='Component']) {
     List<int> list = _componentLists[type];
     if (list == null || list.length == 0) {
       return new List<Component>();
@@ -63,7 +69,7 @@ class GameObjectComponents {
     var system = Scene.current.components.get(type);
     for (var i in list) {
       if(i == handle) {
-        return system.withHandle(i);
+        return system.getComponentWithHandle(i);
       }
     }
     return null;
@@ -132,7 +138,7 @@ class GameObject {
     events = new EventListenerMap(this);
 
     // Initialize the transform
-    _transform = scene.components.createComponent('Transform', this);
+    _transform = scene.components.get('Transform').createComponent(this);
 
   }
 
@@ -150,13 +156,24 @@ class GameObject {
 
   Component attachComponent(String type, [List params]) {
     var system = _scene.components.get(type);
-    int handle = system.createComponent(this, params);
+    int handle = system.createComponent(this, params).handle;
     _components.attachComponent(type, handle);
-    return system.withHandle(handle);
+    Component c = system.getComponentWithHandle(handle);
+
+    // 2 cases, maybe we are already registered in the scene, in which case we
+    // can initialize the component right away. Otherwise, lets wait for the
+    // scene to notify us that we are added.
+    if(scene != null) {
+      c.init(params);
+      return c;
+    }
+    else {
+      _components._toInitialize[c.handle] = params;
+      return c;
+    }
   }
 
   void destroyComponent(Component component) {
-    // This is the suer defined callback.
     component.free();
 
     _components.detachComponent(component.type, component.handle);
@@ -174,6 +191,31 @@ class GameObject {
     }
     else {
       scene.registerGameObject(go, this);
+    }
+  }
+
+  /**
+   * Checks that all the components' dependencies on other components
+   * are satisfied.
+   */
+  bool checkDependencies() {
+    for(var c in _components.getComponents()) {
+      c.checkDependencies();
+    }
+  }
+
+  /**
+   * If there are components added but not yet initialized, this will initialize
+   * them. Called by the scene when a game object is registered with it.
+   * Do not manually call this.
+   */
+  void _initializeComponents() {
+    if(_components._toInitialize != null){
+      for(var handle in _components._toInitialize.getKeys()) {
+        var c = getComponentWithHandle(handle);
+        var params = _components._toInitialize[handle];
+        c.init(params);
+      }
     }
   }
 
