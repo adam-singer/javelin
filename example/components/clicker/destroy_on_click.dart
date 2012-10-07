@@ -1,16 +1,16 @@
 
 class DestroyOnClick extends ScriptComponent{
 
-  void init() {
+  void init([List params]) {
     require('MouseEvents');
     events.on('click').add(destroy);
   }
 
   void destroy(num mouseX, num mouseY) {
 
-    //Before we die, let's read a property set by EvadeMouse, just for fun:
+    // Before we die, let's read a property set by EvadeMouse, just for fun:
     var message = properties.get('secretMessage');
-    if(message)
+    if(message != null)
       print(message);
 
     // Fire an event on the scene's root to notify the ScoreManager.

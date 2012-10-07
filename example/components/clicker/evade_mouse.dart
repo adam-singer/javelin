@@ -12,10 +12,10 @@ class EvadeMouse extends ScriptComponent{
   // Use init instead.
   // Parameters for init are provided as a list when you create the component.
   // Internally we use Function.apply to get this to work.
-  void init(num speed) {
+  void init([List params]) {
     // Cannot use constructor's syntax sugar because this is not a
     // constructor :(
-    _speed = speed;
+    _speed = params[0];
 
     // This throws an exception if MouseEvents component is not present on the
     // Game Object.

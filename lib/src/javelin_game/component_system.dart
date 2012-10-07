@@ -1,5 +1,5 @@
 
-class ComponentSystem<T extends ComponentBase> {
+class ComponentSystem<T extends Component> {
   List<T> _componentPool;
   HandleSystem _handleSystem;
 

@@ -2,7 +2,7 @@
 #library("javelin_clicker_demo");
 
 #import('../../../lib/Javelin.dart');
-#import('../../../lib/javelin_scene.dart');
+#import('../../../lib/javelin_game.dart');
 
 #source('enemy.dart');
 #source('evade_mouse.dart');

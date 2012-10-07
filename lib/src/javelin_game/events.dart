@@ -15,7 +15,7 @@ class EventListenerSet {
     _listeners.remove(listener);
   }
 
-  void fire([List params]) {
+  void _receive([List params]) {
     _listeners.forEach((l) {
       l(params);
     });
@@ -23,9 +23,10 @@ class EventListenerSet {
 }
 
 class EventListenerMap {
+  GameObject _owner;
   Map<String, EventListenerSet> _events;
 
-  EventListenerMap() {
+  EventListenerMap(this._owner) {
     _events = new Map<String, EventListenerSet>();
   }
 
@@ -43,6 +44,13 @@ class EventListenerMap {
     if (listeners == null) {
       return;
     }
-    listeners.fire(params);
+    listeners._receive(params);
+  }
+
+  void broadcast(String eventName, [List params=null]) {
+    fire(eventName, params);
+    _owner.children.forEach((go) {
+      go.events.broadcast(eventName, params);
+    });
   }
 }
