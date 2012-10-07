@@ -1,9 +1,8 @@
-
 class Scene {
 
   // TODO: remove me once we have proper support for multiple scenes.
   static Scene _instance;
-  static Scene get current => _instance;  // Replace by Application.currenScene;
+  static Scene get current => _instance;  // Replace by Application.currentScene;
 
   GameObject _root;
   GameObject get root => _root;
