@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -37,7 +37,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   Float32Array _lightDirection;
   ConfigUI _configUI;
   JavelinHFluidDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
-    _fluid = new HeightFieldFluid(20, 1.0);
+    _fluid = new HeightFieldFluid(50, 1.0);
     _centerColumnIndex = 12;
     _configUI = new ConfigUI();
     _configUI.addItem({
@@ -60,12 +60,12 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     });
     _configUI.build();
   }
-  
+
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
     _lightDirection = new Float32Array(3);
     int numColumns = (_fluid.columnsWide-2)*(_fluid.columnsWide-2);
-    int vboSize = (numColumns)*2*6; // two triangles per column, triangle needs 3 vertices and 3 normals 
+    int vboSize = (numColumns)*2*6; // two triangles per column, triangle needs 3 vertices and 3 normals
     _fluidNumVertices = (numColumns)*2*3;
     // Each vertex/normal needs three floats
     vboSize *= 3;
@@ -77,17 +77,17 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     _fluidFSResourceHandle = resourceManager.registerResource('/shaders/simple_fluid.fs');
     _fluidVSHandle = device.createVertexShader('Fluid Vertex Shader',{});
     _fluidFSHandle = device.createFragmentShader('Fluid Fragment Shader', {});
-    
+
     rs = device.getDeviceChildHandle('RasterizerState.CullDisabled');
     ds = device.getDeviceChildHandle('DepthState.TestWrite');
-    
+
     List loadedResources = [];
     base.then((value) {
       // Once the base is done, we load our resources
       loadedResources.add(resourceManager.loadResource(_fluidVSResourceHandle));
       loadedResources.add(resourceManager.loadResource(_fluidFSResourceHandle));
     });
-    
+
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
@@ -102,13 +102,13 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     });
     return complete.future;
   }
-  
+
   String get demoDescription() => 'Height Field Fluid';
-  
+
   Element makeDemoUI() {
     return _configUI.root;
   }
-  
+
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
     _fluidVertexData = null;
@@ -116,7 +116,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     device.batchDeleteDeviceChildren([_fluidVBOHandle, _fluidShaderProgramHandle, _fluidVSHandle, _fluidFSHandle, _fluidInputLayoutHandle]);
     return base;
   }
-  
+
   void _drawFluid() {
     device.immediateContext.setInputLayout(_fluidInputLayoutHandle);
     device.immediateContext.setVertexBuffers(0, [_fluidVBOHandle]);
@@ -132,11 +132,11 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     device.immediateContext.setUniformVector3('lightDir', _lightDirection);
     device.immediateContext.draw(_fluidNumVertices, 0);
   }
-  
+
   void _updateFluidVertexData() {
     device.immediateContext.updateBuffer(_fluidVBOHandle, _fluidVertexData);
   }
-  
+
   void _buildFluidVertexData() {
     final num scale = 1.0;
     int vertexDataIndex = 0;
@@ -146,11 +146,11 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         final int indexEast = _fluid.columnIndex(i+1, j);
         final int indexNorth = _fluid.columnIndex(i, j+1);
         final int indexNorthEast = _fluid.columnIndex(i+1, j+1);
-        final num height = _fluid.columns[index].height;
-        final num heightEast = _fluid.columns[indexEast].height;
-        final num heightNorth = _fluid.columns[indexNorth].height;
-        final num heightNorthEast = _fluid.columns[indexNorthEast].height;
-        
+        final num height = _fluid.columns[index];
+        final num heightEast = _fluid.columns[indexEast];
+        final num heightNorth = _fluid.columns[indexNorth];
+        final num heightNorthEast = _fluid.columns[indexNorthEast];
+
         vec3 n1;
         {
           vec3 v0 = new vec3.raw(i, height, j);
@@ -172,7 +172,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         {
           vec3 s = new vec3(i, height, j);
           vec3 e = s + n1;
-          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));  
+          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));
         }
         // v1
         _fluidVertexData[vertexDataIndex++] = i+1;
@@ -198,7 +198,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         }
         // Normal for Tri 1 (1, heightNorthEast-height, 1)
         //                  (-1, heightNorth-heightNorthEast, 0);
-        // == (-(heightNorth-heightNorthEast), -1, (heightNorth-heightNorthEast)+(heightNorthEast-height)) 
+        // == (-(heightNorth-heightNorthEast), -1, (heightNorth-heightNorthEast)+(heightNorthEast-height))
         // v0
         _fluidVertexData[vertexDataIndex++] = i;
         _fluidVertexData[vertexDataIndex++] = height;
@@ -209,7 +209,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         {
           vec3 s = new vec3(i, height, j);
           vec3 e = s + n2;
-          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));  
+          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));
         }
         // v1
         _fluidVertexData[vertexDataIndex++] = i+1;
@@ -228,33 +228,33 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
       }
     }
   }
-  
+
   void _makeWave(int column, num h) {
     int half = _fluid.columnsWide~/2;
     int quarter = half~/2;
     for (int j = quarter; j < half+quarter; j++) {
       int columnIndex = _fluid.columnIndex(column, j);
-      _fluid.columns[columnIndex].height += h;
+      _fluid.columns[columnIndex] += h;
     }
   }
-  
+
   void _makeDrop(int column, num h) {
     int columnIndex1 = _fluid.columnIndex(column, column);
     int columnIndex2 = _fluid.columnIndex(column+1, column);
     int columnIndex3 = _fluid.columnIndex(column, column+1);
     int columnIndex4 = _fluid.columnIndex(column+1, column+1);
-    _fluid.columns[columnIndex1].height += h;
-    _fluid.columns[columnIndex2].height += h;
-    _fluid.columns[columnIndex3].height += h;
-    _fluid.columns[columnIndex4].height += h;
+    _fluid.columns[columnIndex1] += h;
+    _fluid.columns[columnIndex2] += h;
+    _fluid.columns[columnIndex3] += h;
+    _fluid.columns[columnIndex4] += h;
   }
-  
+
   void update(num time, num dt) {
     Profiler.enter('Demo Update');
     Profiler.enter('super.update');
     super.update(time, dt);
     Profiler.exit();
-        
+
     if (keyboard.pressed(JavelinKeyCodes.KeyP)) {
       _makeWave(3, JavelinConfigStorage.get('demo.hfluid.waveheight'));
       _makeWave(2, JavelinConfigStorage.get('demo.hfluid.waveheight'));
@@ -262,7 +262,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     if (keyboard.pressed(JavelinKeyCodes.KeyO)) {
       _makeDrop(_centerColumnIndex, JavelinConfigStorage.get('demo.hfluid.dropheight'));
     }
-    
+
     //drawGrid(20);
     Profiler.enter('fluid update');
     _fluid.update();
@@ -276,13 +276,17 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     //_fluid.setOpenBoundary(HeightFieldFluid.BoundaryEast);
     //_fluid.setOpenBoundaryAll();
     Profiler.exit();
-    
+
+    Stopwatch sw = new Stopwatch();
     Profiler.enter('fluid prepare to draw');
+    sw.start();
     _buildFluidVertexData();
+    sw.stop();
+    print(sw.elapsed());
     _updateFluidVertexData();
     Profiler.exit();
-    
-    { 
+
+    {
       vec3 lightDirection = new vec3(1.0, -1.0, 1.0);
       lightDirection.normalize();
       normalMatrix.rotate3(lightDirection);
