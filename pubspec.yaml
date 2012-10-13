@@ -1,12 +1,16 @@
 name: javelin
 description: Data Driven Games
 version: 0.0.1
+author: John McCutchan <john@johnmccutchan.com>
+homepage: https://github.com/johnmccutchan/javelin
 dependencies:
   unittest:
     sdk: unittest
   markerprof:
     git: https://github.com/johnmccutchan/markerprof.git
-  DartVectorMath:
+  dartvectormath:
     git: https://github.com/johnmccutchan/DartVectorMath.git
   spectre:
     git: https://github.com/johnmccutchan/spectre.git
+  handlesystem:
+    git: https://github.com/johnmccutchan/handlesystem.git

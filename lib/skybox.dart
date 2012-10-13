@@ -22,7 +22,7 @@
 
 #library('skybox');
 #import('dart:html');
-#import('package:DartVectorMath/vector_math_html.dart');
+#import('package:dartvectormath/vector_math_html.dart');
 #import('package:spectre/spectre.dart');
 
 class Skybox {
