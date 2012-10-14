@@ -1,5 +1,5 @@
 #library('particle_system');
-#import('package:DartVectorMath/vector_math_html.dart'); 
+#import('package:dartvectormath/vector_math_html.dart');
 #import('package:spectre/spectre.dart');
 #import('dart:math', prefix:'Math');
 
@@ -7,15 +7,15 @@ class ParticleSystemBackend {
   int _numParticles;
   num _timeStep;
   num _timeStep2;
-  
+
   vec3 gravityDirection;
   vec3 _min;
   vec3 _max;
-  
+
   int _index;
-  
+
   Math.Random _random;
-  
+
   ParticleSystemBackend(this._numParticles, this._timeStep) {
     gravityDirection = new vec3(0.0, -1.0, 0.0);
     // 5x5x5 box for particles
@@ -25,45 +25,45 @@ class ParticleSystemBackend {
     _index = 0;
     _random = new Math.Random();
   }
-  
+
   void setBounds(vec3 min, vec3 max) {
     _min = min;
     _max = max;
   }
-  
+
   num getRandomBetween(num min, num max) {
     num len = max - min;
     return min + _random.nextDouble() * len;
   }
-    
+
   void getRandomPosition(vec3 p) {
     p.x = getRandomBetween(_min.x, _max.x);
     p.y = getRandomBetween(_min.y, _max.y);
     p.z = getRandomBetween(_min.z, _max.z);
   }
-  
+
   bool _clamp(vec3 x, vec3 min, vec3 max) {
     bool clamped = false;
     if (max.x < x.x) {
       clamped = true;
       x.x = max.x;
     }
-    
+
     if (max.y < x.y) {
       clamped = true;
       x.y = max.y;
     }
-    
+
     if (max.z < x.z) {
       clamped = true;
       x.z = max.z;
     }
-    
+
     if (min.x > x.x) {
       clamped = true;
       x.x = min.x;
     }
-    
+
     if (min.y > x.y) {
       clamped = true;
       x.y = min.y;
@@ -72,32 +72,32 @@ class ParticleSystemBackend {
       clamped = true;
       x.z = min.z;
     }
-    
+
     return clamped;
-    
+
   }
-  
+
   int get readIndex() => _index;
   int get writeIndex() => (_index+1)%2;
   abstract void applyForces();
   abstract void integrate();
   abstract void satisfyConstraints();
   abstract void copyPositions(Dynamic out, int stride);
-  
+
   void update() {
     applyForces();
     integrate();
     satisfyConstraints();
     // Move index
     //_index = (_index+1)%2;
-  }  
+  }
 }
 
 class ParticleSystemBackendDVM extends ParticleSystemBackend {
   List<vec3> positions0;
   List<vec3> positions1;
   List<vec3> impulses;
-  
+
   ParticleSystemBackendDVM(int numParticles_) : super(numParticles_, 0.016) {
     positions0 = new List<vec3>(_numParticles);
     positions1 = new List<vec3>(_numParticles);
@@ -110,7 +110,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       impulses[i] = new vec3.zero();
     }
   }
-  
+
   void applyForces() {
     vec3 impulse = new vec3.copy(gravityDirection);
     impulse.scale(10.0);
@@ -123,7 +123,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       impulses[i].copyFrom(impulse);
     }
   }
-  
+
   List<vec3> getPositions(int index) {
     if (index == 0) {
       return positions0;
@@ -131,7 +131,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       return positions1;
     }
   }
-  
+
   void integrate() {
     final int ri = readIndex;
     final int wi = writeIndex;
@@ -144,7 +144,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       oldx.copyFrom(oldPositions[i]);
       // Update old position with position from new positions
       oldPositions[i].copyFrom(x);
-      
+
       // Integrate x
       // x += x-oldx + a * t * t;
       // impulse has a * t * t in it
@@ -156,7 +156,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       newPositions[i].copyFrom(x);
     }
   }
-  
+
   void bounce(int i, List<vec3> oldPositions, List<vec3> newPositions) {
     vec3 temp = new vec3.zero();
     temp.copyFrom(newPositions[i]);
@@ -168,11 +168,11 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
     newPositions[i].copyFrom(oldPositions[i]);
     oldPositions[i].copyFrom(temp);
   }
-  
+
   void drag(int i, List<vec3> oldPositions, List<vec3> newPositions) {
-    
+
   }
-  
+
   void satisfyConstraints() {
     final int ri = readIndex;
     final int wi = writeIndex;
@@ -185,7 +185,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       }
     }
   }
-  
+
   void copyPositions(Dynamic out, int stride) {
     final List<vec3> pos = getPositions(writeIndex);
     for (int i = 0; i < _numParticles; i++) {
@@ -195,7 +195,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
       out[index+2] = pos[i].z;
     }
   }
-} 
+}
 
 class ClothConstraint {
   final int i;
@@ -209,7 +209,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
   List<vec3> positions1;
   List<vec3> impulses;
   List<ClothConstraint> constraints;
-  
+
   num _topHeight;
   num _gapWidth;
   int _gridWidth;
@@ -230,7 +230,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
     resetPositions();
     buildConstraints();
   }
-  
+
   void buildConstraints() {
     _numConstraints = _gridWidth*_gridWidth*2 - _gridWidth - _gridWidth;
     constraints = new List<ClothConstraint>(_numConstraints);
@@ -241,7 +241,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
           constraints[i] = new ClothConstraint(x+y*_gridWidth, x+1 + y*_gridWidth, _gapWidth);
           i++;
         }
-        
+
         if (y+1 < _gridWidth) {
           constraints[i] = new ClothConstraint(x+y*_gridWidth, x+_gridWidth + y*_gridWidth, _gapWidth);
           i++;
@@ -250,7 +250,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
     }
     assert(i == _numConstraints);
   }
-  
+
   void resetPositions() {
     for (int i = 0; i < _gridWidth; i++) {
       for (int j = 0; j < _gridWidth; j++) {
@@ -260,17 +260,17 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       }
     }
   }
-  
+
   void applyForces() {
     vec3 impulse = new vec3.copy(gravityDirection);
     impulse.scale(10.0);
     impulse.scale(_timeStep2);
-    
+
     final List<vec3> pos = getPositions(readIndex);
     for (int i = 0; i < _numParticles; i++) {
       impulses[i].copyFrom(impulse);
     }
-    
+
     vec3 impulse2 = new vec3.raw(0.0, 0.0, 1.0);
     impulse2.scale(5.0);
     impulse2.scale(_timeStep2);
@@ -280,7 +280,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       }
     }
   }
-  
+
   List<vec3> getPositions(int index) {
     if (index == 0) {
       return positions0;
@@ -288,7 +288,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       return positions1;
     }
   }
-  
+
   void integrate() {
     final int ri = readIndex;
     final int wi = writeIndex;
@@ -302,7 +302,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       oldx.copyFrom(oldPositions[i]);
       // Update old position with position from new positions
       oldPositions[i].copyFrom(x);
-      
+
       // x' = 1.99 * x + 0.99 oldx + a*t*t
       temp.copyFrom(x);
       temp.scale(0.99);
@@ -311,29 +311,29 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       x.add(temp);
       // x+= 0.99 oldx => x = 1.99x + 0.99 oldx
       x.sub(oldx);
-      // x+= impulse => x' = 1.99 * x + 0.99 oldx + a*t*t 
+      // x+= impulse => x' = 1.99 * x + 0.99 oldx + a*t*t
       x.add(impulses[i]);
-      
+
       // Copy updated x into new positions
       newPositions[i].copyFrom(x);
     }
   }
-  
+
   void satisfyConstraints() {
     final int ri = readIndex;
     final int wi = writeIndex;
     final List<vec3> oldPositions = getPositions(ri);
     final List<vec3> newPositions = getPositions(wi);
     vec3 x = new vec3.zero();
-    
+
     // Keep inside box
     for (int i = 0; i < _numParticles; i++) {
       _clamp(newPositions[i], _min, _max);
     }
-    
+
     vec3 delta = new vec3.zero();
     vec3 temp = new vec3.zero();
-    
+
     final int numIterations = 5;
     for (int iter = 0; iter < numIterations; iter++) {
       for (int c = 0; c < _numConstraints; c++) {
@@ -347,7 +347,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
         delta.scale(0.5*diff);
         newPositions[i].add(delta);
         newPositions[j].sub(delta);
-        
+
         if (_sphereEnabled) {
           temp.copyFrom(_sphereCenter);
           temp.sub(newPositions[i]);
@@ -358,7 +358,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
             temp.add(_sphereCenter);
             newPositions[i].copyFrom(temp);
           }
-          
+
           temp.copyFrom(_sphereCenter);
           temp.sub(newPositions[j]);
           length = temp.length;
@@ -370,7 +370,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
           }
         }
       }
-      
+
       newPositions[0].x = 0.0;
       newPositions[0].y = _topHeight;
       newPositions[0].z = 0.0;
@@ -381,13 +381,13 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
     // We disable sphere collisions after each frame
     _sphereEnabled = false;
   }
-  
+
   void sphereConstraints(vec3 center, num radius) {
     _sphereEnabled = true;
     _sphereCenter.copyFrom(center);
     _sphereRadius = radius * 1.2;
   }
-  
+
   void copyPositions(Dynamic out, int stride) {
     final List<vec3> pos = getPositions(writeIndex);
     for (int i = 0; i < _numParticles; i++) {
@@ -397,7 +397,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
       out[index+2] = pos[i].z;
     }
   }
-  
+
   void pick(int i, int j, vec3 w) {
     final int wi = writeIndex;
     final List<vec3> newPositions = getPositions(wi);

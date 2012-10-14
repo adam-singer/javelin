@@ -2,7 +2,7 @@
 #import('dart:html');
 #import('dart:math', prefix:'Math');
 #import('package:dartvectormath/vector_math_html.dart');
-#import('package:spectre/handle.dart');
+#import('package:handlesystem/handlesystem.dart');
 #import('package:spectre/spectre.dart');
 #import('package:spectre/spectre_scene.dart');
 #import('skybox.dart');
