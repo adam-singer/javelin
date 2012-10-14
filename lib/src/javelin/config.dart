@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -105,7 +105,7 @@ class JavelinConfigVariable {
     value = defaultValue();
   }
   void reset() {
-    value = defaultValue(); 
+    value = defaultValue();
   }
 }
 
@@ -139,13 +139,13 @@ class JavelinConfigStorage {
     }
     String json = window.localStorage[name];
     if (json != null) {
-      variable.value = type.deserialize(json);  
+      variable.value = type.deserialize(json);
     } else {
       print('First time seeing $name');
       storeVariable(name);
     }
   }
-  
+
   static void storeVariable(String name) {
     JavelinConfigVariable variable = JavelinConfigStorage.variables[name];
     if (variable == null) {
@@ -158,19 +158,19 @@ class JavelinConfigStorage {
     String json = type.serialize(variable.value);
     window.localStorage[name] = json;
   }
-  
+
   static void load() {
     variables.forEach((k,v) {
       loadVariable(k);
     });
   }
-  
+
   static void store() {
     variables.forEach((k,v) {
       storeVariable(k);
     });
   }
-  
+
   static Dynamic set(String name, Dynamic o,[bool commit=true]) {
     JavelinConfigVariable variable;
     variable = JavelinConfigStorage.variables[name];
@@ -183,7 +183,7 @@ class JavelinConfigStorage {
     }
     return o;
   }
-  
+
   static Dynamic get(String name) {
     JavelinConfigVariable variable;
     variable = JavelinConfigStorage.variables[name];

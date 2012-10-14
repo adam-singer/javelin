@@ -22,7 +22,7 @@
 
 #import('dart:html');
 #import('dart:math', prefix:'Math');
-#import('package:DartVectorMath/vector_math_html.dart'); 
+#import('package:dartvectormath/vector_math_html.dart');
 #import('package:spectre/spectre.dart');
 #import('package:spectre/spectre_scene.dart');
 #import('package:spectre/spectre_post.dart');

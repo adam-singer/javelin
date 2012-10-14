@@ -37,7 +37,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   Float32Array _lightDirection;
   ConfigUI _configUI;
   JavelinHFluidDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
-    _fluid = new HeightFieldFluid(50, 1.0);
+    _fluid = new HeightFieldFluid(100, 0.5);
     _centerColumnIndex = 12;
     _configUI = new ConfigUI();
     _configUI.addItem({
@@ -140,6 +140,10 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   void _buildFluidVertexData() {
     final num scale = 1.0;
     int vertexDataIndex = 0;
+    vec3 n1 = new vec3.zero();
+    vec3 v0 = new vec3.zero();
+    vec3 v1 = new vec3.zero();
+    vec3 v2 = new vec3.zero();
     for (int i = 1; i < _fluid.columnsWide-1; i++) {
       for (int j = 1; j < _fluid.columnsWide-1; j++) {
         final int index = _fluid.columnIndex(i, j);
@@ -150,81 +154,71 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         final num heightEast = _fluid.columns[indexEast];
         final num heightNorth = _fluid.columns[indexNorth];
         final num heightNorthEast = _fluid.columns[indexNorthEast];
+        final double dI = i.toDouble();
+        final double dJ = j.toDouble();
+        final double dI1 = dI+1.0;
+        final double dJ1 = dJ+1.0;
 
-        vec3 n1;
         {
-          vec3 v0 = new vec3.raw(i, height, j);
-          vec3 v1 = new vec3.raw(i+1, heightEast, j);
-          vec3 v2 = new vec3.raw(i+1, heightNorthEast, j+1);
-          n1 = (v2 - v1).cross(v1 - v0);
+          v0.setComponents(i, height, j);
+          v1.setComponents(i+1, heightEast, j);
+          v2.setComponents(i+1, heightNorthEast, j+1);
+          v2.sub(v1);
+          v1.sub(v0);
+          v2.cross(v1, n1);
           n1.normalize();
         }
-        // Normal for Tri 0 (1, heightEast-height,          0)
-        //                  (0, heightNorthEast-heightEast, 1)
-        // == (heightEast-height, -1, heightNorthEast-heightEast)
         // v0
-        _fluidVertexData[vertexDataIndex++] = i;
+        _fluidVertexData[vertexDataIndex++] = dI;
         _fluidVertexData[vertexDataIndex++] = height;
-        _fluidVertexData[vertexDataIndex++] = j;
+        _fluidVertexData[vertexDataIndex++] = dJ;
         _fluidVertexData[vertexDataIndex++] = n1.x;
         _fluidVertexData[vertexDataIndex++] = n1.y;
         _fluidVertexData[vertexDataIndex++] = n1.z;
-        {
-          vec3 s = new vec3(i, height, j);
-          vec3 e = s + n1;
-          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));
-        }
+
         // v1
-        _fluidVertexData[vertexDataIndex++] = i+1;
+        _fluidVertexData[vertexDataIndex++] = dI1;
         _fluidVertexData[vertexDataIndex++] = heightEast;
-        _fluidVertexData[vertexDataIndex++] = j;
+        _fluidVertexData[vertexDataIndex++] = dJ;
         _fluidVertexData[vertexDataIndex++] = n1.x;
         _fluidVertexData[vertexDataIndex++] = n1.y;
         _fluidVertexData[vertexDataIndex++] = n1.z;
         // v2
-        _fluidVertexData[vertexDataIndex++] = i+1;
+        _fluidVertexData[vertexDataIndex++] = dI1;
         _fluidVertexData[vertexDataIndex++] = heightNorthEast;
-        _fluidVertexData[vertexDataIndex++] = j+1;
+        _fluidVertexData[vertexDataIndex++] = dJ1;
         _fluidVertexData[vertexDataIndex++] = n1.x;
         _fluidVertexData[vertexDataIndex++] = n1.y;
         _fluidVertexData[vertexDataIndex++] = n1.z;
-        vec3 n2;
         {
-          vec3 v0 = new vec3.raw(i, height, j);
-          vec3 v1 = new vec3.raw(i+1, heightNorthEast, j+1);
-          vec3 v2 = new vec3.raw(i, heightNorth, j+1);
-          n2 = (v2 - v1).cross(v1 - v0);
-          n2.normalize();
+          v1.setComponents(i+1, heightNorthEast, j+1);
+          v2.setComponents(i, heightNorth, j+1);
+          v2.sub(v1);
+          v1.sub(v0);
+          v2.cross(v1, n1);
+          n1.normalize();
         }
-        // Normal for Tri 1 (1, heightNorthEast-height, 1)
-        //                  (-1, heightNorth-heightNorthEast, 0);
-        // == (-(heightNorth-heightNorthEast), -1, (heightNorth-heightNorthEast)+(heightNorthEast-height))
         // v0
-        _fluidVertexData[vertexDataIndex++] = i;
+        _fluidVertexData[vertexDataIndex++] = dI;
         _fluidVertexData[vertexDataIndex++] = height;
-        _fluidVertexData[vertexDataIndex++] = j;
-        _fluidVertexData[vertexDataIndex++] = n2.x;
-        _fluidVertexData[vertexDataIndex++] = n2.y;
-        _fluidVertexData[vertexDataIndex++] = n2.z;
-        {
-          vec3 s = new vec3(i, height, j);
-          vec3 e = s + n2;
-          //debugDrawManager.addLine(s, e, new vec4(1.0, 1.0, 1.0, 1.0));
-        }
+        _fluidVertexData[vertexDataIndex++] = dJ;
+        _fluidVertexData[vertexDataIndex++] = n1.x;
+        _fluidVertexData[vertexDataIndex++] = n1.y;
+        _fluidVertexData[vertexDataIndex++] = n1.z;
         // v1
-        _fluidVertexData[vertexDataIndex++] = i+1;
+        _fluidVertexData[vertexDataIndex++] = dI1;
         _fluidVertexData[vertexDataIndex++] = heightNorthEast;
-        _fluidVertexData[vertexDataIndex++] = j+1;
-        _fluidVertexData[vertexDataIndex++] = n2.x;
-        _fluidVertexData[vertexDataIndex++] = n2.y;
-        _fluidVertexData[vertexDataIndex++] = n2.z;
+        _fluidVertexData[vertexDataIndex++] = dJ1;
+        _fluidVertexData[vertexDataIndex++] = n1.x;
+        _fluidVertexData[vertexDataIndex++] = n1.y;
+        _fluidVertexData[vertexDataIndex++] = n1.z;
         // v2
-        _fluidVertexData[vertexDataIndex++] = i;
+        _fluidVertexData[vertexDataIndex++] = dI;
         _fluidVertexData[vertexDataIndex++] = heightNorth;
-        _fluidVertexData[vertexDataIndex++] = j+1;
-        _fluidVertexData[vertexDataIndex++] = n2.x;
-        _fluidVertexData[vertexDataIndex++] = n2.y;
-        _fluidVertexData[vertexDataIndex++] = n2.z;
+        _fluidVertexData[vertexDataIndex++] = dJ1;
+        _fluidVertexData[vertexDataIndex++] = n1.x;
+        _fluidVertexData[vertexDataIndex++] = n1.y;
+        _fluidVertexData[vertexDataIndex++] = n1.z;
       }
     }
   }

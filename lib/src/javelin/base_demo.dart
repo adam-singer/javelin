@@ -68,9 +68,9 @@ class JavelinBaseDemo {
   DebugDrawManager get debugDrawManager() => _debugDrawManager;
   ResourceManager get resourceManager() => _resourceManager;
   RenderConfig get renderConfig() => _renderConfig;
-  
+
   RenderConfig _renderConfig;
-  
+
   int frameCounter;
 
   bool _quit;
@@ -91,7 +91,8 @@ class JavelinBaseDemo {
     keyboard = new JavelinKeyboard();
     mouse = new JavelinMouse();
     _camera = new Camera();
-    _camera.eyePosition = JavelinConfigStorage.get('camera.eyePosition');
+    var d = JavelinConfigStorage.get('camera.eyePosition');
+    _camera.eyePosition = d;
     _camera.lookAtPosition = JavelinConfigStorage.get('camera.lookAtPosition');
     _cameraController = new MouseKeyboardCameraController();
     _quit = false;
@@ -215,13 +216,13 @@ class JavelinBaseDemo {
       debugDrawManager.addLine(start, end, color);
     }
   }
-  
+
   void drawGrid(int gridLines) {
     drawGridRaw(gridLines, new vec3(1.0, 0.0, 0.0),
                 new vec3(0.0, 0.0, 1.0),
                 new vec4(0.0, 1.0, 0.0, 1.0));
   }
-  
+
   void drawHolodeck(int gridLines) {
     vec3 x = new vec3(1.0, 0.0, 0.0);
     vec3 y = new vec3(0.0, 1.0, 0.0);
