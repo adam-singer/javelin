@@ -37,7 +37,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   Float32Array _lightDirection;
   ConfigUI _configUI;
   JavelinHFluidDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
-    _fluid = new HeightFieldFluid(100, 0.5);
+    _fluid = new HeightFieldFluid(50, 0.5);
     _centerColumnIndex = 12;
     _configUI = new ConfigUI();
     _configUI.addItem({
@@ -276,7 +276,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     sw.start();
     _buildFluidVertexData();
     sw.stop();
-    print(sw.elapsed());
+    //print(sw.elapsed());
     _updateFluidVertexData();
     Profiler.exit();
 
