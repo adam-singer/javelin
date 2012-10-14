@@ -31,17 +31,18 @@ class EvadeMouse extends ScriptComponent{
 
   // The signature for this callback should be specified in the
   // MouseEvents component API.
-  void captureMouse(num mouseX, num mouseY) {
-    _mouseX = mouseX;
-    _mouseY = mouseY;
+  void captureMouse([List params]) {
+    _mouseX = params[0];
+    _mouseY = params[1];
   }
 
   // This is not an event handler.
   // All components support init, update and free.
   // update gets called every frame.
-  void update() {
+  void update(num timeDelta) {
     // Assume this works, for now.
-    vec3 mouseProjection = SomeUtilClass.getMouseProjection(scene.camera,
+    vec3 mouseProjection = SomeUtilClass.getMouseProjection(
+        scene.properties.get('camera'),
         _mouseX, _mouseY, new Plane.ground());
 
     // owner is the GameObject that owns this component.
@@ -49,7 +50,7 @@ class EvadeMouse extends ScriptComponent{
     // owner.transform is a shortcut for owner.getComponent('Transform')
     vec3 delta = mouseProjection - owner.transform.position;
     if(delta.length2 < 100*100) {
-      delta = delta * (-1 *_speed * scene.timeDelta());
+      delta = delta * (-1 *_speed * timeDelta);
       owner.transform.translate(delta);
     }
   }

@@ -1,4 +1,4 @@
-class GameObjectComponents {
+class ComponentList {
   Map<String, List<int>> _componentLists;
   Map<int, String> _componentTypes;
 
@@ -10,7 +10,7 @@ class GameObjectComponents {
   GameObject _owner;
 
   //TODO: Remove all the references to Scene.current here.
-  GameObjectComponents(this._owner) {
+  ComponentList(this._owner) {
     _componentLists = new Map();
     _componentTypes = new Map();
   }
@@ -37,7 +37,7 @@ class GameObjectComponents {
     if (list == null || list.length == 0) {
       return null;
     }
-    return Scene.current.components.get(type).getComponentWithHandle(list[0]);
+    return _owner.scene.componentManager.getComponentWithHandle(list[0]);
   }
 
   List<Component> getComponents([String type='Component']) {
@@ -46,7 +46,7 @@ class GameObjectComponents {
       return new List<Component>();
     }
     else {
-      var system = Scene.current.components.get(type);
+      var system = _owner.scene.componentManager.getSystemForType(type);
       List<Component> output = [];
       for (var i in list) {
         var component = system.getComponentWithHandle(i);
@@ -66,7 +66,7 @@ class GameObjectComponents {
     if (list == null || list.length == 0) {
       return null;
     }
-    var system = Scene.current.components.get(type);
+    var system = _owner.scene.componentManager.getSystemForType(type);
     for (var i in list) {
       if(i == handle) {
         return system.getComponentWithHandle(i);
@@ -123,7 +123,7 @@ class GameObject {
 
   // Private properties
 
-  GameObjectComponents _components;
+  ComponentList _components;
 
   /// Contructor.
   GameObject([String this._id]) {
@@ -134,11 +134,11 @@ class GameObject {
     parent = null;
     children = new Set<GameObject>();
     properties = new PropertyBag();
-    _components = new GameObjectComponents(this);
+    _components = new ComponentList(this);
     events = new EventListenerMap(this);
 
     // Initialize the transform
-    _transform = scene.components.get('Transform').createComponent(this);
+    _transform = attachComponent('Transform');
 
   }
 
@@ -155,16 +155,15 @@ class GameObject {
   }
 
   Component attachComponent(String type, [List params]) {
-    var system = _scene.components.get(type);
-    int handle = system.createComponent(this, params).handle;
-    _components.attachComponent(type, handle);
-    Component c = system.getComponentWithHandle(handle);
+    Component c = _scene.componentManager.createComponent(type, this, params);
+    _components.attachComponent(type, c.handle);
 
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
     if(scene != null) {
       c.init(params);
+      c.checkDependencies();
       return c;
     }
     else {
@@ -175,10 +174,9 @@ class GameObject {
 
   void destroyComponent(Component component) {
     component.free();
-
     _components.detachComponent(component.type, component.handle);
-    var system = _scene.components.get(component.type);
-    system.destroyComponent(handle);
+    _scene.componentManager.destroyComponent(component.handle, component.type);
+    checkDependencies();
   }
 
   void addChild(GameObject go) {

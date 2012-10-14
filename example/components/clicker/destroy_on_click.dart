@@ -6,7 +6,7 @@ class DestroyOnClick extends ScriptComponent{
     events.on('click').add(destroy);
   }
 
-  void destroy(num mouseX, num mouseY) {
+  void destroy([List params]) {
 
     // Before we die, let's read a property set by EvadeMouse, just for fun:
     var message = properties.get('secretMessage');
@@ -24,15 +24,14 @@ class DestroyOnClick extends ScriptComponent{
     GameObject explosion = new GameObject();
 
     // Remember that owner is the game object that owns this component.
-    explosion.transform.position = owner.transform.position.clone();
+    explosion.transform.position = owner.transform.position.xyz; // clone
     owner.addChild(explosion);
 
     Mesh mesh = createAMeshInSpectre(magic);
-    Components.create('AnimatedMesh', explosion, [mesh]);
+    explosion.attachComponent('AnimatedMesh', [mesh]);
 
-    // Tracker provides time management operations.
     // Tell the scene's tracker to kill us when the animation is done.
-    scene.tracker.callFunctionWithDelay(mesh.animation.duration, () {
+    new Timer(mesh.animation.duration, () {
       // This will also destroy all other components this game object has, and
       // recursively destroy all childen as well, including the explosion.
       scene.destroyGameObject(owner);

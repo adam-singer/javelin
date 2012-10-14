@@ -10,18 +10,18 @@ class Enemy extends GameObject{
 
     // This component fires mouse events. It is not a ScriptComponent, its
     // part of Javelin.
-    Components.create('MouseEvents', this);
+    attachComponent('MouseEvents');
 
     // RenderableMesh is another Javelin Component to display meshes.
     // I don't know how to create a mesh in Spectre.
     Mesh enemyMesh = createAMeshInSpectre(magic);
-    Components.create('RenderableMesh', this, [enemyMesh]);
+    attachComponent('RenderableMesh', [enemyMesh]);
 
     // Custom components (ScriptComponents):
 
     // 20 (the speed) will be passed as parameter to the init
     // function of EvadeMouse.
-    Components.create('EvadeMouse', this, [20]);
-    Components.create('DestroyOnClick', this);
+    attachComponent('EvadeMouse', [20]);
+    attachComponent('DestroyOnClick');
   }
 }

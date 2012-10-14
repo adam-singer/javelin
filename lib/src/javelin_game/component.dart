@@ -5,8 +5,12 @@ class Component {
   int get handle => _handle;
 
   // We need this until dart fully supports runtimeType
+  // TODO: Implement using runtimeType.toString()?
   String _type;
   String get type => _type;
+
+  // Won't receive update calls if set to false.
+  bool enbled = true;
 
   GameObject _owner;
   GameObject get owner => _owner;
@@ -36,7 +40,7 @@ class Component {
   void init([List params]) {
   }
 
-  void update() {
+  void update(num timeDelta) {
   }
 
   void free() {

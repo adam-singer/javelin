@@ -7,18 +7,34 @@ class ComponentSystem<T extends Component> {
     _handleSystem = new HandleSystem(numComponents, 0);
   }
 
+  // TODO: Not implemeted yet.
+  String get componentTypeName => "Implement me";
+
   Component createComponent(GameObject owner, [List params]) {
-    // Not implemented yet.
+    // TODO: Not implemented yet.
+    // Do not call init on it. The owner will do that.
     return null;
   }
 
   void destroyComponent(int handle) {
-    // Not implemented yet.
+    // TODO: Not implemented yet.
+    // Do not call free on it. The owner will do that.
     return;
   }
 
   Component getComponentWithHandle(int handle) {
-    // Not implemented yet.
+    // TODO: Not implemented yet.
     return null;
+  }
+
+  /**
+   * Updates all the components of this type
+   * */
+  void updateComponents(num timeDelta) {
+    for (var c in _componentPool) {
+      if(c.enabled && c.owner.enabled) {
+        c.update(timeDelta);
+      }
+    }
   }
 }
