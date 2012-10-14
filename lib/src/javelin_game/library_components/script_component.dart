@@ -11,7 +11,7 @@ class ScriptComponent extends Component {
   void init([List params]) {
   }
 
-  void update() {
+  void update(num timeDelta) {
   }
 
   void free() {

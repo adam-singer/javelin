@@ -1,6 +1,7 @@
 
 #library("javelin_clicker_demo");
 
+#import('package:dartvectormath/vector_math_html.dart');
 #import('../../../lib/Javelin.dart');
 #import('../../../lib/javelin_game.dart');
 
@@ -13,13 +14,9 @@ class Clicker extends Scene{
 
   GameObject _scoreManager;
 
-  // Suggestion: Move the code that deals with the device and resource
-  // management out of the scene and into a Game or Application class so that
-  // you don't have to pass these around for every scene.
   // E.g. A game is a collection of scenes (kind of provide a basic state
   // machine here, with functions like switchToScene, etc.)
-  Clicker(Device device, ResourceManager resourceManager):
-          super(device, resourceManager) {
+  Clicker() {
 
     // Add 100 enemies to the scene. Enemy extends GameObject.
     for(var i = 0 ; i < 100 ; i++) {
@@ -29,8 +26,8 @@ class Clicker extends Scene{
     }
 
     // Also add a vanilla GameObject and manually add a component to it:
-    _scoreManager = new GameObect();
-    components.get('ScorePrinter').createComponent(_scoreManager);
+    _scoreManager = new GameObject();
+    _scoreManager.attachComponent('ScorePrinter');
     root.addChild(_scoreManager);
   }
 }

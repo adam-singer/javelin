@@ -2,7 +2,7 @@ class Scene {
 
   // TODO: remove me once we have proper support for multiple scenes.
   static Scene _instance;
-  static Scene get current => _instance;  // Replace by Application.currentScene;
+  static Scene get current => _instance; // Replace by Application.currentScene
 
   GameObject _root;
   GameObject get root => _root;
@@ -10,8 +10,11 @@ class Scene {
   Map<String, int> _idMap;
   Map<int, GameObject> _handleMap;
 
-  ComponentManager _components;
-  ComponentManager get components => _components;
+  ComponentManager _componentManager;
+  ComponentManager get componentManager => _componentManager;
+
+  PropertyBag _properties;
+  PropertyBag get properties => _properties;
 
   Scene() {
   	// TODO: remove me once we have proper support for multiple scenes.
@@ -21,6 +24,8 @@ class Scene {
   	_handleMap = new Map<int, GameObject>();
   	_root = new GameObject('root');
   	registerGameObject(root, null);
+
+  	properties = new PropertyBag();
   }
 
   /// Registers a game object with the scene.
@@ -61,6 +66,7 @@ class Scene {
     //TODO: Reparenting has implications on the Transform. Do math!
   }
 
+  /// Destroys a game object owned by this scene.
   void destroyGameObject(GameObject go) {
   	// Never destroy root. That should never happen.
   	assert(go != root);
@@ -86,10 +92,17 @@ class Scene {
      // TODO: Notify Spectre that the resource with go.handle is gone.
   }
 
+  /**
+   * Returns the game object that has the passed handle, if owned by this
+   * scene.
+   */
   GameObject getGameObjectWithHandle(int handle) {
   	return _handleMap[handle];
   }
 
+  /**
+   * Returns the game object with the specified id if owned by this scene.
+   */
   GameObject getGameObjectWithId(String id) {
   	int handle = _idMap[id];
   	if(handle == null) {
