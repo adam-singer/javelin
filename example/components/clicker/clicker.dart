@@ -1,6 +1,8 @@
 
 #library("javelin_clicker_demo");
 
+#import('dart:isolate');
+
 #import('package:dartvectormath/vector_math_html.dart');
 #import('../../../lib/Javelin.dart');
 #import('../../../lib/javelin_game.dart');

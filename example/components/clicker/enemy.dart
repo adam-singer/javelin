@@ -14,7 +14,7 @@ class Enemy extends GameObject{
 
     // RenderableMesh is another Javelin Component to display meshes.
     // I don't know how to create a mesh in Spectre.
-    Mesh enemyMesh = createAMeshInSpectre(magic);
+    dynamic enemyMesh; // TODO(demo): Get a mesh from spectre.
     attachComponent('RenderableMesh', [enemyMesh]);
 
     // Custom components (ScriptComponents):

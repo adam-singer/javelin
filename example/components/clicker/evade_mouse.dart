@@ -40,10 +40,12 @@ class EvadeMouse extends ScriptComponent{
   // All components support init, update and free.
   // update gets called every frame.
   void update(num timeDelta) {
-    // Assume this works, for now.
-    vec3 mouseProjection = SomeUtilClass.getMouseProjection(
-        scene.properties.get('camera'),
-        _mouseX, _mouseY, new Plane.ground());
+    // TODO(demo): get the projection of the mouse coordinates, stored in
+    // _mouseX and _mouseY onto the ground plane using the current camera.
+    // I added a property bag to the scene and I was thinking of having the
+    // camera component do owner.scene.properties.set('camera', this), so that
+    // we can always get the last camera added.
+    vec3 mouseProjection;
 
     // owner is the GameObject that owns this component.
     // All game objects have a Transform component.
