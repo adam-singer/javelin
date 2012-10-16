@@ -2,6 +2,7 @@ name: javelin
 description: Data Driven Games
 version: 0.0.1
 author: John McCutchan <john@johnmccutchan.com>
+author: Daniel Rodríguez <seth.illgard@gmail.com>
 homepage: https://github.com/johnmccutchan/javelin
 dependencies:
   unittest:

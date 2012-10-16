@@ -223,8 +223,8 @@ class JavelinDemoLaunch {
     String webGLCanvasName = '#webGLFrontBuffer';
     {
       DivElement canvasParent = document.query(webGLCanvasParentName);
-      final num width = canvasParent.$dom_clientWidth;
-      final num height = canvasParent.$dom_clientHeight;
+      final num width = canvasParent.clientWidth;
+      final num height = canvasParent.clientHeight;
       CanvasElement canvas = document.query(webGLCanvasName);
       canvas.width = width;
       canvas.height = height;
