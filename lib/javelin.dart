@@ -24,9 +24,9 @@
 #import('dart:math', prefix:'Math');
 #import('dart:html');
 #import('dart:json');
-#import('package:dartvectormath/vector_math_html.dart');
+#import('package:vector_math/vector_math_browser.dart');
 #import('package:spectre/spectre.dart');
-#import('package:markerprof/profiler.dart');
+#import('package:marker_prof/profiler.dart');
 #source('src/javelin/config.dart');
 #source('src/javelin/config_ui.dart');
 #source('src/javelin/keyboard.dart');

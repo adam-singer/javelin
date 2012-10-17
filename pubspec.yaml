@@ -8,11 +8,11 @@ homepage: https://github.com/johnmccutchan/javelin
 dependencies:
   unittest:
     sdk: unittest
-  markerprof:
+  marker_prof:
     git: https://github.com/johnmccutchan/markerprof.git
-  dartvectormath:
+  vector_math:
     git: https://github.com/johnmccutchan/DartVectorMath.git
   spectre:
     git: https://github.com/johnmccutchan/spectre.git
-  handlesystem:
+  handle_system:
     git: https://github.com/johnmccutchan/handlesystem.git

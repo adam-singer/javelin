@@ -22,15 +22,15 @@
 
 #import('dart:html');
 #import('dart:math', prefix:'Math');
-#import('package:dartvectormath/vector_math_html.dart');
+#import('package:vector_math/vector_math_browser.dart');
 #import('package:spectre/spectre.dart');
 #import('package:spectre/spectre_scene.dart');
 #import('package:spectre/spectre_post.dart');
 #import('package:javelin/javelin.dart');
 #import('package:javelin/javelin_scene.dart');
-#import('package:markerprof/profiler.dart');
-#import('package:markerprof/profiler_gui.dart');
-#import('package:markerprof/profiler_client.dart');
+#import('package:marker_prof/profiler.dart');
+#import('package:marker_prof/profiler_gui.dart');
+#import('package:marker_prof/profiler_client.dart');
 #import('package:javelin/hfluid.dart');
 #import('package:javelin/skybox.dart');
 #import('particle_system.dart');

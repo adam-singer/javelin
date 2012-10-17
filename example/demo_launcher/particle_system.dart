@@ -1,5 +1,5 @@
 #library('particle_system');
-#import('package:dartvectormath/vector_math_html.dart');
+#import('package:vector_math/vector_math_browser.dart');
 #import('package:spectre/spectre.dart');
 #import('dart:math', prefix:'Math');
 

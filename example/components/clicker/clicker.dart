@@ -3,7 +3,7 @@
 
 #import('dart:isolate');
 
-#import('package:dartvectormath/vector_math_html.dart');
+#import('package:vector_math/vector_math_browser.dart');
 #import('../../../lib/Javelin.dart');
 #import('../../../lib/javelin_game.dart');
 
