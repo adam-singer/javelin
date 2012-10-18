@@ -4,8 +4,8 @@
 #import('dart:isolate');
 
 #import('package:vector_math/vector_math_browser.dart');
-#import('../../../lib/Javelin.dart');
-#import('../../../lib/javelin_game.dart');
+#import('package:javelin/javelin.dart');
+#import('package:javelin/javelin_game.dart');
 
 #source('enemy.dart');
 #source('evade_mouse.dart');
