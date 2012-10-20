@@ -59,8 +59,8 @@ class JavelinMouse {
   mouseMoveEvent(MouseEvent event) {
     _accumDX += event.webkitMovementX;
     _accumDY += event.webkitMovementY;
-    _X = event.screenX;
-    _Y = event.screenY;
+    _X = event.offsetX;
+    _Y = event.offsetY;
   }
 
   int get accumulatedDX() => _accumDX;

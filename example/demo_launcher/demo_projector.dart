@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,21 +23,21 @@
 class JavelinProjector extends JavelinBaseDemo {
   Loader _loader;
   Scene _scene;
-  
-  JavelinProjector(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+
+  JavelinProjector(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _scene = new Scene(device, resourceManager);
     _loader = new Loader(_scene, device, resourceManager);
   }
-  
+
   String get demoDescription() => 'Projector';
-  
+
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
     return base.chain((r) {
       return _loader.loadFromUrl('/scenes/test.scene');
     });
   }
-  
+
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
     _scene.shutdown();
@@ -46,7 +46,7 @@ class JavelinProjector extends JavelinBaseDemo {
     _scene = null;
     return base;
   }
-  
+
   void update(num time, num dt) {
     super.update(time, dt);
     _scene.update(time, dt);

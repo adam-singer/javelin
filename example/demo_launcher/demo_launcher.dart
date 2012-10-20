@@ -223,8 +223,8 @@ class JavelinDemoLaunch {
     String webGLCanvasName = '#webGLFrontBuffer';
     {
       DivElement canvasParent = document.query(webGLCanvasParentName);
-      final num width = canvasParent.$dom_clientWidth;
-      final num height = canvasParent.$dom_clientHeight;
+      final num width = canvasParent.clientWidth;
+      final num height = canvasParent.clientHeight;
       CanvasElement canvas = document.query(webGLCanvasName);
       canvas.width = width;
       canvas.height = height;
@@ -274,15 +274,15 @@ class JavelinDemoLaunch {
       spectreLog.Info('Javelin Running');
       device.immediateContext.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
       device.immediateContext.clearDepthBuffer(1.0);
-      registerDemo('Empty', () { return new JavelinEmptyDemo(device, resourceManager, debugDrawManager); });
-      registerDemo('Debug Draw Test', () { return new JavelinDebugDrawTest(device, resourceManager, debugDrawManager); });
-      registerDemo('Spinning Mesh', () { return new JavelinSpinningCube(device, resourceManager, debugDrawManager); });
-      registerDemo('Height Field Fluid', () { return new JavelinHFluidDemo(device, resourceManager, debugDrawManager); });
+      registerDemo('Empty', () { return new JavelinEmptyDemo(document.query('#webGLFrontBuffer'), device, resourceManager, debugDrawManager); });
+      registerDemo('Debug Draw Test', () { return new JavelinDebugDrawTest(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
+      registerDemo('Spinning Mesh', () { return new JavelinSpinningCube(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
+      registerDemo('Height Field Fluid', () { return new JavelinHFluidDemo(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
       //registerDemo('Skybox', () { return new JavelinSkyboxDemo(device, resourceManager, debugDrawManager); });
-      registerDemo('Cloth', () { return new JavelinClothDemo(device, resourceManager, debugDrawManager); });
-      registerDemo('Particles', () { return new JavelinParticlesDemo(device, resourceManager, debugDrawManager); });
+      registerDemo('Cloth', () { return new JavelinClothDemo(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
+      registerDemo('Particles', () { return new JavelinParticlesDemo(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
       //registerDemo('Normal Map', () { return new JavelinNormalMap(device, resourceManager, debugDrawManager); });
-      registerDemo('Scene', () { return new JavelinProjector(device, resourceManager, debugDrawManager); });
+      registerDemo('Scene', () { return new JavelinProjector(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
       switchToDemo(JavelinConfigStorage.get('Javelin.demo'));
       window.setInterval(refresh, 1000);
     });

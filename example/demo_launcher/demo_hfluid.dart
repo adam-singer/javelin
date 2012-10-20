@@ -36,7 +36,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   int _fluidNumVertices;
   Float32Array _lightDirection;
   ConfigUI _configUI;
-  JavelinHFluidDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+  JavelinHFluidDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _fluid = new HeightFieldFluid(50, 0.5);
     _centerColumnIndex = 12;
     _configUI = new ConfigUI();

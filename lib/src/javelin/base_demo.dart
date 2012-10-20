@@ -47,7 +47,7 @@ class JavelinBaseDemo {
   int _rasterizerState;
   int _rasterizerState1;
   int _rasterizerState2;
-
+  Element _element;
   Device _device;
   ImmediateContext _immediateContext;
   ResourceManager _resourceManager;
@@ -82,7 +82,8 @@ class JavelinBaseDemo {
   int viewportWidth;
   int viewportHeight;
 
-  JavelinBaseDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) {
+  JavelinBaseDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) {
+    _element = element;
     _device = device;
     _immediateContext = device.immediateContext;
     _resourceManager = resourceManager;
@@ -145,9 +146,9 @@ class JavelinBaseDemo {
     }
     document.on.keyDown.add(_keyDownHandler);
     document.on.keyUp.add(_keyUpHandler);
-    document.on.mouseMove.add(_mouseMoveHandler);
-    document.on.mouseDown.add(_mouseDownHandler);
-    document.on.mouseUp.add(_mouseUpHandler);
+    _element.on.mouseMove.add(_mouseMoveHandler);
+    _element.on.mouseDown.add(_mouseDownHandler);
+    _element.on.mouseUp.add(_mouseUpHandler);
     _immediateContext.reset();
     return completer.future;
   }
@@ -155,9 +156,9 @@ class JavelinBaseDemo {
   Future<JavelinDemoStatus> shutdown() {
     document.on.keyDown.remove(_keyDownHandler);
     document.on.keyUp.remove(_keyUpHandler);
-    document.on.mouseMove.remove(_mouseMoveHandler);
-    document.on.mouseDown.remove(_mouseDownHandler);
-    document.on.mouseUp.remove(_mouseUpHandler);
+    _element.on.mouseMove.remove(_mouseMoveHandler);
+    _element.on.mouseDown.remove(_mouseDownHandler);
+    _element.on.mouseUp.remove(_mouseUpHandler);
     _device.batchDeleteDeviceChildren([_rasterizerState, _rasterizerState1, _rasterizerState2, _depthState, _depthState1, _depthState2, _blendState, _blendState1, _viewPort]);
     _quit = true;
     Completer<JavelinDemoStatus> completer = new Completer();

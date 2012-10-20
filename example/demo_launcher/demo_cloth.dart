@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -26,18 +26,18 @@ class JavelinFlyingSphere {
   vec3 center;
   vec3 velocity;
   vec4 color;
-  
+
   JavelinFlyingSphere(this.radius, this.debugDrawManager) {
     center = new vec3.zero();
     velocity = new vec3.zero();
     color = new vec4.raw(0.5, 0.5, 0.5, 1.0);
   }
-  
+
   void reset(vec3 center_, vec3 velocity_) {
     center.copyFrom(center_);
     velocity.copyFrom(velocity_);
   }
-  
+
   void update() {
     vec3 acceleration = new vec3.raw(0.0, -10.0, 0.0);
     acceleration.scale(0.016);
@@ -46,7 +46,7 @@ class JavelinFlyingSphere {
     temp.scale(0.016);
     center.add(temp);
   }
-  
+
   void draw() {
     debugDrawManager.addSphere(center, radius, color, 0.0, true);
   }
@@ -67,18 +67,18 @@ class JavelinClothDemo extends JavelinBaseDemo {
   int _particleDepthStateHandle;
   int _particleBlendStateHandle;
   int _particleRasterizerStateHandle;
-  
+
   JavelinFlyingSphere _sphere;
-  
+
   Float32Array _particlesVertexData;
-  
+
   ClothSystemBackendDVM _particles;
-  
+
   int _gridWidth;
   int _numParticles;
   int _particleVertexSize;
-  
-  JavelinClothDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+
+  JavelinClothDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _sphere = new JavelinFlyingSphere(1.0, debugDrawManager);
     _gridWidth = 15;
     _numParticles = _gridWidth*_gridWidth;
@@ -91,7 +91,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
         int index = (i + j * _gridWidth) * _particleVertexSize;
         _particlesVertexData[index+0] = 0.0;
         _particlesVertexData[index+1] = 0.0;
-        _particlesVertexData[index+2] = 0.0;  
+        _particlesVertexData[index+2] = 0.0;
         // Color
         _particlesVertexData[index+3] = 1.0;
         _particlesVertexData[index+4] = 0.0;
@@ -103,19 +103,19 @@ class JavelinClothDemo extends JavelinBaseDemo {
         } else if (i + j * _gridWidth > (_numParticles ~/ 3)) {
           _particlesVertexData[index+3] = 0.0;
           _particlesVertexData[index+4] = 1.0;
-          _particlesVertexData[index+5] = 0.0;  
+          _particlesVertexData[index+5] = 0.0;
         }
         _particlesVertexData[index+6] = i / _gridWidth;
         _particlesVertexData[index+7] = j / _gridWidth;
       }
     }
   }
-  
+
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
-    
+
     _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {'usage':'static', 'size':2*(_gridWidth-1)*(_gridWidth-1)*6});
-    
+
     {
       Uint16Array indexArray = new Uint16Array((_gridWidth-1)*(_gridWidth-1)*6);
       int out = 0;
@@ -135,7 +135,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
       }
       immediateContext.updateBuffer(_particleIBHandle, indexArray);
     }
-    
+
     _particlesVBOHandle = device.createVertexBuffer('Cloth Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
     _particlesVSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.vs');
     _particlesFSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.fs');
@@ -154,7 +154,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
       loadedResources.add(resourceManager.loadResource(_particlesFSResourceHandle));
       loadedResources.add(resourceManager.loadResource(_particlePointSpriteResourceHandle));
     });
-    
+
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
@@ -172,7 +172,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     });
     return complete.future;
   }
-  
+
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
     _particlesVertexData = null;
@@ -192,25 +192,11 @@ class JavelinClothDemo extends JavelinBaseDemo {
                                       _particleRasterizerStateHandle]);
     return base;
   }
-  
+
   void updateParticles() {
     device.immediateContext.updateBuffer(_particlesVBOHandle, _particlesVertexData);
   }
-  
-  void unproject(vec2 click, vec3 p) {
-    mat4 vp = new mat4.copy(projectionViewMatrix);
-    vec4 v = new vec4.zero();
-    vp.invert();
-    v.x = (click.x - 0) * 2.0 / viewportWidth - 1.0;
-    v.y = (click.y - 0) * 2.0 / viewportHeight - 1.0;
-    v.z = -1.0;
-    v.w = 1.0;
-    vp.transformDirect(v);
-    p.x = v.x/v.w;
-    p.y = v.y/v.w;
-    p.z = v.z/v.w;
-  }
-  
+
   void drawParticles() {
     device.immediateContext.setInputLayout(_particlesInputLayoutHandle);
     device.immediateContext.setVertexBuffers(0, [_particlesVBOHandle]);
@@ -229,20 +215,20 @@ class JavelinClothDemo extends JavelinBaseDemo {
     //device.immediateContext.draw(_numParticles, 0);
     device.immediateContext.drawIndexed((_gridWidth-1)*(_gridWidth-1)*6, 0);
   }
-  
+
   void mouseButtonEventHandler(MouseEvent event, bool down) {
     super.mouseButtonEventHandler(event, down);
     if (event.button == JavelinMouseButtonCodes.MouseButtonLeft && down) {
       _sphere.reset(camera.eyePosition,camera.frontDirection.scale(20.0));
     }
   }
-  
+
   void update(num time, num dt) {
     Profiler.enter('Demo Update');
     Profiler.enter('super.update');
     super.update(time, dt);
     Profiler.exit(); // Super.update
-        
+
     {
       quat q = new quat.axisAngle(new vec3.raw(0.0, 0.0, 1.0), 0.0174532925);
       //q.rotate(_particles.gravityDirection);
@@ -252,23 +238,23 @@ class JavelinClothDemo extends JavelinBaseDemo {
     _particles.update();
     _particles.copyPositions(_particlesVertexData, _particleVertexSize);
     updateParticles();
-    
+
     if (keyboard.pressed(JavelinKeyCodes.KeyZ)) {
       _particles.pick(3, 8, new vec3.raw(0.0, 0.0, 0.0));
     }
     Profiler.exit();
-    
+
     Profiler.exit(); // Demo update
-    
+
     drawGrid(20);
     _sphere.update();
     _sphere.draw();
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    
+
     Profiler.enter('Demo draw');
     drawParticles();
     Profiler.exit();
-    
+
   }
 }

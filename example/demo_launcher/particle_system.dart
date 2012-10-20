@@ -3,7 +3,7 @@
 #import('package:spectre/spectre.dart');
 #import('dart:math', prefix:'Math');
 
-class ParticleSystemBackend {
+abstract class ParticleSystemBackend {
   int _numParticles;
   num _timeStep;
   num _timeStep2;

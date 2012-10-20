@@ -46,8 +46,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   List<int> _transformNodes;
   ConfigUI _configUI;
   String get demoDescription() => 'Spinning Mesh';
-  
-  JavelinSpinningCube(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+
+  JavelinSpinningCube(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     cubeMeshResource = 0;
     cubeVertexShaderResource = 0;
     cubeFragmentShaderResource = 0;
@@ -103,15 +103,15 @@ class JavelinSpinningCube extends JavelinBaseDemo {
         MeshResource cube = resource;
         var elements = [InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vPosition', 0, 'POSITION'), cube),
                         InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vTexCoord', 0, 'TEXCOORD0'), cube)];
-        
+
         device.configureDeviceChild(il, {'elements': elements});
         device.configureDeviceChild(il, {'shaderProgram': cubeProgram});
-        
+
         cubeNumIndices = cube.numIndices;
-        
+
         immediateContext.updateBuffer(cubeVertexBuffer, cube.vertexArray);
         immediateContext.updateBuffer(cubeIndexBuffer, cube.indexArray);
-        
+
         // Build frame program
         ProgramBuilder pb = new ProgramBuilder();
         pb.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
@@ -128,22 +128,22 @@ class JavelinSpinningCube extends JavelinBaseDemo {
         pb.drawIndexed(cubeNumIndices, 0);
         _frameProgram = pb.ops;
       });
-      
+
       resourceManager.addEventCallback(cubeTextureResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.updateTexture2DFromResource(texture, cubeTextureResource, resourceManager);
         immediateContext.generateMipmap(texture);
       });
-      
+
       resourceManager.addEventCallback(cubeVertexShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.compileShaderFromResource(cubeVertexShader, cubeVertexShaderResource, resourceManager);
         device.configureDeviceChild(cubeProgram, { 'VertexProgram': cubeVertexShader });
       });
-      
+
       resourceManager.addEventCallback(cubeFragmentShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.compileShaderFromResource(cubeFragmentShader, cubeFragmentShaderResource, resourceManager);
         device.configureDeviceChild(cubeProgram, { 'FragmentProgram': cubeFragmentShader });
       });
-      
+
       resourceManager.loadResource(renderConfigResource).then((_dd) {
         RenderConfigResource rcr = resourceManager.getResource(renderConfigResource);
         renderConfig.load(rcr.renderConfig);
@@ -151,9 +151,9 @@ class JavelinSpinningCube extends JavelinBaseDemo {
         resourceManager.loadResource(cubeFragmentShaderResource);
         resourceManager.loadResource(cubeMeshResource);
         resourceManager.loadResource(cubeTextureResource);
-        
-        complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));  
-      });      
+
+        complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
+      });
     });
     return complete.future;
   }
@@ -187,7 +187,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   Element makeDemoUI() {
     return _configUI.root;
   }
-  
+
   void update(num time, num dt) {
     super.update(time, dt);
     _angle += dt * 3.14159;

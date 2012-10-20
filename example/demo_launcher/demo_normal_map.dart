@@ -52,8 +52,8 @@ class JavelinNormalMap extends JavelinBaseDemo {
   List<int> _transformNodes;
   ConfigUI _configUI;
   String get demoDescription() => 'Normal Mapped Mesh';
-  
-  JavelinNormalMap(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+
+  JavelinNormalMap(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     cubeMeshResource = 0;
     cubeVertexShaderResource = 0;
     cubeFragmentShaderResource = 0;
@@ -118,15 +118,15 @@ class JavelinNormalMap extends JavelinBaseDemo {
                         InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vNormal', 0, 'NORMAL'), cube),
                         InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vBitangent', 0, 'BITANGENT'), cube),
                         InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vTangent', 0, 'TANGENT'), cube)];
-        
+
         device.configureDeviceChild(il, {'elements': elements});
         device.configureDeviceChild(il, {'shaderProgram': cubeProgram});
-        
+
         cubeNumIndices = cube.numIndices;
-        
+
         immediateContext.updateBuffer(cubeVertexBuffer, cube.vertexArray);
         immediateContext.updateBuffer(cubeIndexBuffer, cube.indexArray);
-        
+
         // Build frame program
         ProgramBuilder pb = new ProgramBuilder();
         pb.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
@@ -150,27 +150,27 @@ class JavelinNormalMap extends JavelinBaseDemo {
         pb.drawIndexed(cubeNumIndices, 0);
         _frameProgram = pb.ops;
       });
-      
+
       resourceManager.addEventCallback(cubeTextureResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.updateTexture2DFromResource(textureDiffuse, cubeTextureResource, resourceManager);
         immediateContext.generateMipmap(textureDiffuse);
       });
-      
+
       resourceManager.addEventCallback(cubeTextureResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.updateTexture2DFromResource(textureNormal, cubeTexture1Resource, resourceManager);
         immediateContext.generateMipmap(textureNormal);
       });
-      
+
       resourceManager.addEventCallback(cubeVertexShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.compileShaderFromResource(cubeVertexShader, cubeVertexShaderResource, resourceManager);
         device.configureDeviceChild(cubeProgram, { 'VertexProgram': cubeVertexShader });
       });
-      
+
       resourceManager.addEventCallback(cubeFragmentShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
         immediateContext.compileShaderFromResource(cubeFragmentShader, cubeFragmentShaderResource, resourceManager);
         device.configureDeviceChild(cubeProgram, { 'FragmentProgram': cubeFragmentShader });
       });
-      
+
       resourceManager.loadResource(renderConfigResource).then((_dd) {
         RenderConfigResource rcr = resourceManager.getResource(renderConfigResource);
         renderConfig.load(rcr.renderConfig);
@@ -178,9 +178,9 @@ class JavelinNormalMap extends JavelinBaseDemo {
         resourceManager.loadResource(cubeFragmentShaderResource);
         resourceManager.loadResource(cubeMeshResource);
         resourceManager.loadResource(cubeTextureResource);
-        
-        complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));  
-      });      
+
+        complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
+      });
     });
     return complete.future;
   }
@@ -208,7 +208,7 @@ class JavelinNormalMap extends JavelinBaseDemo {
   Element makeDemoUI() {
     return _configUI.root;
   }
-  
+
   void updateMode() {
     String modeStyle = JavelinConfigStorage.get('demo.normalmap.style');
     if (modeStyle == 'basic') {
@@ -219,7 +219,7 @@ class JavelinNormalMap extends JavelinBaseDemo {
     if (_frameProgram != null)
       _frameProgram[modeOffset] = mode;
   }
-  
+
   void update(num time, num dt) {
     super.update(time, dt);
     _angle += dt * 3.14159;
@@ -233,7 +233,7 @@ class JavelinNormalMap extends JavelinBaseDemo {
     device.immediateContext.clearDepthBuffer(1.0);
     device.immediateContext.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
     updateMode();
-    { 
+    {
       vec3 lightDirection = new vec3(1.0, -1.0, 1.0);
       lightDirection.normalize();
       mat4 R = new mat4.rotationY(_angle);

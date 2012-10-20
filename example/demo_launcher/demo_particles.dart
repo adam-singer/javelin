@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -33,15 +33,15 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   int _particlePointSpriteSamplerHandle;
   int _particleDepthStateHandle;
   int _particleBlendStateHandle;
-  
+
   Float32Array _particlesVertexData;
-  
+
   ParticleSystemBackend _particles;
-  
+
   int _numParticles;
   int _particleVertexSize;
-  
-  JavelinParticlesDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+
+  JavelinParticlesDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _numParticles = 100;
     _particleVertexSize = 6;
     _particles = new ParticleSystemBackendDVM(_numParticles);
@@ -52,7 +52,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
       _particlesVertexData[index+0] = 0.0;
       _particlesVertexData[index+1] = 0.0;
       _particlesVertexData[index+2] = 0.0;
-      
+
       // Color
       _particlesVertexData[index+3] = 1.0;
       _particlesVertexData[index+4] = 0.0;
@@ -64,16 +64,16 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
       } else if (i > (_numParticles ~/ 3)) {
         _particlesVertexData[index+3] = 0.0;
         _particlesVertexData[index+4] = 1.0;
-        _particlesVertexData[index+5] = 0.0;  
-      } 
+        _particlesVertexData[index+5] = 0.0;
+      }
     }
   }
-  
+
   String get demoDescription() => 'Particles';
-  
+
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
-    
+
     _particlesVBOHandle = device.createVertexBuffer('Particles Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
     _particlesVSResourceHandle = resourceManager.registerResource('/shaders/simple_particle.vs');
     _particlesFSResourceHandle = resourceManager.registerResource('/shaders/simple_particle.fs');
@@ -83,7 +83,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     _particlePointSpriteHandle = device.createTexture2D('Particle Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.TextureFormatRGBA, 'pixelFormat': Texture.PixelFormatUnsignedByte});
     _particlePointSpriteSamplerHandle = device.createSamplerState('Particle Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
     _particleDepthStateHandle = device.createDepthState('Particle Depth State', {});
-    _particleBlendStateHandle = device.createBlendState('Particle Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha}); 
+    _particleBlendStateHandle = device.createBlendState('Particle Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
     List loadedResources = [];
     base.then((value) {
       // Once the base is done, we load our resources
@@ -91,7 +91,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
       loadedResources.add(resourceManager.loadResource(_particlesFSResourceHandle));
       loadedResources.add(resourceManager.loadResource(_particlePointSpriteResourceHandle));
     });
-    
+
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
@@ -108,7 +108,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     });
     return complete.future;
   }
-  
+
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
     _particlesVertexData = null;
@@ -116,11 +116,11 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     device.batchDeleteDeviceChildren([_particlesVBOHandle, _particlesShaderProgramHandle, _particlesVSHandle, _particlesFSHandle, _particlesInputLayoutHandle, _particlePointSpriteHandle, _particleDepthStateHandle, _particleBlendStateHandle, _particlePointSpriteSamplerHandle]);
     return base;
   }
-  
+
   void updateParticles() {
     device.immediateContext.updateBuffer(_particlesVBOHandle, _particlesVertexData);
   }
-  
+
   void drawParticles() {
     device.immediateContext.setInputLayout(_particlesInputLayoutHandle);
     device.immediateContext.setVertexBuffers(0, [_particlesVBOHandle]);
@@ -137,13 +137,13 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     device.immediateContext.setUniformMatrix4('normalTransform', normalTransform);
     device.immediateContext.draw(_numParticles, 0);
   }
-  
+
   void update(num time, num dt) {
     Profiler.enter('Demo Update');
     Profiler.enter('super.update');
     super.update(time, dt);
     Profiler.exit(); // Super.update
-        
+
     {
       quat q = new quat.axisAngle(new vec3.raw(0.0, 0.0, 1.0), 0.0174532925);
       //q.rotate(_particles.gravityDirection);
@@ -153,16 +153,16 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     _particles.copyPositions(_particlesVertexData, _particleVertexSize);
     updateParticles();
     Profiler.exit();
-    
+
     Profiler.exit(); // Demo update
-    
+
     drawGrid(20);
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    
+
     Profiler.enter('Demo draw');
     drawParticles();
     Profiler.exit();
-    
+
   }
 }

@@ -20,7 +20,7 @@
 
 */
 
-class JavelinConfigType {
+abstract class JavelinConfigType {
   abstract String serialize(Dynamic o);
   abstract Dynamic deserialize(String data);
   bool istype(Dynamic o) => false;

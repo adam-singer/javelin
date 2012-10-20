@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -21,24 +21,24 @@
 */
 
 class JavelinEmptyDemo extends JavelinBaseDemo {
-  JavelinEmptyDemo(Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(device, resourceManager, debugDrawManager) {
+  JavelinEmptyDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
   }
-  
+
   String get demoDescription() => 'Empty';
-  
+
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
     return base;
   }
-  
+
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
     return base;
   }
-  
+
   void update(num time, num dt) {
     super.update(time, dt);
-    
+
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
   }
