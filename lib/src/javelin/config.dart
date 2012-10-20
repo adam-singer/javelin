@@ -118,8 +118,8 @@ class JavelinConfigStorage {
     notification = null;
     JavelinConfigTypes.init();
     variables = new Map<String, JavelinConfigVariable>();
-    variables['camera.eyePosition'] = new JavelinConfigVariable('camera.eyePosition', 'vec3', () => new vec3(0.0, 2.0, 0.0));
-    variables['camera.lookAtPosition'] = new JavelinConfigVariable('camera.lookAtPosition', 'vec3', () => new vec3(0.0, 2.0, 2.0));
+    variables['camera.position'] = new JavelinConfigVariable('camera.position', 'vec3', () => new vec3(0.0, 2.0, 0.0));
+    variables['camera.focusPosition'] = new JavelinConfigVariable('camera.focusPosition', 'vec3', () => new vec3(0.0, 2.0, 2.0));
     variables['drawlist.update'] = new JavelinConfigVariable('drawlist.update', 'bool', () => true);
     variables['Javelin.demo'] = new JavelinConfigVariable('Javelin.demo', 'String', () => 'Empty');
     variables['demo.hfluid.waveheight'] = new JavelinConfigVariable('demo.hfluid.waveheight', 'num', () => 0.8);

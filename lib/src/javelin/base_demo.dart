@@ -92,9 +92,9 @@ class JavelinBaseDemo {
     keyboard = new JavelinKeyboard();
     mouse = new JavelinMouse();
     _camera = new Camera();
-    var d = JavelinConfigStorage.get('camera.eyePosition');
-    _camera.eyePosition = d;
-    _camera.lookAtPosition = JavelinConfigStorage.get('camera.lookAtPosition');
+    var d = JavelinConfigStorage.get('camera.position');
+    _camera.position = d;
+    _camera.focusPosition = JavelinConfigStorage.get('camera.focusPosition');
     _cameraController = new MouseKeyboardCameraController();
     _quit = false;
     _time = 0;
@@ -255,8 +255,8 @@ class JavelinBaseDemo {
       projectionViewMatrix.copyIntoArray(projectionViewTransform);
       normalMatrix.copyIntoArray(normalTransform);
     }
-    JavelinConfigStorage.set('camera.lookAtPosition', _camera.lookAtPosition);
-    JavelinConfigStorage.set('camera.eyePosition', _camera.eyePosition);
+    JavelinConfigStorage.set('camera.focusPosition', _camera.focusPosition);
+    JavelinConfigStorage.set('camera.position', _camera.position);
     {
       num yaw = _camera.yaw;
       num pitch = _camera.pitch;
