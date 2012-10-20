@@ -1,0 +1,7 @@
+Authors:
+
+John McCutchan <john@johnmccutchan.com>
+Daniel Rodríguez <seth.illgard@gmail.com>
+
+Contributors:
+

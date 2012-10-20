@@ -1,9 +1,11 @@
 
 #library("javelin_clicker_demo");
 
-#import('package:dartvectormath/vector_math_html.dart');
-#import('../../../lib/Javelin.dart');
-#import('../../../lib/javelin_game.dart');
+#import('dart:isolate');
+
+#import('package:vector_math/vector_math_browser.dart');
+#import('package:javelin/javelin.dart');
+#import('package:javelin/javelin_game.dart');
 
 #source('enemy.dart');
 #source('evade_mouse.dart');

@@ -1,8 +1,8 @@
 #library('javelin_game');
 
 #import('dart:html');
-#import('package:handlesystem/handlesystem.dart');
-#import('package:dartvectormath/vector_math_html.dart');
+#import('package:handle_system/handle_system.dart');
+#import('package:vector_math/vector_math_browser.dart');
 
 #source('src/javelin_game/scene.dart');
 #source('src/javelin_game/property_bag.dart');

@@ -27,11 +27,11 @@ class DestroyOnClick extends ScriptComponent{
     explosion.transform.position = owner.transform.position.xyz; // clone
     owner.addChild(explosion);
 
-    Mesh mesh = createAMeshInSpectre(magic);
+    dynamic mesh; //TODO (demo): Get a mesh from spectre.
     explosion.attachComponent('AnimatedMesh', [mesh]);
 
     // Tell the scene's tracker to kill us when the animation is done.
-    new Timer(mesh.animation.duration, () {
+    new Timer(mesh.animation.duration, (Timer t) {
       // This will also destroy all other components this game object has, and
       // recursively destroy all childen as well, including the explosion.
       scene.destroyGameObject(owner);

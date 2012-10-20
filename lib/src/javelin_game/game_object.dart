@@ -175,7 +175,7 @@ class GameObject {
   void destroyComponent(Component component) {
     component.free();
     _components.detachComponent(component.type, component.handle);
-    _scene.componentManager.destroyComponent(component.handle, component.type);
+    _scene.componentManager.destroyComponent(component);
     checkDependencies();
   }
 
