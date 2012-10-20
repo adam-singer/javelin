@@ -219,7 +219,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
   void mouseButtonEventHandler(MouseEvent event, bool down) {
     super.mouseButtonEventHandler(event, down);
     if (event.button == JavelinMouseButtonCodes.MouseButtonLeft && down) {
-      _sphere.reset(camera.eyePosition,camera.frontDirection.scale(-20.0));
+      _sphere.reset(camera.position,camera.frontDirection.scale(20.0));
     }
   }
 
