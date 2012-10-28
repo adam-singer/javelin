@@ -20,31 +20,31 @@
 
 */
 
-#import('dart:html');
-#import('dart:math', prefix:'Math');
-#import('package:vector_math/vector_math_browser.dart');
-#import('package:spectre/spectre.dart');
-#import('package:spectre/spectre_scene.dart');
-#import('package:spectre/spectre_post.dart');
-#import('package:javelin/javelin.dart');
-#import('package:javelin/javelin_scene.dart');
-#import('package:marker_prof/profiler.dart');
-#import('package:marker_prof/profiler_gui.dart');
-#import('package:marker_prof/profiler_client.dart');
-#import('package:javelin/hfluid.dart');
-#import('package:javelin/skybox.dart');
-#import('particle_system.dart');
+import 'dart:html';
+import 'dart:math' as Math;
+import 'package:vector_math/vector_math_browser.dart';
+import 'package:spectre/spectre.dart';
+import 'package:spectre/spectre_scene.dart';
+import 'package:spectre/spectre_post.dart';
+import 'package:javelin/javelin.dart';
+import 'package:javelin/javelin_scene.dart';
+import 'package:marker_prof/profiler.dart';
+import 'package:marker_prof/profiler_gui.dart';
+import 'package:marker_prof/profiler_client.dart';
+import 'package:javelin/hfluid.dart';
+import 'package:javelin/skybox.dart';
+import 'particle_system.dart';
 
 // Demos
-#source('demo_empty.dart');
-#source('demo_debug_draw.dart');
-#source('demo_spinning_cube.dart');
-#source('demo_hfluid.dart');
-#source('demo_skybox.dart');
-#source('demo_cloth.dart');
-#source('demo_particles.dart');
-#source('demo_normal_map.dart');
-#source('demo_projector.dart');
+part 'demo_empty.dart';
+part 'demo_debug_draw.dart';
+part 'demo_spinning_cube.dart';
+part 'demo_hfluid.dart';
+part 'demo_skybox.dart';
+part 'demo_cloth.dart';
+part 'demo_particles.dart';
+part 'demo_normal_map.dart';
+part 'demo_projector.dart';
 
 class JavelinDemoDescription {
   String name;
