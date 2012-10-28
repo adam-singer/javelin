@@ -7,8 +7,7 @@ class Scene {
   GameObject _root;
   GameObject get root => _root;
 
-  Map<String, int> _idMap;
-  Map<int, GameObject> _handleMap;
+  Map<String, GameObject> _idMap;
 
   ComponentManager _componentManager;
   ComponentManager get componentManager => _componentManager;
@@ -20,8 +19,7 @@ class Scene {
   	// TODO: remove me once we have proper support for multiple scenes.
   	_instance = this;
 
-  	_idMap = new Map<String, int>();
-  	_handleMap = new Map<int, GameObject>();
+  	_idMap = new Map<String, GameObject>();
   	_root = new GameObject('root');
   	_registerGameObject(root, null);
 
@@ -44,10 +42,8 @@ class Scene {
 
     if(go.id != null) {
       assert(_idMap[go.id] == null);
-      _idMap[go.id] = go.handle;
+      _idMap[go.id] = go;
     }
-    assert(_handleMap[go.handle] == null);
-    _handleMap[go.handle] = go;
 
     go._scene = this;
     go._parent = parent;
@@ -92,7 +88,6 @@ class Scene {
   /// Registers a game object with the scene.
   void _reparentGameObject(GameObject go, GameObject parent) {
     assert(go != root);  // Cannot reparent root!
-    assert(_handleMap[go.handle] != null);
 
     assert(go.parent.children.contains(go));
     go.parent.children.remove(go);
@@ -122,31 +117,21 @@ class Scene {
       assert(_idMap[go.id] != null);
       _idMap[go.id] = null;
     }
-    assert(_handleMap[go.handle] != null);
-    _handleMap[go.handle] = null;
 
     go._parent = null;
 
      // TODO: Notify Spectre that the resource with go.handle is gone.
   }
 
-  /**
-   * Returns the game object that has the passed handle, if owned by this
-   * scene.
-   */
-  GameObject getGameObjectWithHandle(int handle) {
-  	return _handleMap[handle];
-  }
 
   /**
    * Returns the game object with the specified id if owned by this scene.
    */
   GameObject getGameObjectWithId(String id) {
-  	int handle = _idMap[id];
-  	if(handle == null) {
+  	GameObject go = _idMap[id];
+  	if(go == null) {
   	  return null;
   	}
-  	return getGameObjectWithHandle(handle);
   }
 
   // TODO: Tags for game objects.

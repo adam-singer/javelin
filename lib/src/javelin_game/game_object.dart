@@ -1,8 +1,4 @@
 class GameObject {
-
-  int _handle;
-  int get handle => _handle;
-
   String _id;
   String get id => _id;
 

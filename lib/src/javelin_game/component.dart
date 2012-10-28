@@ -1,9 +1,6 @@
 
 class Component {
 
-  int _handle;
-  int get handle => _handle;
-
   // We need this until dart fully supports runtimeType
   // TODO: Implement using runtimeType.toString()?
   String _type;
@@ -27,13 +24,11 @@ class Component {
   Component() {
   }
 
-  void _attach(int handle, GameObject owner) {
-    this.handle = handle;
+  void _attach(GameObject owner) {
     this.owner = owner;
   }
 
   void _destroy() {
-    handle = null;
     owner = null;
   }
 
