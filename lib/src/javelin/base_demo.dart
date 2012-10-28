@@ -82,7 +82,9 @@ class JavelinBaseDemo {
   int viewportWidth;
   int viewportHeight;
 
-  JavelinBaseDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) {
+  JavelinBaseDemo(Element element, GraphicsDevice device,
+                  ResourceManager resourceManager,
+                  DebugDrawManager debugDrawManager) {
     _element = element;
     _device = device;
     _immediateContext = device.context;
@@ -199,20 +201,20 @@ class JavelinBaseDemo {
   }
 
   void drawGridRaw(int gridLines, vec3 x, vec3 z, vec4 color) {
-    final int midLine = gridLines~/2;
+    final double midLine = gridLines~/2.toDouble();
     vec3 o = new vec3.zero();
-    o.sub(z*midLine.toDouble());
-    o.sub(x*midLine.toDouble());
+    o.sub(z.scaled(midLine));
+    o.sub(x.scaled(midLine));
 
     for (int i = 0; i <= gridLines; i++) {
-      vec3 start = o + (z * (i-midLine).toDouble()) + (x * -midLine.toDouble());
-      vec3 end = o + (z * (i-midLine).toDouble()) + (x * midLine.toDouble());
+      vec3 start = o + (z.scaled(i-midLine)) + (x.scaled(-midLine));
+      vec3 end = o + (z.scaled(i-midLine)) + (x.scaled(midLine));
       debugDrawManager.addLine(start, end, color);
     }
 
     for (int i = 0; i <= gridLines; i++) {
-      vec3 start = o + (x * (i-midLine).toDouble()) + (z * -midLine.toDouble());
-      vec3 end = o + (x * (i-midLine).toDouble()) + (z * midLine.toDouble());
+      vec3 start = o + (x.scaled(i-midLine)) + (z.scaled(-midLine));
+      vec3 end = o + (x.scaled(i-midLine)) + (z.scaled(midLine));
       debugDrawManager.addLine(start, end, color);
     }
   }
