@@ -20,10 +20,10 @@
 
 */
 
-#library('skybox');
-#import('dart:html');
-#import('package:vector_math/vector_math_browser.dart');
-#import('package:spectre/spectre.dart');
+library skybox;
+import 'dart:html';
+import 'package:vector_math/vector_math_browser.dart';
+import 'package:spectre/spectre.dart';
 
 class Skybox {
   static final int _depthStateHandleIndex = 0;

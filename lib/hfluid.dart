@@ -20,8 +20,8 @@
 
 */
 
-#library('hfluid');
-#import('dart:html');
+library hfluid;
+import 'dart:html';
 
 class HeightFieldFluid {
   final num columnWidth;

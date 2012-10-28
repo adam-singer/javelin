@@ -1,8 +1,8 @@
 library javelin_game;
 import 'dart:html';
-import 'package:handle_system/handle_system.dart';
 import 'package:vector_math/vector_math_browser.dart';
-
+import 'package:spectre/spectre.dart';
+import 'package:spectre/spectre_scene.dart';
 
 part 'src/javelin_game/scene.dart';
 part 'src/javelin_game/property_bag.dart';

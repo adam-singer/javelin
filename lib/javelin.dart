@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -20,16 +20,17 @@
 
 */
 
-#library('Javelin');
-#import('dart:math', prefix:'Math');
-#import('dart:html');
-#import('dart:json');
-#import('package:vector_math/vector_math_browser.dart');
-#import('package:spectre/spectre.dart');
-#import('package:marker_prof/profiler.dart');
-#source('src/javelin/config.dart');
-#source('src/javelin/config_ui.dart');
-#source('src/javelin/keyboard.dart');
-#source('src/javelin/mouse.dart');
-#source('src/javelin/base_demo.dart');
-#source('src/javelin/render_config.dart');
+library javelin;
+import 'dart:math' as Math;
+import 'dart:html';
+import 'dart:json';
+import 'package:vector_math/vector_math_browser.dart';
+import 'package:spectre/spectre.dart';
+import 'package:marker_prof/profiler.dart';
+
+part 'src/javelin/config.dart';
+part 'src/javelin/config_ui.dart';
+part 'src/javelin/keyboard.dart';
+part 'src/javelin/mouse.dart';
+part 'src/javelin/base_demo.dart';
+part 'src/javelin/render_config.dart';
