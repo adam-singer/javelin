@@ -48,8 +48,8 @@ class JavelinBaseDemo {
   int _rasterizerState1;
   int _rasterizerState2;
   Element _element;
-  Device _device;
-  ImmediateContext _immediateContext;
+  GraphicsDevice _device;
+  GraphicsContext _immediateContext;
   ResourceManager _resourceManager;
   DebugDrawManager _debugDrawManager;
 
@@ -63,8 +63,8 @@ class JavelinBaseDemo {
   Float32Array projectionViewTransform;
   Float32Array normalTransform;
 
-  Device get device() => _device;
-  ImmediateContext get immediateContext() => _immediateContext;
+  GraphicsDevice get device() => _device;
+  GraphicsContext get immediateContext() => _immediateContext;
   DebugDrawManager get debugDrawManager() => _debugDrawManager;
   ResourceManager get resourceManager() => _resourceManager;
   RenderConfig get renderConfig() => _renderConfig;
@@ -82,10 +82,10 @@ class JavelinBaseDemo {
   int viewportWidth;
   int viewportHeight;
 
-  JavelinBaseDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) {
+  JavelinBaseDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) {
     _element = element;
     _device = device;
-    _immediateContext = device.immediateContext;
+    _immediateContext = device.context;
     _resourceManager = resourceManager;
     _debugDrawManager = debugDrawManager;
     _renderConfig = new RenderConfig(_device);
@@ -175,9 +175,9 @@ class JavelinBaseDemo {
 
   bool get shouldQuit() => _quit;
 
-  bool _animationFrame(num highResTime) {
+  void _animationFrame(num highResTime) {
     if (shouldQuit) {
-      return false;
+      return;
     }
 
     if (_time == 0 && _oldTime == 0) {
@@ -185,7 +185,7 @@ class JavelinBaseDemo {
       _time = highResTime;
       _oldTime = highResTime;
       window.requestAnimationFrame(_animationFrame);
-      return true;
+      return;
     }
 
     _oldTime = _time;
@@ -196,24 +196,23 @@ class JavelinBaseDemo {
     update(_accumTime/1000.0, dt/1000.0);
 
     window.requestAnimationFrame(_animationFrame);
-    return true;
   }
 
   void drawGridRaw(int gridLines, vec3 x, vec3 z, vec4 color) {
     final int midLine = gridLines~/2;
     vec3 o = new vec3.zero();
-    o.sub(z*midLine);
-    o.sub(x*midLine);
+    o.sub(z*midLine.toDouble());
+    o.sub(x*midLine.toDouble());
 
     for (int i = 0; i <= gridLines; i++) {
-      vec3 start = o + (z * (i-midLine)) + (x * -midLine);
-      vec3 end = o + (z * (i-midLine)) + (x * midLine);
+      vec3 start = o + (z * (i-midLine).toDouble()) + (x * -midLine.toDouble());
+      vec3 end = o + (z * (i-midLine).toDouble()) + (x * midLine.toDouble());
       debugDrawManager.addLine(start, end, color);
     }
 
     for (int i = 0; i <= gridLines; i++) {
-      vec3 start = o + (x * (i-midLine)) + (z * -midLine);
-      vec3 end = o + (x * (i-midLine)) + (z * midLine);
+      vec3 start = o + (x * (i-midLine).toDouble()) + (z * -midLine.toDouble());
+      vec3 end = o + (x * (i-midLine).toDouble()) + (z * midLine.toDouble());
       debugDrawManager.addLine(start, end, color);
     }
   }

@@ -24,8 +24,8 @@ class JavelinSkyboxDemo extends JavelinBaseDemo {
   Skybox _skybox;
   num _blendT;
   num _blendTDirection;
-  JavelinSkyboxDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
-    _skybox = new Skybox(device, resourceManager, '/textures/skybox1.png', '/textures/skybox2.png');
+  JavelinSkyboxDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+    //_skybox = new Skybox(device, resourceManager, '/textures/skybox1.png', '/textures/skybox2.png');
     _blendT = 0.0;
     _blendTDirection = 0.05;
   }

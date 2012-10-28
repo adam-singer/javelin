@@ -5,13 +5,13 @@ class Mesh extends SceneChild {
   Mesh(String name, Scene scene) : super(name, scene) {
     indexedMesh = 0;
   }
-  
+
   void delete() {
     if (indexedMesh != 0) {
       scene.device.deleteDeviceChild(indexedMesh);
     }
   }
-  
+
   void load(Map o) {
     int resourceHandle = scene.resourceManager.getResourceHandle(name);
     MeshResource mr = scene.resourceManager.getResource(resourceHandle);
@@ -36,16 +36,16 @@ class Mesh extends SceneChild {
     }
     attributes = mr.meshData['meshes'][0]['attributes'];
   }
-  
+
   void preDraw() {
     IndexedMesh im = scene.device.getDeviceChild(indexedMesh);
-    scene.device.immediateContext.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
-    scene.device.immediateContext.setIndexBuffer(im.indexArrayHandle);
-    scene.device.immediateContext.setVertexBuffers(0, [im.vertexArrayHandle]);
+    scene.device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
+    scene.device.context.setIndexBuffer(im.indexArrayHandle);
+    scene.device.context.setVertexBuffers(0, [im.vertexArrayHandle]);
   }
-  
+
   void draw() {
     IndexedMesh im = scene.device.getDeviceChild(indexedMesh);
-    scene.device.immediateContext.drawIndexed(im.numIndices, im.indexOffset);
+    scene.device.context.drawIndexed(im.numIndices, im.indexOffset);
   }
 }

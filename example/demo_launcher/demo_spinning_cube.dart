@@ -47,7 +47,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   ConfigUI _configUI;
   String get demoDescription() => 'Spinning Mesh';
 
-  JavelinSpinningCube(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinSpinningCube(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     cubeMeshResource = 0;
     cubeVertexShaderResource = 0;
     cubeFragmentShaderResource = 0;
@@ -113,8 +113,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
         immediateContext.updateBuffer(cubeIndexBuffer, cube.indexArray);
 
         // Build frame program
-        ProgramBuilder pb = new ProgramBuilder();
-        pb.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
+        CommandListBuilder pb = new CommandListBuilder();
+        pb.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
         pb.setRasterizerState(rs);
         pb.setDepthState(ds);
         pb.setShaderProgram(cubeProgram);
@@ -161,7 +161,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   Future<JavelinDemoStatus> shutdown() {
     Interpreter interpreter = new Interpreter();
     // Build shutdown program
-    ProgramBuilder pb = new ProgramBuilder();
+    CommandListBuilder pb = new CommandListBuilder();
     renderConfig.cleanup();
     pb.deregisterResources([cubeMeshResource, cubeVertexShaderResource, cubeFragmentShaderResource, cubeTextureResource]);
     pb.deleteDeviceChildren([il, rs, sampler, texture, cubeProgram, cubeVertexBuffer, cubeIndexBuffer, cubeVertexShader, cubeFragmentShader]);
@@ -198,8 +198,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     _transformGraph.setLocalMatrix(_transformNodes[1], new mat4.rotationZ(_angle));
     _transformGraph.updateWorldMatrices();
     renderConfig.setupLayer('forward');
-    device.immediateContext.clearDepthBuffer(1.0);
-    device.immediateContext.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
+    device.context.clearDepthBuffer(1.0);
+    device.context.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
     drawCube(_transformGraph.refWorldMatrix(_transformNodes[3]));
     {
       aabb3 aabb = new aabb3.minmax(new vec3.raw(-0.5, -0.5, -0.5), new vec3(0.5, 0.5, 0.5));
@@ -209,7 +209,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     }
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    device.immediateContext.generateMipmap(renderConfig.getBufferHandle('colorbuffer'));
+    device.context.generateMipmap(renderConfig.getBufferHandle('colorbuffer'));
     String postpass = JavelinConfigStorage.get('demo.postprocess');
     SpectrePost.pass(postpass, renderConfig.getLayerHandle('final'), {
       'textures': [renderConfig.getBufferHandle('colorbuffer')],

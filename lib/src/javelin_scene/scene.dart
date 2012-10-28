@@ -1,5 +1,5 @@
 class Scene {
-  Device device;
+  GraphicsDevice device;
   ResourceManager resourceManager;
   Skybox skybox;
   int skyboxVertexShader;
@@ -48,7 +48,7 @@ class Scene {
       device.deleteDeviceChild(skyboxShaderProgram);
     }
   }
-  
+
   void removeModel(String name) {
     Model m = models[name];
     if (m == null) {

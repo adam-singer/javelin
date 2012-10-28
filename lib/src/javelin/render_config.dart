@@ -20,18 +20,18 @@ class RenderConfig {
   Map _conf;
   Map<String, RenderLayer> _layers;
   Map<String, RenderResource> _buffers;
-  Device _device;
-  
+  GraphicsDevice _device;
+
   RenderConfig(this._device) {
     _buffers = new Map<String, RenderResource>();
     _layers = new Map<String, RenderLayer>();
   }
-  
+
   void cleanup() {
     _layers.forEach((k,v) {
       spectreLog.Info('Destroying render layer $k');
       if (v.handle != 0) {
-        _device.deleteDeviceChild(v.handle);  
+        _device.deleteDeviceChild(v.handle);
       }
     });
     _layers.clear();
@@ -42,11 +42,11 @@ class RenderConfig {
     _buffers.clear();
     _conf = null;
   }
-  
+
   void setup() {
     List globalBuffers = _conf['global_buffers'];
     List layers = _conf['layers'];
-    
+
     globalBuffers.forEach((bufferDesc) {
       String name = bufferDesc['name'];
       String type = bufferDesc['type'];
@@ -74,7 +74,7 @@ class RenderConfig {
         _buffers[name] = new RenderResource(name, type, width, height, format, handle);
       }
     });
-    
+
     layers.forEach((layerDesc) {
       String name = layerDesc['name'];
       String type = layerDesc['type'];
@@ -114,25 +114,25 @@ class RenderConfig {
       }
     });
   }
-  
+
   int getBufferHandle(String bufferName) {
     RenderResource resource = _buffers[bufferName];
     return resource.handle;
   }
-  
+
   int getLayerHandle(String layerName) {
     RenderLayer layer = _layers[layerName];
     return layer.handle;
   }
-  
+
   void load(Map<String, Dynamic> conf) {
     cleanup();
     _conf = conf;
     setup();
   }
-  
+
   void setupLayer(String layerName) {
     RenderLayer layer = _layers[layerName];
-    _device.immediateContext.setRenderTarget(layer.handle);
+    _device.context.setRenderTarget(layer.handle);
   }
 }

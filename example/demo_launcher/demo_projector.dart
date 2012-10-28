@@ -24,7 +24,7 @@ class JavelinProjector extends JavelinBaseDemo {
   Loader _loader;
   Scene _scene;
 
-  JavelinProjector(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinProjector(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _scene = new Scene(device, resourceManager);
     _loader = new Loader(_scene, device, resourceManager);
   }

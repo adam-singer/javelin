@@ -50,7 +50,7 @@ class Skybox {
 
   List<int> _resourceHandles;
 
-  Device device;
+  GraphicsDevice device;
   ResourceManager resourceManager;
 
   Float32Array _lookatMatrix;
@@ -77,7 +77,7 @@ class Skybox {
     _deviceHandles.add(device.createInputLayout(_inputLayoutName, {}));
 
     //   InputElementDescription(this.name, this.format, this.elementStride, this.vertexBufferSlot, this.vertexBufferOffset);
-    var elements = [new InputElementDescription('vPosition', Device.DeviceFormatFloat3, 20, 0, 0), new InputElementDescription('vTexCoord', Device.DeviceFormatFloat2, 20, 0, 12)];
+    var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, 20, 0, 0), new InputElementDescription('vTexCoord', GraphicsDevice.DeviceFormatFloat2, 20, 0, 12)];
 
     device.configureDeviceChild(_deviceHandles[_inputLayoutHandleIndex], {'elements': elements, 'shaderProgram': shaderProgramHandle});
 
@@ -363,7 +363,7 @@ class Skybox {
 
     skyboxVertexResource.array = vb;
 
-    device.immediateContext.updateBuffer(_deviceHandles[_vertexBufferHandleIndex], skyboxVertexResource.array);
+    device.context.updateBuffer(_deviceHandles[_vertexBufferHandleIndex], skyboxVertexResource.array);
   }
 
   void fini() {
@@ -378,19 +378,19 @@ class Skybox {
       T.multiply(L);
       T.copyIntoArray(_lookatMatrix);
     }
-    device.immediateContext.setDepthState(_deviceHandles[_depthStateHandleIndex]);
-    device.immediateContext.setBlendState(_deviceHandles[_blendStateHandleIndex]);
-    device.immediateContext.setRasterizerState(_deviceHandles[_rasterizerStateHandleIndex]);
-    device.immediateContext.setShaderProgram(shaderProgramHandle);
-    device.immediateContext.setTextures(0, [skyboxTexture1Handle, skyboxTexture2Handle]);
-    device.immediateContext.setSamplers(0, [_deviceHandles[_skyboxSamplerHandleIndex], _deviceHandles[_skyboxSamplerHandleIndex]]);
-    device.immediateContext.setVertexBuffers(0, [_deviceHandles[_vertexBufferHandleIndex]]);
-    device.immediateContext.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
-    device.immediateContext.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
-    device.immediateContext.setUniformInt('sampler1', 0);
-    device.immediateContext.setUniformInt('sampler2', 1);
-    device.immediateContext.setUniformNum('t', blendT);
-    device.immediateContext.setUniformMatrix4('cameraTransform', _lookatMatrix);
-    device.immediateContext.draw(36, 0);
+    device.context.setDepthState(_deviceHandles[_depthStateHandleIndex]);
+    device.context.setBlendState(_deviceHandles[_blendStateHandleIndex]);
+    device.context.setRasterizerState(_deviceHandles[_rasterizerStateHandleIndex]);
+    device.context.setShaderProgram(shaderProgramHandle);
+    device.context.setTextures(0, [skyboxTexture1Handle, skyboxTexture2Handle]);
+    device.context.setSamplers(0, [_deviceHandles[_skyboxSamplerHandleIndex], _deviceHandles[_skyboxSamplerHandleIndex]]);
+    device.context.setVertexBuffers(0, [_deviceHandles[_vertexBufferHandleIndex]]);
+    device.context.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
+    device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
+    device.context.setUniformInt('sampler1', 0);
+    device.context.setUniformInt('sampler2', 1);
+    device.context.setUniformNum('t', blendT);
+    device.context.setUniformMatrix4('cameraTransform', _lookatMatrix);
+    device.context.draw(36, 0);
   }
 }

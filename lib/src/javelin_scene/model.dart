@@ -5,17 +5,17 @@ class Model extends SceneChild {
   int _inputLayoutHandle;
   int transformHandle;
   TransformController controller;
-  
+
   Model(String name, Scene scene) : super(name, scene) {
     _inputLayoutHandle = 0;
     transformHandle = scene.transformGraph.createNode();
     print('Spawned $name with $transformHandle');
   }
-  
+
   void delete() {
     scene.device.deleteDeviceChild(_inputLayoutHandle);
   }
-  
+
   void update(MaterialInstance materialInstance, Mesh mesh, List layout) {
     _materialInstance = materialInstance;
     _mesh = mesh;
@@ -28,22 +28,22 @@ class Model extends SceneChild {
       InputElementDescription ied = InputLayoutHelper.inputElementDescriptionFromAttributes(ild, _mesh.attributes);
       descriptions.add(ied);
     });
-    
+
     scene.device.configureDeviceChild(_inputLayoutHandle, {
       'shaderProgram': _materialInstance.material.shaderProgramHandle,
       'elements': descriptions
     });
   }
-  
+
   void draw(Camera camera, Map globalUniforms) {
-    scene.device.immediateContext.setInputLayout(_inputLayoutHandle);
+    scene.device.context.setInputLayout(_inputLayoutHandle);
     _mesh.preDraw();
     _materialInstance.preDraw();
     globalUniforms.forEach((k,v) {
-      scene.device.immediateContext.setUniformMatrix4(k, v);
+      scene.device.context.setUniformMatrix4(k, v);
     });
     Float32Array objectTransformArray = scene.transformGraph.refWorldMatrixArray(transformHandle);
-    scene.device.immediateContext.setUniformMatrix4('objectTransform', objectTransformArray);
+    scene.device.context.setUniformMatrix4('objectTransform', objectTransformArray);
     _mesh.draw();
   }
 }

@@ -21,7 +21,7 @@
 */
 
 class JavelinEmptyDemo extends JavelinBaseDemo {
-  JavelinEmptyDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinEmptyDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
   }
 
   String get demoDescription() => 'Empty';

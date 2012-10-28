@@ -56,7 +56,7 @@ class JavelinDemoLaunch {
   List<JavelinDemoDescription> demos;
   ProfilerClient profilerClient;
 
-  Device device;
+  GraphicsDevice device;
   ResourceManager resourceManager;
   DebugDrawManager debugDrawManager;
   ProfilerTree tree;
@@ -240,7 +240,7 @@ class JavelinDemoLaunch {
     spectreLog.Info('Started Javelin');
     CanvasElement canvas = document.query(webGLCanvasName);
     WebGLRenderingContext webGL = canvas.getContext("experimental-webgl");
-    device = new Device(webGL);
+    device = new GraphicsDevice(webGL);
     SpectrePost.init(device);
     debugDrawManager = new DebugDrawManager();
     resourceManager = new ResourceManager();
@@ -253,13 +253,7 @@ class JavelinDemoLaunch {
     }
     Completer<bool> inited = new Completer<bool>();
     debugPackLoaded.then((resourceList) {
-      debugDrawManager.init(device,
-        resourceManager,
-        resourceManager.getResourceHandle('/shaders/debug_line.vs'),
-        resourceManager.getResourceHandle('/shaders/debug_line.fs'),
-        resourceManager.getResourceHandle('/shaders/debug_sphere.vs'),
-        resourceManager.getResourceHandle('/shaders/debug_sphere.fs'),
-        resourceManager.getResourceHandle('/meshes/DebugSphere.mesh'));
+      debugDrawManager.init(device);
       inited.complete(true);
     });
     return inited.future;
@@ -272,8 +266,8 @@ class JavelinDemoLaunch {
     Future<bool> started = startup();
     started.then((value) {
       spectreLog.Info('Javelin Running');
-      device.immediateContext.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
-      device.immediateContext.clearDepthBuffer(1.0);
+      device.context.clearColorBuffer(0.0, 0.0, 0.0, 1.0);
+      device.context.clearDepthBuffer(1.0);
       registerDemo('Empty', () { return new JavelinEmptyDemo(document.query('#webGLFrontBuffer'), device, resourceManager, debugDrawManager); });
       registerDemo('Debug Draw Test', () { return new JavelinDebugDrawTest(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
       registerDemo('Spinning Mesh', () { return new JavelinSpinningCube(document.query('#webGLFrontBuffer'),device, resourceManager, debugDrawManager); });
@@ -296,7 +290,7 @@ class JavelinDemoLaunch {
       shut = new Future.immediate(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
     }
     shut.then((statusValue) {
-      device.immediateContext.reset();
+      device.context.reset();
       _demo = null;
       for (final JavelinDemoDescription jdd in demos) {
         if (jdd.name == name) {

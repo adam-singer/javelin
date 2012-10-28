@@ -32,7 +32,7 @@ class JavelinDebugDrawTest extends JavelinBaseDemo {
   mat4 _rotateZ;
   num _angle;
   num _scale;
-  JavelinDebugDrawTest(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinDebugDrawTest(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _colors = new Map<String, vec4>();
     _colors['Red'] = new vec4(1.0, 0.0, 0.0, 1.0);
     _colors['Green'] = new vec4(0.0, 1.0, 0.0, 1.0);
@@ -89,9 +89,9 @@ class JavelinDebugDrawTest extends JavelinBaseDemo {
     _rotateZ.setRotationZ(_angle);
 
     // Global Axis
-    debugDrawManager.addLine(_origin, (_unitX * 20.0), _colors['Red']);
-    debugDrawManager.addLine(_origin, (_unitY * 20.0), _colors['Green']);
-    debugDrawManager.addLine(_origin, (_unitZ * 20.0), _colors['Blue']);
+    debugDrawManager.addLine(_origin, _unitX.scaled(20.0), _colors['Red']);
+    debugDrawManager.addLine(_origin, _unitY.scaled(20.0), _colors['Green']);
+    debugDrawManager.addLine(_origin, _unitZ.scaled(20.0), _colors['Blue']);
 
 
     // Rotating transformations
@@ -125,9 +125,9 @@ class JavelinDebugDrawTest extends JavelinBaseDemo {
     // Spheres
     {
       num radius = _scale * 2.0 + 1.0;
-      debugDrawManager.addSphere(_unitX * 22.0, radius, _colors['Red']);
-      debugDrawManager.addSphere(_unitY * 22.0, radius, _colors['Green']);
-      debugDrawManager.addSphere(_unitZ * 22.0, radius, _colors['Blue']);
+      debugDrawManager.addSphere(_unitX.scaled(22.0), radius, _colors['Red']);
+      debugDrawManager.addSphere(_unitY.scaled(22.0), radius, _colors['Green']);
+      debugDrawManager.addSphere(_unitZ.scaled(22.0), radius, _colors['Blue']);
     }
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);

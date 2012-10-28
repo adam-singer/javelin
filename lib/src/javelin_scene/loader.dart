@@ -4,7 +4,7 @@ class Loader {
   Set<int> _deviceHandleTable;
   Map _sceneDescription;
   Scene _scene;
-  Device _device;
+  GraphicsDevice _device;
   ResourceManager _resourceManager;
   int sceneResourceHandle;
   int sceneResourceCallback;
@@ -14,7 +14,7 @@ class Loader {
     sceneResourceHandle = 0;
     sceneResourceCallback = 0;
   }
-  
+
   void shutdown() {
     _resourceHandleTable.forEach((r) {
       _resourceManager.deregisterResource(r);
@@ -88,8 +88,8 @@ class Loader {
       if (rb is ImageResource) {
         int textureHandle = _device.createTexture2D(rb.url, {});
         _resourceManager.addEventCallback(handle, ResourceEvents.TypeUpdate, (type, resource) {
-          _device.immediateContext.updateTexture2DFromResource(textureHandle, handle, _resourceManager);
-          _device.immediateContext.generateMipmap(textureHandle);
+          _device.context.updateTexture2DFromResource(textureHandle, handle, _resourceManager);
+          _device.context.generateMipmap(textureHandle);
           spectreLog.Info('Updated texture - ${rb.url}');
         });
         _deviceHandleTable.add(textureHandle);

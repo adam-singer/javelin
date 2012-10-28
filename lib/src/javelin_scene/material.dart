@@ -13,13 +13,13 @@ class Material extends SceneChild {
     shaderProgramHandle = 0;
     textureNameToUnit = new Map<String, int>();
   }
-  
+
   void delete() {
     scene.device.deleteDeviceChild(vertexShaderHandle);
     scene.device.deleteDeviceChild(fragmentShaderHandle);
     scene.device.deleteDeviceChild(shaderProgramHandle);
   }
-  
+
   void processUniforms() {
     textureNameToUnit.clear();
     int textureUnitIndex = 0;
@@ -65,7 +65,7 @@ class Material extends SceneChild {
       }
     });
   }
-  
+
   static void updateSamplerTable(Scene scene, String prefix, Map textures, Map samplers, Map samplerNameToHandle) {
     if (textures == null || samplers == null) {
       return;
@@ -82,7 +82,7 @@ class Material extends SceneChild {
       }
     });
   }
-    
+
   void load(Map o) {
     entity = o;
     uniformset = o['uniformset'];
@@ -101,7 +101,7 @@ class Material extends SceneChild {
       fragmentShaderHandle = scene.device.createFragmentShader('$shaderName.fs', {});
     }
     if (shaderProgramHandle == 0) {
-      shaderProgramHandle = scene.device.createShaderProgram('$shaderName.sp', {});  
+      shaderProgramHandle = scene.device.createShaderProgram('$shaderName.sp', {});
     }
 
     bool relink = false;
@@ -111,14 +111,14 @@ class Material extends SceneChild {
       vs.compile();
       relink = true;
     }
-    
+
     FragmentShader fs = scene.device.getDeviceChild(fragmentShaderHandle);
     if (fs.source != spr.fragmentShaderSource) {
       fs.source = spr.fragmentShaderSource;
       fs.compile();
       relink = true;
     }
-    
+
     ShaderProgram sp = scene.device.getDeviceChild(shaderProgramHandle);
     if (!sp.linked || relink) {
       scene.device.configureDeviceChild(shaderProgramHandle, {
@@ -128,12 +128,12 @@ class Material extends SceneChild {
       processUniforms();
     }
   }
-  
+
   void preDraw() {
-    scene.device.immediateContext.setShaderProgram(shaderProgramHandle);
+    scene.device.context.setShaderProgram(shaderProgramHandle);
     if (uniformset != null) {
       uniformset.forEach((name, value) {
-        scene.device.immediateContext.setUniform3f(name, value[0], value[1], value[2]);
+        scene.device.context.setUniform3f(name, value[0], value[1], value[2]);
       });
     }
   }

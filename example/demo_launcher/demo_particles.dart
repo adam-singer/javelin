@@ -41,7 +41,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   int _numParticles;
   int _particleVertexSize;
 
-  JavelinParticlesDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinParticlesDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _numParticles = 100;
     _particleVertexSize = 6;
     _particles = new ParticleSystemBackendDVM(_numParticles);
@@ -99,8 +99,8 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
       immediateContext.compileShaderFromResource(_particlesFSHandle, _particlesFSResourceHandle, resourceManager);
       _particlesShaderProgramHandle = device.createShaderProgram('Particle Shader Program', { 'VertexProgram': _particlesVSHandle, 'FragmentProgram': _particlesFSHandle});
       int vertexStride = _particleVertexSize*4;
-      var elements = [new InputElementDescription('vPosition', Device.DeviceFormatFloat3, vertexStride, 0, 0),
-                      new InputElementDescription('vColor', Device.DeviceFormatFloat3, vertexStride, 0, 12)];
+      var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 0),
+                      new InputElementDescription('vColor', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 12)];
       _particlesInputLayoutHandle = device.createInputLayout('Particles Input Layout', {'elements':elements, 'shaderProgram':_particlesShaderProgramHandle});
       immediateContext.updateTexture2DFromResource(_particlePointSpriteHandle, _particlePointSpriteResourceHandle, resourceManager);
       immediateContext.generateMipmap(_particlePointSpriteHandle);
@@ -118,24 +118,24 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    device.immediateContext.updateBuffer(_particlesVBOHandle, _particlesVertexData);
+    device.context.updateBuffer(_particlesVBOHandle, _particlesVertexData);
   }
 
   void drawParticles() {
-    device.immediateContext.setInputLayout(_particlesInputLayoutHandle);
-    device.immediateContext.setVertexBuffers(0, [_particlesVBOHandle]);
-    device.immediateContext.setIndexBuffer(0);
-    device.immediateContext.setDepthState(_particleDepthStateHandle);
-    device.immediateContext.setBlendState(_particleBlendStateHandle);
-    device.immediateContext.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyPoints);
-    device.immediateContext.setShaderProgram(_particlesShaderProgramHandle);
-    device.immediateContext.setTextures(0, [_particlePointSpriteHandle]);
-    device.immediateContext.setSamplers(0, [_particlePointSpriteSamplerHandle]);
-    device.immediateContext.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.immediateContext.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.immediateContext.setUniformMatrix4('viewTransform', viewTransform);
-    device.immediateContext.setUniformMatrix4('normalTransform', normalTransform);
-    device.immediateContext.draw(_numParticles, 0);
+    device.context.setInputLayout(_particlesInputLayoutHandle);
+    device.context.setVertexBuffers(0, [_particlesVBOHandle]);
+    device.context.setIndexBuffer(0);
+    device.context.setDepthState(_particleDepthStateHandle);
+    device.context.setBlendState(_particleBlendStateHandle);
+    device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyPoints);
+    device.context.setShaderProgram(_particlesShaderProgramHandle);
+    device.context.setTextures(0, [_particlePointSpriteHandle]);
+    device.context.setSamplers(0, [_particlePointSpriteSamplerHandle]);
+    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
+    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
+    device.context.setUniformMatrix4('viewTransform', viewTransform);
+    device.context.setUniformMatrix4('normalTransform', normalTransform);
+    device.context.draw(_numParticles, 0);
   }
 
   void update(num time, num dt) {

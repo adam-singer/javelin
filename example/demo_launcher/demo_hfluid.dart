@@ -36,7 +36,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   int _fluidNumVertices;
   Float32Array _lightDirection;
   ConfigUI _configUI;
-  JavelinHFluidDemo(Element element, Device device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+  JavelinHFluidDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
     _fluid = new HeightFieldFluid(50, 0.5);
     _centerColumnIndex = 12;
     _configUI = new ConfigUI();
@@ -95,8 +95,8 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
       immediateContext.compileShaderFromResource(_fluidFSHandle, _fluidFSResourceHandle, resourceManager);
       _fluidShaderProgramHandle = device.createShaderProgram('Fluid Shader Program', { 'VertexProgram': _fluidVSHandle, 'FragmentProgram': _fluidFSHandle});
       int vertexStride = 2*3*4;
-      var elements = [new InputElementDescription('vPosition', Device.DeviceFormatFloat3, vertexStride, 0, 0),
-                      new InputElementDescription('vNormal', Device.DeviceFormatFloat3, vertexStride, 0, 12)];
+      var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 0),
+                      new InputElementDescription('vNormal', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 12)];
       _fluidInputLayoutHandle = device.createInputLayout('Fluid Input Layout', {'elements':elements, 'shaderProgram':_fluidShaderProgramHandle});
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
     });
@@ -118,23 +118,23 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   }
 
   void _drawFluid() {
-    device.immediateContext.setInputLayout(_fluidInputLayoutHandle);
-    device.immediateContext.setVertexBuffers(0, [_fluidVBOHandle]);
-    device.immediateContext.setIndexBuffer(0);
-    device.immediateContext.setPrimitiveTopology(ImmediateContext.PrimitiveTopologyTriangles);
-    device.immediateContext.setShaderProgram(_fluidShaderProgramHandle);
-    device.immediateContext.setDepthState(ds);
-    device.immediateContext.setRasterizerState(rs);
-    device.immediateContext.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.immediateContext.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.immediateContext.setUniformMatrix4('viewTransform', viewTransform);
-    device.immediateContext.setUniformMatrix4('normalTransform', normalTransform);
-    device.immediateContext.setUniformVector3('lightDir', _lightDirection);
-    device.immediateContext.draw(_fluidNumVertices, 0);
+    device.context.setInputLayout(_fluidInputLayoutHandle);
+    device.context.setVertexBuffers(0, [_fluidVBOHandle]);
+    device.context.setIndexBuffer(0);
+    device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
+    device.context.setShaderProgram(_fluidShaderProgramHandle);
+    device.context.setDepthState(ds);
+    device.context.setRasterizerState(rs);
+    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
+    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
+    device.context.setUniformMatrix4('viewTransform', viewTransform);
+    device.context.setUniformMatrix4('normalTransform', normalTransform);
+    device.context.setUniformVector3('lightDir', _lightDirection);
+    device.context.draw(_fluidNumVertices, 0);
   }
 
   void _updateFluidVertexData() {
-    device.immediateContext.updateBuffer(_fluidVBOHandle, _fluidVertexData);
+    device.context.updateBuffer(_fluidVBOHandle, _fluidVertexData);
   }
 
   void _buildFluidVertexData() {
@@ -160,9 +160,9 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         final double dJ1 = dJ+1.0;
 
         {
-          v0.setComponents(i, height, j);
-          v1.setComponents(i+1, heightEast, j);
-          v2.setComponents(i+1, heightNorthEast, j+1);
+          v0.setComponents(i.toDouble(), height, j.toDouble());
+          v1.setComponents(i.toDouble()+1.0, heightEast, j.toDouble());
+          v2.setComponents(i.toDouble()+1.0, heightNorthEast, j.toDouble()+1.0);
           v2.sub(v1);
           v1.sub(v0);
           v2.cross(v1, n1);
@@ -191,8 +191,8 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
         _fluidVertexData[vertexDataIndex++] = n1.y;
         _fluidVertexData[vertexDataIndex++] = n1.z;
         {
-          v1.setComponents(i+1, heightNorthEast, j+1);
-          v2.setComponents(i, heightNorth, j+1);
+          v1.setComponents(i.toDouble()+1.0, heightNorthEast, j.toDouble()+1.0);
+          v2.setComponents(i.toDouble(), heightNorth, j.toDouble()+1.0);
           v2.sub(v1);
           v1.sub(v0);
           v2.cross(v1, n1);
