@@ -31,11 +31,11 @@ class DestroyOnClick extends ScriptComponent{
     explosion.attachComponent('AnimatedMesh', [mesh]);
 
     // Tell the scene's tracker to kill us when the animation is done.
-    new Timer(mesh.animation.duration, (Timer t) {
+    //TODO(johnmccutchan): Add a timer class to the scene.
+    window.setTimeout(() {
       // This will also destroy all other components this game object has, and
       // recursively destroy all childen as well, including the explosion.
       scene.destroyGameObject(owner);
-    });
+    }, mesh.animation.duration);
   }
-
 }
