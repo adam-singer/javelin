@@ -65,7 +65,7 @@ class ComponentManager {
   void updateComponents(num timeDelta) {
   	// TODO: Priority rules? E.g. physics go first?
     // Yes, but I'm not sure how best to express it.
-    // Could be as simple as N levels which comonent systems are binned in. 
+    // Could be as simple as N levels which comonent systems are binned in.
    	for (var system in _systems.getValues()) {
     	system.updateComponents(timeDelta);	//Have fun!
     }
@@ -79,7 +79,7 @@ class ComponentManager {
    */
   Component _findComponentWithHandle(int handle) {
     // TODO: This won't work because handles are only unique within a
-    // component system. If we need to suppor this the handle system will
+    // component system. If we need to support this the handle system will
     // need to be updated to support it.
     for (var system in _systems.getValues()) {
       var c = system.getComponentWithHandle(handle);

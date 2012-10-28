@@ -13,10 +13,10 @@ class ComponentSystem<T extends Component> {
   // TODO: Not implemeted yet.
   String get componentTypeName => "Implement me";
 
-  /** 
+  /**
    * Allocates a new component and returns the handle to it.
    */
-  int createComponent(GameObject owner, [List params]) {
+  Component createComponent(GameObject owner, [List params]) {
     int handle = _handleSystem.allocateHandle(0x0);
     if (handle == Handle.BadHandle) {
         // We have exhausted our pool.
@@ -46,7 +46,7 @@ class ComponentSystem<T extends Component> {
     return;
   }
 
-    
+
   /**
    * Returns the component associated with [handle] or null.
    */

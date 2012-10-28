@@ -23,13 +23,25 @@ class Scene {
   	_idMap = new Map<String, int>();
   	_handleMap = new Map<int, GameObject>();
   	_root = new GameObject('root');
-  	registerGameObject(root, null);
+  	_registerGameObject(root, null);
 
   	properties = new PropertyBag();
   }
 
-  /// Registers a game object with the scene.
-  void registerGameObject(GameObject go, GameObject parent) {
+  /**
+   * Registers a game object with the scene.
+   * The second parameter indicates the parent of the game object.
+   * Returns null unless 'initializeComponents' is set to false,
+   * in wich case it returns a list of game objects that need to be initialized.
+   * This mechanism is used internally calling this function recursively to
+   * register children of the game object we are trying to register.
+   * This ensures that components don't get initialized before all of the
+   * children of their owner have been added.
+   */
+  Set<GameObject> _registerGameObject(GameObject go, GameObject parent,
+                          [bool initializeComponents = true]) {
+    assert(parent.scene == this);
+
     if(go.id != null) {
       assert(_idMap[go.id] == null);
       _idMap[go.id] = go.handle;
@@ -41,18 +53,44 @@ class Scene {
     go._parent = parent;
 
     if(go.id == 'root') {
-      return;
+      return null;
     }
 
-    assert(parent.children.contains(go));
-    parent.children.add(go);
+    assert(parent._children.contains(go));
+    parent._children.add(go);
+
+    // If the game object has children that need to be registred, do that
+    // recursivey.
+    if (go._childrenToRegister != null) {
+      Set<GameObject> toInitialize = new Set.from(go._childrenToRegister);
+
+      // First register all children recursively and collect a list of
+      // game objects to initialize.
+      for (var child in go._childrenToRegister) {
+        toInitialize.addAll(_registerGameObject(child, go, false));
+      }
+
+      // If we are not the first call on the stack, return a list of game
+      // objects that need to be initialized.
+      if (!initializeComponents) {
+        return toInitialize;
+      }
+      else {
+        // Initialize everything at once.
+        for (var child in toInitialize) {
+          child.checkDependencies();
+          child._initializeComponents();
+        }
+      }
+    }
 
     go.checkDependencies();
     go._initializeComponents();
+    return null;
   }
 
   /// Registers a game object with the scene.
-  void reparentGameObject(GameObject go, GameObject parent) {
+  void _reparentGameObject(GameObject go, GameObject parent) {
     assert(go != root);  // Cannot reparent root!
     assert(_handleMap[go.handle] != null);
 
