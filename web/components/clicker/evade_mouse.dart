@@ -1,5 +1,11 @@
 
-class EvadeMouse extends ScriptComponent{
+class EvadeMouse extends ScriptComponent {
+
+  EvadeMouse() : super('EvadeMouse');
+
+  static EvadeMouse componentConstructor() {
+    return new EvadeMouse();
+  }
 
   // Components can have private properties. This data does not need to be
   // exposed to any other component, so we don't use the property bag.
@@ -26,7 +32,9 @@ class EvadeMouse extends ScriptComponent{
 
     // Just for fun, set a property in the property bag so that other
     // components can read it. In this case, DestroyOnClick will read it.
-    properties.set('secretMessage', 'Hi! I am a property!');
+    //TODO(sethilgard): properties depends on the game object owner which
+    //doesn't exist yet....
+    //properties.set('secretMessage', 'Hi! I am a property!');
   }
 
   // The signature for this callback should be specified in the

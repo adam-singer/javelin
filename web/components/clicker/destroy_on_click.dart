@@ -1,5 +1,11 @@
 
-class DestroyOnClick extends ScriptComponent{
+class DestroyOnClick extends ScriptComponent {
+
+  DestroyOnClick() : super('DestroyOnClick');
+
+  static DestroyOnClick componentConstructor() {
+    return new DestroyOnClick();
+  }
 
   void init([List params]) {
     requireComponent('MouseEvents');
@@ -21,7 +27,7 @@ class DestroyOnClick extends ScriptComponent{
     // Spawn an explosion object.
     // I am doing it all in place to demonstrate that is possible but
     // you may want to have an Explosion class instead.
-    GameObject explosion = new GameObject();
+    GameObject explosion = new GameObject(owner.scene);
 
     // Remember that owner is the game object that owns this component.
     explosion.transform.position = owner.transform.position.xyz; // clone

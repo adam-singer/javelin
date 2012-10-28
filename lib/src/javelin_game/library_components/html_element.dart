@@ -9,6 +9,14 @@ class HtmlElement extends Component {
   String _htmlId;
   Element _element;
 
+  HtmlElement() {
+    _type = 'HtmlElement';
+  }
+
+  static HtmlElement componentConstructor() {
+    return new HtmlElement();
+  }
+
   /// First element of the list is the element's id on the page.
   void init([List params]) {
     _htmlId = params[0];

@@ -12,7 +12,7 @@ class GameObject {
   PropertyBag get properties => _properties;
 
   EventListenerMap _events;
-  EventListenerMap get events => events;
+  EventListenerMap get events => _events;
 
   Scene _scene;
   Scene get scene => _scene;
@@ -38,20 +38,14 @@ class GameObject {
   Set<GameObject> _childrenToRegister;
 
   /// Contructor.
-  GameObject([String this._id]) {
-
-    // TODO: Get a handle from Spectre and store it on:
-    // _handle
-
-    parent = null;
-    children = new Set();
-    properties = new PropertyBag();
+  GameObject(this._scene, [String this._id]) {
+    _parent = null;
+    _children = new Set<GameObject>();
+    _childrenToRegister = new Set<GameObject>();
+    _properties = new PropertyBag();
     _components = new Set();
-    events = new EventListenerMap(this);
-
-    // Initialize the transform
-    _transform = attachComponent('Transform');
-
+    _events = new EventListenerMap(this);
+    //TODO(johnmccutchan): Initialize the transform
   }
 
   /**
@@ -83,18 +77,6 @@ class GameObject {
     return list;
   }
 
-  /**
-   * Returns the attached component with the given handle
-   */
-  Component getComponentWithHandle(int handle) {
-    // TODO: Should we ask the component system here to make this O(1)?
-    for(var component in _components) {
-      if(component.handle == handle) {
-        return component;
-      }
-    }
-    return null;
-  }
 
   /**
    * Attaches a component of the given type to this game object.
@@ -102,9 +84,9 @@ class GameObject {
    * sent as arguments to the component's init() function.
    */
   Component attachComponent(String type, [List params]) {
-    var component = _scene.componentManager.createComponent(type, this, params);
+    var component = Game.componentManager.createComponent(type, this, params);
+    component.attach(this);
     _components.add(component);
-
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
@@ -130,7 +112,7 @@ class GameObject {
    * */
   void destroyComponent(Component component) {
     component.free();
-    _scene.componentManager.destroyComponent(component);
+    Game.componentManager.destroyComponent(component);
     checkDependencies();
   }
 

@@ -7,6 +7,9 @@
 class ComponentManager {
   Map<String, ComponentSystem> _systems;
 
+  ComponentManager() {
+    _systems = new Map<String, ComponentSystem>();
+  }
   /**
    * Creates a component of the specified type and attaaches it to the given
    * game object

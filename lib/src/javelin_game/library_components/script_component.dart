@@ -5,7 +5,8 @@
  */
 class ScriptComponent extends Component {
 
-  ScripComponent() {
+  ScriptComponent(String type) : super() {
+    _type = type;
   }
 
   void init([List params]) {

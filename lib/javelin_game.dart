@@ -12,6 +12,7 @@ part 'src/javelin_game/component.dart';
 part 'src/javelin_game/component_pool.dart';
 part 'src/javelin_game/component_system.dart';
 part 'src/javelin_game/component_manager.dart';
+part 'src/javelin_game/game.dart';
 
 part 'src/javelin_game/library_components/keyboard_events.dart';
 part 'src/javelin_game/library_components/mouse_events.dart';
@@ -19,3 +20,4 @@ part 'src/javelin_game/library_components/physics_collider.dart';
 part 'src/javelin_game/library_components/script_component.dart';
 part 'src/javelin_game/library_components/transform.dart';
 part 'src/javelin_game/library_components/html_element.dart';
+

@@ -1,29 +1,21 @@
 class Scene {
-
-  // TODO: remove me once we have proper support for multiple scenes.
-  static Scene _instance;
-  static Scene get current => _instance; // Replace by Application.currentScene
+  TransformGraph _transformGraph;
 
   GameObject _root;
   GameObject get root => _root;
 
   Map<String, GameObject> _idMap;
 
-  ComponentManager _componentManager;
-  ComponentManager get componentManager => _componentManager;
-
   PropertyBag _properties;
   PropertyBag get properties => _properties;
 
-  Scene() {
+  Scene(int maxGameObjects) {
   	// TODO: remove me once we have proper support for multiple scenes.
-  	_instance = this;
-
+  	_transformGraph = new TransformGraph(maxGameObjects);
   	_idMap = new Map<String, GameObject>();
-  	_root = new GameObject('root');
+  	_root = new GameObject(this, 'root');
   	_registerGameObject(root, null);
-
-  	properties = new PropertyBag();
+  	_properties = new PropertyBag();
   }
 
   /**
@@ -38,7 +30,11 @@ class Scene {
    */
   Set<GameObject> _registerGameObject(GameObject go, GameObject parent,
                           [bool initializeComponents = true]) {
-    assert(parent.scene == this);
+    if (parent != null) {
+      // Can't have a parent from a different scene.
+      assert(parent.scene == this);
+    }
+
 
     if(go.id != null) {
       assert(_idMap[go.id] == null);
@@ -52,8 +48,8 @@ class Scene {
       return null;
     }
 
-    assert(parent._children.contains(go));
     parent._children.add(go);
+    assert(parent._children.contains(go));
 
     // If the game object has children that need to be registred, do that
     // recursivey.

@@ -24,8 +24,9 @@ class Component {
   Component() {
   }
 
-  void _attach(GameObject owner) {
-    this.owner = owner;
+  //TODO(sethilgard): I (johnmccutchan) made this public. Is this correct?
+  void attach(GameObject owner) {
+    this._owner = owner;
   }
 
   void _destroy() {

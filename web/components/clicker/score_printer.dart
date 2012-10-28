@@ -1,14 +1,19 @@
 
-class ScorePrinter extends ScriptComponent{
+class ScorePrinter extends ScriptComponent {
 
   int _score = 0;
 
+  ScorePrinter() : super('ScorePrinter');
+
+  static ScorePrinter componentConstructor() {
+    return new ScorePrinter();
+  }
+
   void init([List params]) {
-    // Suscribing to a custom event, fired by DestroyOnClick.
     events.on('enemyDestroyed').add(onEnemyDestroyed);
   }
 
-  void onEnemyDestroyed() {
+  void onEnemyDestroyed([List params]) {
     _score += 10;
     print(_score);
   }

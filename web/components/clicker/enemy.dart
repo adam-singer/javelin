@@ -1,6 +1,6 @@
 
-class Enemy extends GameObject{
-  Enemy() {
+class Enemy extends GameObject {
+  Enemy(Scene scene, [String id]) : super(scene, id) {
 
     // All GameObjects have a Transform component by default.
 
@@ -15,7 +15,7 @@ class Enemy extends GameObject{
     // RenderableMesh is another Javelin Component to display meshes.
     // I don't know how to create a mesh in Spectre.
     dynamic enemyMesh; // TODO(demo): Get a mesh from spectre.
-    attachComponent('RenderableMesh', [enemyMesh]);
+    //attachComponent('RenderableMesh', [enemyMesh]);
 
     // Custom components (ScriptComponents):
 
