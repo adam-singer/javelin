@@ -1,91 +1,3 @@
-class ComponentList {
-  Map<String, List<int>> _componentLists;
-  Map<int, String> _componentTypes;
-
-  // List of components to initialize (in case they are added before this
-  // game object is added to the scene). Maps Component handles to lists
-  // of arguments to be passed to their init function.
-  Map<int, List> _toInitialize = null;
-
-  GameObject _owner;
-
-  //TODO: Remove all the references to Scene.current here.
-  ComponentList(this._owner) {
-    _componentLists = new Map();
-    _componentTypes = new Map();
-  }
-
-  void attachComponent(String type, int handle) {
-    List<int> list = _componentLists[type];
-    if (list == null) {
-      list = new List<int>();
-      _componentLists[type] = list;
-    }
-    list.add(handle);
-    _componentTypes[handle] = type;
-  }
-
-  void detachComponent(String type, int handle) {
-    List<int> list = _componentLists[type];
-    int index = list.indexOf(handle, 0);
-    assert(index != -1);
-    list.removeAt(index);
-  }
-
-  Component getComponent(String type) {
-    List<int> list = _componentLists[type];
-    if (list == null || list.length == 0) {
-      return null;
-    }
-    return _owner.scene.componentManager.getComponentWithHandle(list[0]);
-  }
-
-  List<Component> getComponents([String type='Component']) {
-    List<int> list = _componentLists[type];
-    if (list == null || list.length == 0) {
-      return new List<Component>();
-    }
-    else {
-      var system = _owner.scene.componentManager.getSystemForType(type);
-      List<Component> output = [];
-      for (var i in list) {
-        var component = system.getComponentWithHandle(i);
-        assert(component != null);
-        output.add(component);
-      }
-      return output;
-    }
-  }
-
-  Component getComponentWithHandle(int handle) {
-    String type = _componentTypes[handle];
-    if (type == null) {
-      return null;
-    }
-    List<int> list = _componentLists[type];
-    if (list == null || list.length == 0) {
-      return null;
-    }
-    var system = _owner.scene.componentManager.getSystemForType(type);
-    for (var i in list) {
-      if(i == handle) {
-        return system.getComponentWithHandle(i);
-      }
-    }
-    return null;
-  }
-
-  void destroyAllComponents() {
-    // Destroy every component we have, be extra careful to not modify the
-    // lists of components as we iterate them.
-    for (var list in _componentLists.getValues()) {
-      for (var component in new List.from(list)) {
-        _owner.destroyComponent(component);
-      }
-    }
-  }
-}
-
 class GameObject {
 
   int _handle;
@@ -123,7 +35,11 @@ class GameObject {
 
   // Private properties
 
-  ComponentList _components;
+  Set<Component> _components;
+
+  Map<Component, List> _componentsToInitialize;
+
+  Set<GameObject> _childrenToRegister;
 
   /// Contructor.
   GameObject([String this._id]) {
@@ -132,9 +48,9 @@ class GameObject {
     // _handle
 
     parent = null;
-    children = new Set<GameObject>();
+    children = new Set();
     properties = new PropertyBag();
-    _components = new ComponentList(this);
+    _components = new Set();
     events = new EventListenerMap(this);
 
     // Initialize the transform
@@ -142,53 +58,117 @@ class GameObject {
 
   }
 
-  Component getComponent(String type) {
-    return _components.getComponent(type);
+  /**
+   * Returns the first component of the specified type.
+   * Interfaces and base clases may be used, unless exactType is true.
+   */
+  Component getComponent(String type, [bool exactType = false]) {
+    for(var component in _components) {
+      // TODO: Replace by an actual type check.
+      if(component._type == type) {
+        return component;
+      }
+    }
+    return null;
   }
 
-  List<Component> getComponents(String type) {
-    return _components.getComponents(type);
+  /**
+   * Returns all the components of the specified type.
+   * Interfaces and base clases may be used, unless exactType is true.
+   */
+  List<Component> getComponents(String type, [bool exactType = false]) {
+    var list = [];
+    for(var component in _components) {
+      // TODO: Replace by an actual type check.
+      if(component._type == type) {
+        list.add(component);
+      }
+    }
+    return list;
   }
 
+  /**
+   * Returns the attached component with the given handle
+   */
   Component getComponentWithHandle(int handle) {
-    return _components.getComponentWithHandle(handle);
+    // TODO: Should we ask the component system here to make this O(1)?
+    for(var component in _components) {
+      if(component.handle == handle) {
+        return component;
+      }
+    }
+    return null;
   }
 
+  /**
+   * Attaches a component of the given type to this game object.
+   * An optional list of parameters may be supplied, these parameters will be
+   * sent as arguments to the component's init() function.
+   */
   Component attachComponent(String type, [List params]) {
-    Component c = _scene.componentManager.createComponent(type, this, params);
-    _components.attachComponent(type, c.handle);
+    var component = _scene.componentManager.createComponent(type, this, params);
+    _components.add(component);
 
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
     if(scene != null) {
-      c.init(params);
-      c.checkDependencies();
-      return c;
+      component.init(params);
+      component.checkDependencies();
+      return component;
     }
     else {
-      _components._toInitialize[c.handle] = params;
-      return c;
+      if(_componentsToInitialize == null) {
+        _componentsToInitialize = new Map();
+      }
+      _componentsToInitialize[component] = params;
+      return component;
     }
   }
 
+  /**
+   * Destroys a component attached to this game object.
+   * This component cannot be used on other game objects.
+   * References to the destroyed component are now invalid and they will not
+   * be set to null because the Component is part of an object pool.
+   * */
   void destroyComponent(Component component) {
     component.free();
-    _components.detachComponent(component.type, component.handle);
     _scene.componentManager.destroyComponent(component);
     checkDependencies();
   }
 
+  /**
+   * Adds a new child to this game object.
+   * Reparenting and scene registration are managed automatically.
+   */
   void addChild(GameObject go) {
-    if(children.contains(go)) {
+    if (go.scene != null) {
+      // Make sure we are not adding game object from a different scene.
+      assert(go.scene == scene);
+    }
+
+    // Already added.
+    if (_children.contains(go) || _childrenToRegister.contains(go)) {
       return;
     }
 
-    if(go.parent != null) {
-      scene.reparentGameObject(go, this);
+    if (scene == null ) {
+      // We are not registred yet.
+      if (_childrenToRegister = null) {
+        _childrenToRegister = new Set();
+      }
+      if (!_childrenToRegister.contains(go)) {
+        _childrenToRegister.add(go);
+      }
     }
     else {
-      scene.registerGameObject(go, this);
+      if (go.parent != null) {
+        scene._reparentGameObject(go, this);
+      }
+      else {
+        scene._registerGameObject(go, this);
+      }
     }
   }
 
@@ -197,8 +177,8 @@ class GameObject {
    * are satisfied.
    */
   bool checkDependencies() {
-    for(var c in _components.getComponents()) {
-      c.checkDependencies();
+    for(var component in _components) {
+      component.checkDependencies();
     }
   }
 
@@ -208,17 +188,21 @@ class GameObject {
    * Do not manually call this.
    */
   void _initializeComponents() {
-    if(_components._toInitialize != null){
-      for(var handle in _components._toInitialize.getKeys()) {
-        var c = getComponentWithHandle(handle);
-        var params = _components._toInitialize[handle];
-        c.init(params);
+    if(_componentsToInitialize != null){
+      for(var component in _componentsToInitialize.getKeys()) {
+        var params = _componentsToInitialize[component];
+        component.init(params);
       }
     }
   }
 
   /// Do not manually call this. Call Scene.destroyGameObject instead.
   void _destroyAllComponents() {
-    _components.destroyAllComponents();
+    // Destroy every component we have, be extra careful to not modify the
+    // lists of components as we iterate them.
+    for (var component in new List.from(_components)) {
+      destroyComponent(component);
+      _componentsToInitialize = null;
+    }
   }
 }

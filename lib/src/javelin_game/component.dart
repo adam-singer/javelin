@@ -10,7 +10,7 @@ class Component {
   String get type => _type;
 
   // Won't receive update calls if set to false.
-  bool enbled = true;
+  bool enabled = true;
 
   GameObject _owner;
   GameObject get owner => _owner;
