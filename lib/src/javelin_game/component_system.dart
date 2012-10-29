@@ -30,7 +30,6 @@ class ComponentSystem<T extends Component> {
     if (component == null) {
       return;
     }
-    //TODO(sithilgard): Do we need ot ensure the component's owner field is null?
     _removeFromLiveComponents(component);
     // Add component to the pool to be recycled.
     _componentPool.add(component);
