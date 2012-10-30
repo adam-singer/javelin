@@ -22,6 +22,7 @@
 
 library hfluid;
 import 'dart:html';
+import 'dart:scalarlist';
 
 class HeightFieldFluid {
   final num columnWidth;
@@ -46,11 +47,11 @@ class HeightFieldFluid {
   num _velocityDampen;
 
 
-  Float32Array _velocity;
-  Float32Array _height;
-  Float32Array _tempHeight;
+  Float32List _velocity;
+  Float32List _height;
+  Float32List _tempHeight;
 
-  Float32Array get columns => _height;
+  Float32List get columns => _height;
 
   int columnIndex(int i, int j) => i + (columnsWide * j);
 
@@ -71,9 +72,9 @@ class HeightFieldFluid {
     _maxSlope = 4.0;
     _maxOffset = _maxSlope * _h;
 
-    _velocity = new Float32Array(numColumns);
-    _height = new Float32Array(numColumns);
-    _tempHeight = new Float32Array(numColumns);
+    _velocity = new Float32List(numColumns);
+    _height = new Float32List(numColumns);
+    _tempHeight = new Float32List(numColumns);
   }
 
   void _simpleUpdate() {
