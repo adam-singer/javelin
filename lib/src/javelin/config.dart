@@ -21,47 +21,47 @@
 */
 
 abstract class JavelinConfigType {
-  abstract String serialize(Dynamic o);
-  abstract Dynamic deserialize(String data);
-  bool istype(Dynamic o) => false;
+  abstract String serialize(dynamic o);
+  abstract dynamic deserialize(String data);
+  bool istype(dynamic o) => false;
 }
 
 class JavelinConfigType_bool extends JavelinConfigType {
-  String serialize(Dynamic o) {
+  String serialize(dynamic o) {
     assert(o is bool);
     return JSON.stringify(o);
   }
-  Dynamic deserialize(String data) {
+  dynamic deserialize(String data) {
     bool o = JSON.parse(data);
     return o;
   }
-  bool istype(Dynamic o) => o is bool;
+  bool istype(dynamic o) => o is bool;
 }
 
 class JavelinConfigType_num extends JavelinConfigType {
-  String serialize(Dynamic o) {
+  String serialize(dynamic o) {
     assert(o is num);
     return JSON.stringify(o);
   }
-  Dynamic deserialize(String data) {
+  dynamic deserialize(String data) {
     num o = JSON.parse(data);
     return o;
   }
-  bool istype(Dynamic o) => o is num;
+  bool istype(dynamic o) => o is num;
 }
 
 class JavelinConfigType_String extends JavelinConfigType {
-  String serialize(Dynamic o) {
+  String serialize(dynamic o) {
     return o;
   }
-  Dynamic deserialize(Dynamic o) {
+  dynamic deserialize(dynamic o) {
     return o;
   }
-  bool istype(Dynamic o) => o is String;
+  bool istype(dynamic o) => o is String;
 }
 
 class JavelinConfigType_vec3 extends JavelinConfigType {
-  String serialize(Dynamic o) {
+  String serialize(dynamic o) {
     assert(o is vec3);
     Map<String, num> target = new Map<String, num>();
     target['x'] = o.x;
@@ -69,7 +69,7 @@ class JavelinConfigType_vec3 extends JavelinConfigType {
     target['z'] = o.z;
     return JSON.stringify(target);
   }
-  Dynamic deserialize(String data) {
+  dynamic deserialize(String data) {
     Map<String, num> src = JSON.parse(data);
     vec3 o = new vec3.zero();
     o.x = src['x'];
@@ -77,7 +77,7 @@ class JavelinConfigType_vec3 extends JavelinConfigType {
     o.z = src['z'];
     return o;
   }
-  bool istype(Dynamic o) => o is vec3;
+  bool istype(dynamic o) => o is vec3;
 }
 
 class JavelinConfigTypes {
@@ -94,13 +94,13 @@ class JavelinConfigTypes {
   }
 }
 
-typedef Dynamic CreateDefault();
+typedef dynamic CreateDefault();
 
 class JavelinConfigVariable {
   String name;
   String type;
   CreateDefault defaultValue;
-  Dynamic value;
+  dynamic value;
   JavelinConfigVariable(this.name, this.type, this.defaultValue) {
     value = defaultValue();
   }
@@ -171,7 +171,7 @@ class JavelinConfigStorage {
     });
   }
 
-  static Dynamic set(String name, Dynamic o,[bool commit=true]) {
+  static dynamic set(String name, dynamic o,[bool commit=true]) {
     JavelinConfigVariable variable;
     variable = JavelinConfigStorage.variables[name];
     if (variable == null) {
@@ -184,7 +184,7 @@ class JavelinConfigStorage {
     return o;
   }
 
-  static Dynamic get(String name) {
+  static dynamic get(String name) {
     JavelinConfigVariable variable;
     variable = JavelinConfigStorage.variables[name];
     if (variable == null) {

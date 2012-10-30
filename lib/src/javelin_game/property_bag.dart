@@ -1,15 +1,15 @@
 
 class PropertyBag {
-  Map<String, Dynamic> _properties;
+  Map<String, dynamic> _properties;
   PropertyBag() {
-    _properties = new Map<String, Dynamic>();
+    _properties = new Map<String, dynamic>();
   }
 
-  void set(String name, Dynamic value) {
+  void set(String name, dynamic value) {
     _properties[name] = value;
   }
 
-  Dynamic get(String name) {
+  dynamic get(String name) {
     return _properties[name];
   }
 

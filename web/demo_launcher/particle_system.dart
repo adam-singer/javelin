@@ -82,7 +82,7 @@ abstract class ParticleSystemBackend {
   abstract void applyForces();
   abstract void integrate();
   abstract void satisfyConstraints();
-  abstract void copyPositions(Dynamic out, int stride);
+  abstract void copyPositions(dynamic out, int stride);
 
   void update() {
     applyForces();
@@ -186,7 +186,7 @@ class ParticleSystemBackendDVM extends ParticleSystemBackend {
     }
   }
 
-  void copyPositions(Dynamic out, int stride) {
+  void copyPositions(dynamic out, int stride) {
     final List<vec3> pos = getPositions(writeIndex);
     for (int i = 0; i < _numParticles; i++) {
       int index = i * stride;
@@ -388,7 +388,7 @@ class ClothSystemBackendDVM extends ParticleSystemBackend {
     _sphereRadius = radius * 1.2;
   }
 
-  void copyPositions(Dynamic out, int stride) {
+  void copyPositions(dynamic out, int stride) {
     final List<vec3> pos = getPositions(writeIndex);
     for (int i = 0; i < _numParticles; i++) {
       int index = i * stride;

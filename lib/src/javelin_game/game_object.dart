@@ -167,7 +167,7 @@ class GameObject {
    */
   void _initializeComponents() {
     if(_componentsToInitialize != null){
-      for(var component in _componentsToInitialize.getKeys()) {
+      for(var component in _componentsToInitialize.keys) {
         var params = _componentsToInitialize[component];
         component.init(params);
       }
