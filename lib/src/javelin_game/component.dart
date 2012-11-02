@@ -59,7 +59,8 @@ class Component {
   bool checkDependencies() {
     for(var c in _componentDependencies) {
       if(owner.getComponent(c) == null) {
-        assert(false);
+        throw 'Failed component dependency test. Component: ${type} requires'
+            'at least component of type ${c}';
         return false;
       }
     }

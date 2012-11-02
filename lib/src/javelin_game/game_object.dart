@@ -38,7 +38,7 @@ class GameObject {
   Set<GameObject> _childrenToRegister;
 
   /// Contructor.
-  GameObject(this._scene, [String this._id]) {
+  GameObject([String this._id]) {
     _parent = null;
     _children = new Set<GameObject>();
     _childrenToRegister = new Set<GameObject>();
@@ -66,7 +66,7 @@ class GameObject {
    * Returns all the components of the specified type.
    * Interfaces and base clases may be used, unless exactType is true.
    */
-  List<Component> getComponents(String type, [bool exactType = false]) {
+   List<Component> getComponents(String type, [bool exactType = false]) {
     var list = [];
     for(var component in _components) {
       // TODO: Replace by an actual type check.
@@ -111,7 +111,15 @@ class GameObject {
    * be set to null because the Component is part of an object pool.
    * */
   void destroyComponent(Component component) {
+    if(!_components.contains(component)) {
+      throw 'Trying to remove a component (${component.runtimeType}) from a '
+          'game object that does not own it.';
+    }
+
     component.free();
+    component._owner = null;
+    component.enabled = false;
+    _components.remove(component);
     Game.componentManager.destroyComponent(component);
     checkDependencies();
   }
@@ -119,8 +127,9 @@ class GameObject {
   /**
    * Adds a new child to this game object.
    * Reparenting and scene registration are managed automatically.
+   * Returns the game object that was added (for chaining purpuses).
    */
-  void addChild(GameObject go) {
+  GameObject addChild(GameObject go) {
     if (go.scene != null) {
       // Make sure we are not adding game object from a different scene.
       assert(go.scene == scene);
@@ -128,12 +137,12 @@ class GameObject {
 
     // Already added.
     if (_children.contains(go) || _childrenToRegister.contains(go)) {
-      return;
+      return go;
     }
 
     if (scene == null ) {
       // We are not registred yet.
-      if (_childrenToRegister = null) {
+      if (_childrenToRegister == null) {
         _childrenToRegister = new Set();
       }
       if (!_childrenToRegister.contains(go)) {
@@ -148,6 +157,7 @@ class GameObject {
         scene._registerGameObject(go, this);
       }
     }
+    return go;
   }
 
   /**
@@ -167,7 +177,7 @@ class GameObject {
    */
   void _initializeComponents() {
     if(_componentsToInitialize != null){
-      for(var component in _componentsToInitialize.getKeys()) {
+      for(var component in _componentsToInitialize.keys) {
         var params = _componentsToInitialize[component];
         component.init(params);
       }

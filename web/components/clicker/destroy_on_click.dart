@@ -27,7 +27,7 @@ class DestroyOnClick extends ScriptComponent {
     // Spawn an explosion object.
     // I am doing it all in place to demonstrate that is possible but
     // you may want to have an Explosion class instead.
-    GameObject explosion = new GameObject(owner.scene);
+    GameObject explosion = new GameObject();
 
     // Remember that owner is the game object that owns this component.
     explosion.transform.position = owner.transform.position.xyz; // clone

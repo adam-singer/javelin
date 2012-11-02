@@ -22,11 +22,11 @@ class Clicker extends Scene {
     for(var i = 0 ; i < 100 ; i++) {
       // root is the root of the scene graph.
       // The constructor of Enemy will add the components it needs.
-      root.addChild(new Enemy(this));
+      root.addChild(new Enemy());
     }
 
     // Also add a vanilla GameObject and manually add a component to it:
-    _scoreManager = new GameObject(this, 'scoreManager');
+    _scoreManager = new GameObject('scoreManager');
     _scoreManager.attachComponent('ScorePrinter');
     root.addChild(_scoreManager);
   }
@@ -63,5 +63,6 @@ void main() {
   _registerComponentSystemsWithGame();
 
   Clicker clickerScene = new Clicker();
+  print('initialized clicker');
   //clickerScene.getGameObjectWithId('scoreManager');
 }

@@ -1,6 +1,6 @@
 
 class Enemy extends GameObject {
-  Enemy(Scene scene, [String id]) : super(scene, id) {
+  Enemy([String id]) : super(id) {
 
     // All GameObjects have a Transform component by default.
 

@@ -13,7 +13,7 @@ class Scene {
   	// TODO: remove me once we have proper support for multiple scenes.
   	_transformGraph = new TransformGraph(maxGameObjects);
   	_idMap = new Map<String, GameObject>();
-  	_root = new GameObject(this, 'root');
+  	_root = new GameObject('root');
   	_registerGameObject(root, null);
   	_properties = new PropertyBag();
   }
@@ -35,9 +35,12 @@ class Scene {
       assert(parent.scene == this);
     }
 
-
     if(go.id != null) {
-      assert(_idMap[go.id] == null);
+      if (_idMap[go.id] != null) {
+        throw 'Trying to register a second game object with the id "${go.id}" '
+            'to this scene.';
+      }
+
       _idMap[go.id] = go;
     }
 
@@ -114,7 +117,9 @@ class Scene {
       _idMap[go.id] = null;
     }
 
+    go._parent._children.remove(go);
     go._parent = null;
+    go._scene = null;
 
      // TODO: Notify Spectre that the resource with go.handle is gone.
   }
@@ -124,10 +129,7 @@ class Scene {
    * Returns the game object with the specified id if owned by this scene.
    */
   GameObject getGameObjectWithId(String id) {
-  	GameObject go = _idMap[id];
-  	if(go == null) {
-  	  return null;
-  	}
+  	return _idMap[id];
   }
 
   // TODO: Tags for game objects.
