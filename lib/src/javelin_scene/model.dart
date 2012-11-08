@@ -1,3 +1,4 @@
+part of javelin_scene;
 
 class Model extends SceneChild {
   MaterialInstance _materialInstance;

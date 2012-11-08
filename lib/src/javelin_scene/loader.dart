@@ -1,3 +1,4 @@
+part of javelin_scene;
 
 class Loader {
   Set<int> _resourceHandleTable;

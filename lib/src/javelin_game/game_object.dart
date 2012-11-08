@@ -1,3 +1,5 @@
+part of javelin_game;
+
 class GameObject {
   String _id;
   String get id => _id;
@@ -85,7 +87,7 @@ class GameObject {
    */
   Component attachComponent(String type, [List params]) {
     var component = Game.componentManager.createComponent(type, this, params);
-    component.attach(this);
+    component._owner = this;
     _components.add(component);
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the

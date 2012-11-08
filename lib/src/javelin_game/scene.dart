@@ -1,3 +1,5 @@
+part of javelin_game;
+
 class Scene {
   TransformGraph _transformGraph;
 

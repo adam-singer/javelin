@@ -1,5 +1,7 @@
 library javelin_game;
-import 'dart:html';
+import 'dart:html';	//TODO: decide if this dependency is needed.
+import 'dart:json';
+import 'dart:mirrors';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';
@@ -13,6 +15,7 @@ part 'src/javelin_game/component_pool.dart';
 part 'src/javelin_game/component_system.dart';
 part 'src/javelin_game/component_manager.dart';
 part 'src/javelin_game/game.dart';
+part 'src/javelin_game/prefab.dart';
 
 part 'src/javelin_game/library_components/keyboard_events.dart';
 part 'src/javelin_game/library_components/mouse_events.dart';

@@ -43,7 +43,7 @@ void main() {
       try {
         //We expect an exception on this line.
         scene.root.addChild(go2);
-        expect(false, null, 'Unreachable.');
+        expect(false, null, reason: 'Unreachable.');
       }
       catch (e) {
         expect(e, isNotNull);
@@ -212,7 +212,7 @@ void main() {
       try {
         //We expect an exception on this line.
         go.destroyComponent(notMine);
-        expect(false, null, 'Unreachable.');
+        expect(false, null, reason: 'Unreachable.');
       }
       catch (e) {
         expect(e, isNotNull);
@@ -229,7 +229,7 @@ void main() {
       try {
         //We expect an exception on this line.
         go.destroyComponent(c1);
-        expect(false, null, 'Unreachable.');
+        expect(false, null, reason: 'Unreachable.');
       }
       catch (e) {
         expect(e, isNotNull);

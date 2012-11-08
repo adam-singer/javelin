@@ -1,3 +1,4 @@
+part of javelin_game;
 
 /**
  * Provides a way of using html elements as GameObjects.

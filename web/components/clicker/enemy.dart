@@ -1,3 +1,4 @@
+part of javelin_click_demo;
 
 class Enemy extends GameObject {
   Enemy([String id]) : super(id) {

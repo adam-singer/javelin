@@ -1,3 +1,5 @@
+part of javelin;
+
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
@@ -63,11 +65,11 @@ class JavelinMouse {
     _Y = event.offsetY;
   }
 
-  int get accumulatedDX() => _accumDX;
-  int get accumulatedDY() => _accumDY;
+  int get accumulatedDX => _accumDX;
+  int get accumulatedDY => _accumDY;
 
-  int get X() => _X;
-  int get Y() => _Y;
+  int get X => _X;
+  int get Y => _Y;
 
   void resetAccumulator() {
     _accumDX = 0;

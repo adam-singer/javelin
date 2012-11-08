@@ -1,6 +1,11 @@
+part of javelin_game;
 
 class PropertyBag {
   Map<String, dynamic> _properties;
+
+  /**
+    * Constructor.
+    */
   PropertyBag() {
     _properties = new Map<String, dynamic>();
   }

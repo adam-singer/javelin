@@ -1,7 +1,9 @@
+part of javelin;
+
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -22,11 +24,11 @@
 
 class JavelinKeyCodes {
   static final int KeyTab = 9;
-  
+
   static final int KeyShift = 16;
   static final int KeyControl = 17;
   static final int KeyAlt = 18;
-  
+
   static final int KeySpace = 32;
   static final int KeyPageUp = 33;
   static final int KeyPageDown = 34;
@@ -36,7 +38,7 @@ class JavelinKeyCodes {
   static final int KeyUp = 38;
   static final int KeyRight = 39;
   static final int KeyDown = 40;
-  
+
   static final int Key0 = 48;
   static final int Key1 = 49;
   static final int Key2 = 50;
@@ -47,7 +49,7 @@ class JavelinKeyCodes {
   static final int Key7 = 55;
   static final int Key8 = 56;
   static final int Key9 = 57;
-  
+
   static final int KeyA = 65;
   static final int KeyB = 66;
   static final int KeyC = 67;
@@ -78,11 +80,11 @@ class JavelinKeyCodes {
 
 class JavelinKeyboard {
   Map<int, bool> keyboardState;
-  
+
   JavelinKeyboard() {
     keyboardState = new Map<int, bool>();
   }
-  
+
   bool pressed(int keycode) {
     bool r = keyboardState[keycode];
     if (r == null) {
@@ -91,7 +93,7 @@ class JavelinKeyboard {
     }
     return r;
   }
-  
+
   void keyboardEvent(KeyboardEvent event, bool down) {
     keyboardState[event.keyCode] = down;
   }

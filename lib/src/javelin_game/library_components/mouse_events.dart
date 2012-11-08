@@ -1,6 +1,6 @@
+part of javelin_game;
 
 /// Fires MouseEvents.
-
 class MouseEvents extends Component {
   MouseEvents() {
     _type = 'MouseEvents';

@@ -1,3 +1,5 @@
+part of javelin_scene;
+
 class Scene {
   GraphicsDevice device;
   ResourceManager resourceManager;

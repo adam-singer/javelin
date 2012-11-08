@@ -1,3 +1,4 @@
+part of javelin_click_demo;
 
 class EvadeMouse extends ScriptComponent {
 

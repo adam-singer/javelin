@@ -1,3 +1,5 @@
+part of javelin;
+
 class RenderResource {
   String name;
   String type;
@@ -125,7 +127,7 @@ class RenderConfig {
     return layer.handle;
   }
 
-  void load(Map<String, Dynamic> conf) {
+  void load(Map<String, dynamic> conf) {
     cleanup();
     _conf = conf;
     setup();

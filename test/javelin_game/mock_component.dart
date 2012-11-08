@@ -1,3 +1,5 @@
+part of javelin_game_test;
+
 class MockComponent extends ScriptComponent {
   static MockComponent componentConstructor() {
     return new MockComponent();

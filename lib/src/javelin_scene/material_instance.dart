@@ -1,3 +1,5 @@
+part of javelin_scene;
+
 class MaterialInstance extends SceneChild {
   Material material;
   int blendStateHandle;

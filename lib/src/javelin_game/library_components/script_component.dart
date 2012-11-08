@@ -1,3 +1,5 @@
+part of javelin_game;
+
 /**
  * Defines an scriptable component.
  *

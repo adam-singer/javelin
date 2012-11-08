@@ -1,3 +1,5 @@
+part of javelin_scene;
+
 class Material extends SceneChild {
   int vertexShaderHandle;
   int fragmentShaderHandle;

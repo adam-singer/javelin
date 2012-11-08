@@ -1,5 +1,6 @@
-/// Wrapper around a Specre transform.
+part of javelin_game;
 
+/// Wrapper around a Specre transform.
 class Transform extends Component {
   TransformGraph graph;
   int node;
@@ -30,6 +31,8 @@ class Transform extends Component {
    */
   vec3 get position {
     //TODO(sethilgard): Do we want world position?
+    // No. We should have local positions and add a utility method to
+    // calculate the global position. Same applies to rotation an scale.
     graph.refLocalMatrix(node).col3.xyz;
   }
 

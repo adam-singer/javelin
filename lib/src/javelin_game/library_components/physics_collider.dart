@@ -1,3 +1,4 @@
+part of javelin_game;
 
 class PhysicsCollider extends Component {
   PhysicsCollider() {

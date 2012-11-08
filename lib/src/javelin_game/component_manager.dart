@@ -1,4 +1,4 @@
-
+part of javelin_game;
 
 /**
  * Manages multiple component systems (for multiple types of components) for

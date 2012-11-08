@@ -1,3 +1,4 @@
+part of javelin_scene;
 
 class Mesh extends SceneChild {
   int indexedMesh;

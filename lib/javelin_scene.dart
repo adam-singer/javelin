@@ -16,3 +16,4 @@ part 'src/javelin_scene/material.dart';
 part 'src/javelin_scene/material_instance.dart';
 part 'src/javelin_scene/model.dart';
 part 'src/javelin_scene/transform_controller.dart';
+part 'src/javelin_scene/texture.dart';
