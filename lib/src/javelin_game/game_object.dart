@@ -79,6 +79,12 @@ class GameObject {
     return list;
   }
 
+   /**
+    * Returns a list of all the components attached to this game object.
+    */
+   List<Component> getAllComponents() {
+    return new List.from(_components);
+  }
 
   /**
    * Attaches a component of the given type to this game object.
