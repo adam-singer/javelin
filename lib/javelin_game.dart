@@ -1,7 +1,6 @@
 library javelin_game;
-import 'dart:html';	//TODO: decide if this dependency is needed.
-import 'dart:json';
-import 'dart:mirrors';
+
+import 'dart:html';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';
@@ -23,4 +22,3 @@ part 'src/javelin_game/library_components/physics_collider.dart';
 part 'src/javelin_game/library_components/script_component.dart';
 part 'src/javelin_game/library_components/transform.dart';
 part 'src/javelin_game/library_components/html_element.dart';
-

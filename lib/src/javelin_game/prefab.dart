@@ -10,8 +10,4 @@ class Prefab {
 
   Prefab.fromJsonString(String this._json) {
   }
-
-  parse() {
-  	_blueprint =JSON.parse(_json);
-  }
 }

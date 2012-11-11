@@ -65,34 +65,4 @@ class Component {
     }
     return true;
   }
-
-  bool _metadataCopied = false;
-
-  void initializeWithMetadata(dynamic data) {
-    InstanceMirror myself = reflect(this);
-    InstanceMirror metadata = reflect(data);
-
-    var futures1 = [];
-    var futures2 = [];
-
-    for (var memberName in metadata.type.members.keys) {
-      var member = metadata.type.members[memberName];
-      if (member is VariableMirror) {
-        if (myself.type.members.containsKey(memberName)) {
-          var getValueFuture = metadata.getField(memberName);
-          futures1.add(getValueFuture);
-          getValueFuture.then((valueMirror) {
-            var setValueFuture =
-                myself.setField(memberName, valueMirror.reflectee);
-            futures2.add(setValueFuture);
-          });
-        }
-      }
-    }
-
-    var almostThere = Futures.wait(futures1);
-    almostThere.then((list) {
-      Futures.wait(futures2).then((anotherList) => _metadataCopied = true);
-    });
-  }
 }

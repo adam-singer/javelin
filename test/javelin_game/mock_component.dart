@@ -17,5 +17,4 @@ class MockDependencyComponent extends ScriptComponent {
   MockDependencyComponent(): super('MockDependencyComponent') {
     requireComponent('MockComponent');
   }
-
 }
