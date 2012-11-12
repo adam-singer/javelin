@@ -20,8 +20,9 @@ class Component {
   GameObject _owner;
   GameObject get owner => _owner;
 
-  //Expose this properties for easy access.
-  PropertyBag get properties => owner.properties;
+  PropertyBag _data;
+  PropertyBag get data => _data;
+
   EventListenerMap get events => owner.events;
   Transform get transform => owner.transform;
   Scene get scene => owner.scene;

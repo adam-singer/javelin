@@ -16,7 +16,7 @@ class DestroyOnClick extends ScriptComponent {
   void destroy([List params]) {
 
     // Before we die, let's read a property set by EvadeMouse, just for fun:
-    var message = properties.get('secretMessage');
+    var message = owner.data.get('secretMessage');
     if(message != null)
       print(message);
 

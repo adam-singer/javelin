@@ -33,7 +33,7 @@ class EvadeMouse extends ScriptComponent {
 
     // Just for fun, set a property in the property bag so that other
     // components can read it. In this case, DestroyOnClick will read it.
-    properties.set('secretMessage', 'Hi! I am a property!');
+    owner.data.set('secretMessage', 'Hi! I am a property!');
   }
 
   // The signature for this callback should be specified in the
