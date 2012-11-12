@@ -66,7 +66,33 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
     super.noSuchMethod(mirror);
   }
 
+  /**
+   * Serialize.
+   */
   String toJson() {
+    var buffer = new StringBuffer();
+    buffer.add('{');
+    var first = true;
+    for (var key in _objectData.keys) {
+      first ? first = false : buffer.add(',');
+      buffer.add('"${key}":');
+      var value = _objectData[key];
+      if (value is num ||
+          value is bool ||
+          value is String) {
+        buffer.add(value);
+      }
+      else if (value is Serializable) {
+        buffer.add(value.toJson());
+      }
+      else {
+        var mirror = reflect(value);
+        throw 'Unexpected value found on a PropertyMap. Type found: '
+        '${mirror.type.simpleName}.';
+      }
+    }
+    buffer.add('}');
+    return buffer.toString();
   }
 
   void fromJson(String json) {

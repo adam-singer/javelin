@@ -58,7 +58,33 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
   void insertRange(int start, int length, [dynamic initialValue]) =>
       _objectData.insertRange(start, length, initialValue);
 
+  /**
+   * Serialize.
+   */
   String toJson() {
+    var buffer = new StringBuffer();
+    buffer.add('[');
+    for (var i = 0; i < _objectData.length ; i++) {
+      if (i > 0) {
+        buffer.add(',');
+      }
+      var value = _objectData[i];
+      if (value is num ||
+          value is bool ||
+          value is String) {
+        buffer.add(value);
+      }
+      else if (value is Serializable) {
+        buffer.add(value.toJson());
+      }
+      else {
+        var mirror = reflect(value);
+        throw 'Unexpected value found on a PropertyList. Type found: '
+        '${mirror.type.simpleName}.';
+      }
+    }
+    buffer.add(']');
+    return buffer.toString();
   }
 
   void fromJson(String json) {

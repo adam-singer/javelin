@@ -8,7 +8,7 @@ abstract class PropertyContainer implements Serializable {
    * into a PropertyMap or a PropertyList (recursively), otherwise it throws an
    * exception.
    */
-  dynamic _validate(dynamic value) {
+  static dynamic _validate(dynamic value) {
     if (value is num ||
         value is bool ||
         value is String ||
