@@ -1,11 +1,27 @@
 part of javelin_game;
 
-class PropertyList implements List<dynamic>, Serializable {
+/**
+ * Wrapper around List<dynamic>
+ */
+class PropertyList extends PropertyContainer implements List<dynamic> {
 
+  // The actual list that holds the elements.
   List _objectData;
 
-  // Implementation of List
+  /// Default constructor.
+  PropertyList() {
+    _objectData = new List();
+  }
 
+  /// Contructor from Iterable.
+  PropertyList.from(Iterable other) {
+    _objectData = new List.from(other);
+    for (var i = 0; i < _objectData.length; i++) {
+      _objectData[i] = _validate(_objectData[i]);
+    }
+  }
+
+  // Implementation of List
   forEach(func(dynamic value)) => _objectData.forEach(func);
   int get length => _objectData.length;
   bool get isEmpty => _objectData.isEmpty;
@@ -41,36 +57,6 @@ class PropertyList implements List<dynamic>, Serializable {
       _objectData.removeRange(start, length);
   void insertRange(int start, int length, [dynamic initialValue]) =>
       _objectData.insertRange(start, length, initialValue);
-
-  /**
-   * Implementing noSuchMethod allows invocations on this object in a more
-   * natural way:
-   *  - print(data.propertyName);
-   *  - data.propertyName = value;
-   * instead of:
-   *  - print(data.get('propertyName'));
-   *  - data.set('propertyName', value);
-   */
-  noSuchMethod(InvocationMirror mirror) {
-    if (mirror.memberName.startsWith("get:")) {
-      var property = mirror.memberName.replaceFirst("get:", "");
-      if (this.containsKey(property)) {
-        return this[property];
-      }
-    }
-    else if (mirror.memberName.startsWith("set:")) {
-      var property = mirror.memberName.replaceFirst("set:", "");
-      this[property] = mirror.positionalArguments[0];
-      return this[property];
-    }
-
-    //if we get here, then we've not found it - throw.
-    print("Not found: ${mirror.memberName}");
-    print("IsGetter: ${mirror.isGetter}");
-    print("IsSetter: ${mirror.isGetter}");
-    print("isAccessor: ${mirror.isAccessor}");
-    super.noSuchMethod(mirror);
-  }
 
   String toJson() {
   }

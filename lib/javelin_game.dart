@@ -17,6 +17,7 @@ part 'src/javelin_game/component_manager.dart';
 part 'src/javelin_game/game.dart';
 part 'src/javelin_game/prefab.dart';
 part 'src/javelin_game/serializable.dart';
+part 'src/javelin_game/property_container.dart';
 part 'src/javelin_game/property_map.dart';
 part 'src/javelin_game/property_list.dart';
 

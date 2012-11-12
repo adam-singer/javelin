@@ -1,8 +1,26 @@
 part of javelin_game;
 
-class PropertyMap implements Map<String, dynamic>, Serializable {
+/**
+ * Wrapper around a Map<String, dynamic>.
+ */
+class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
 
+  // The actual map that holds the elements.
   Map<String, dynamic> _objectData;
+
+  /// Default constructor.
+  PropertyMap() {
+    _objectData = new Map<String, dynamic>();
+  }
+
+  /// Contructor from Map.
+  PropertyMap.from(Map<String, dynamic> other) {
+    _objectData = new Map.from(other);
+    for (var key in _objectData.keys) {
+      assert(key is String);
+      _objectData[key] = _validate(_objectData[key]);
+    }
+  }
 
   // Implementation of Map<String, dynamic>
   bool containsValue(dynamic value) => _objectData.containsValue(value);
