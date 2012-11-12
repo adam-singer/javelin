@@ -87,6 +87,14 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
     return buffer.toString();
   }
 
-  void fromJson(String json) {
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+    assert(json is List);
+    _objectData = new List.from(json);
+    for (var i = 0; i < _objectData.length; i++) {
+      _objectData[i] = _validate(_objectData[i]);
+    }
   }
 }

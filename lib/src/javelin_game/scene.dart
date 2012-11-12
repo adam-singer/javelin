@@ -8,8 +8,8 @@ class Scene {
 
   Map<String, GameObject> _idMap;
 
-  PropertyBag _properties;
-  PropertyBag get properties => _properties;
+  PropertyMap _data;
+  PropertyMap get data => _data;
 
   Scene(int maxGameObjects) {
   	// TODO: remove me once we have proper support for multiple scenes.
@@ -17,7 +17,7 @@ class Scene {
   	_idMap = new Map<String, GameObject>();
   	_root = new GameObject('root');
   	_registerGameObject(root, null);
-  	_properties = new PropertyBag();
+  	_data = new PropertyMap();
   }
 
   /**

@@ -20,8 +20,8 @@ class Component {
   GameObject _owner;
   GameObject get owner => _owner;
 
-  PropertyBag _data;
-  PropertyBag get data => _data;
+  PropertyMap _data;
+  PropertyMap get data => _data;
 
   EventListenerMap get events => owner.events;
   Transform get transform => owner.transform;

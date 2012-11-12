@@ -95,7 +95,16 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
     return buffer.toString();
   }
 
-  void fromJson(String json) {
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+    assert(json is Map);
+    _objectData = new Map.from(json);
+    for (var key in _objectData.keys) {
+      assert(key is String);
+      _objectData[key] = _validate(_objectData[key]);
+    }
   }
 
 }

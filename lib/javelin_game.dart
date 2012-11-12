@@ -7,7 +7,6 @@ import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';
 
 part 'src/javelin_game/scene.dart';
-part 'src/javelin_game/property_bag.dart';
 part 'src/javelin_game/events.dart';
 part 'src/javelin_game/game_object.dart';
 part 'src/javelin_game/component.dart';

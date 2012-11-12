@@ -10,8 +10,8 @@ class GameObject {
   Set<GameObject> _children;
   Set<GameObject> get children => _children;
 
-  PropertyBag _data;
-  PropertyBag get data => _data;
+  PropertyMap _data;
+  PropertyMap get data => _data;
 
   EventListenerMap _events;
   EventListenerMap get events => _events;
@@ -44,7 +44,7 @@ class GameObject {
     _parent = null;
     _children = new Set<GameObject>();
     _childrenToRegister = new Set<GameObject>();
-    _data = new PropertyBag();
+    _data = new PropertyMap();
     _components = new Set();
     _events = new EventListenerMap(this);
     //TODO(johnmccutchan): Initialize the transform
