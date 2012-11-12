@@ -12,6 +12,12 @@ class GameObject {
 
   PropertyMap _data;
   PropertyMap get data => _data;
+  set data (Map<String, dynamic> value) {
+    if(!value is PropertyMap) {
+      value = new PropertyMap.from(value);
+    }
+    _data = value;
+  }
 
   EventListenerMap _events;
   EventListenerMap get events => _events;
