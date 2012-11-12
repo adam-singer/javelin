@@ -25,8 +25,6 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
   forEach(func(dynamic value)) => _objectData.forEach(func);
   int get length => _objectData.length;
   bool get isEmpty => _objectData.isEmpty;
-  operator [](int index) => _objectData[index];
-  operator []=(int index, dynamic value) => _objectData[index] = value;
   clear() => _objectData.clear();
   Collection map(f(element)) => _objectData.map(f);
   Collection filter(bool f(element)) => _objectData.filter(f);
@@ -57,6 +55,10 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
       _objectData.removeRange(start, length);
   void insertRange(int start, int length, [dynamic initialValue]) =>
       _objectData.insertRange(start, length, initialValue);
+  operator [](int index) => _objectData[index];
+  operator []=(int index, dynamic value) {
+    _objectData[index] = _validate(value);
+  }
 
   /**
    * Serialize.

@@ -25,16 +25,18 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
   // Implementation of Map<String, dynamic>
   bool containsValue(dynamic value) => _objectData.containsValue(value);
   bool containsKey(String key) => _objectData.containsKey(key);
-  operator [](String key) => _objectData[key];
   forEach(func(String key, dynamic value)) => _objectData.forEach(func);
   Collection<String> get keys => _objectData.keys;
   Collection<dynamic> get values => _objectData.values;
   int get length => _objectData.length;
   bool get isEmpty => _objectData.isEmpty;
-  operator []=(String key, dynamic value) => _objectData[key] = value;
   putIfAbsent(String key,ifAbsent()) =>_objectData.putIfAbsent(key, ifAbsent);
   clear() => _objectData.clear();
   remove(String key) => _objectData.remove(key);
+  operator [](String key) => _objectData[key];
+  operator []=(String key, dynamic value) {
+    _objectData[key] = _validate(value);
+  }
 
   /**
    * Implementing noSuchMethod allows invocations on this object in a more
