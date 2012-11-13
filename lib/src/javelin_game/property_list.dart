@@ -36,9 +36,13 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
   Iterator iterator() => _objectData.iterator();
   void set length(int value) { _objectData.length = value; }
   dynamic get last => _objectData.last;
-  void add(dynamic value) => _objectData.add(value);
-  void addLast(dynamic value) => _objectData.addLast(value);
-  void addAll(Collection<dynamic> collection) => _objectData.addAll(collection);
+  void add(dynamic value) => _objectData.add(_validate(value));
+  void addLast(dynamic value) => _objectData.addLast(_validate(value));
+  void addAll(Collection<dynamic> collection) {
+    for (i = 0; i < collection.length; i++) {
+      _objectData.add(_validate(collection[i]));
+    }
+  }
   void sort([Comparator compare = Comparable.compare]) =>
       _objectData.sort(compare);
   int indexOf(dynamic element, [int start = 0]) =>
@@ -50,11 +54,11 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
   List<dynamic> getRange(int start, int length) =>
       _objectData.getRange(start, length);
   void setRange(int start, int length, List<dynamic> from, [int startFrom]) =>
-      _objectData.setRange(start, length, from, startFrom);
+      _objectData.setRange(start, length, _validate(from), startFrom);
   void removeRange(int start, int length) =>
       _objectData.removeRange(start, length);
   void insertRange(int start, int length, [dynamic initialValue]) =>
-      _objectData.insertRange(start, length, initialValue);
+      _objectData.insertRange(start, length, _validate(initialValue));
   operator [](int index) => _objectData[index];
   operator []=(int index, dynamic value) {
     _objectData[index] = _validate(value);
