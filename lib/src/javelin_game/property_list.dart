@@ -39,8 +39,8 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
   void add(dynamic value) => _objectData.add(_validate(value));
   void addLast(dynamic value) => _objectData.addLast(_validate(value));
   void addAll(Collection<dynamic> collection) {
-    for (i = 0; i < collection.length; i++) {
-      _objectData.add(_validate(collection[i]));
+    for (var item in collection) {
+      _objectData.add(_validate(item));
     }
   }
   void sort([Comparator compare = Comparable.compare]) =>

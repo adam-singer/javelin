@@ -32,7 +32,7 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
   bool get isEmpty => _objectData.isEmpty;
   putIfAbsent(String key,ifAbsent()) {
     _objectData.putIfAbsent(key, () {
-      _valudate(ifAbsent())
+      _validate(ifAbsent());
     });
   }
   clear() => _objectData.clear();
