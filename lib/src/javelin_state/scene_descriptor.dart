@@ -7,17 +7,13 @@ class SceneDescriptor {
     buffer.add('{');
     buffer.add(describeComponentsForGameObject(go));
 
-    // TODO: describe property bag.
+    buffer.add('"properties":${go.data.toJson()}');
 
     if (describeChildren) {
+      buffer.add('"children":[');
       var first = true;
       for (var child in go.children) {
-        if (first) {
-          first = false;
-        }
-        else {
-          buffer.add(',');
-        }
+        first ? first = false : buffer.add(',');
         buffer.add(describeGameObject(child));
       }
       buffer.add(']');
@@ -32,12 +28,7 @@ class SceneDescriptor {
     buffer.add('"components":[');
     var first = true;
     for (var component in go.getAllComponents()) {
-      if (first) {
-        first = false;
-      }
-      else {
-        buffer.add(',');
-      }
+      first ? first = false : buffer.add(',');
       buffer.add(describeComponent(component));
     }
     buffer.add(']');
@@ -48,9 +39,8 @@ class SceneDescriptor {
     var mirror = reflect(component);
     var buffer = new StringBuffer();
     buffer.add('{');
-    buffer.add('"type":');
-    buffer.add('"${mirror.type.simpleName}"');
-    // TODO: describe component state.
+    buffer.add('"type":"${mirror.type.qualifiedName}"');
+    buffer.add('"content":"${component.toJson()}"');
     buffer.add('}');
     return buffer.toString();
   }

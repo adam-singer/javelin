@@ -1,6 +1,6 @@
 part of javelin_game;
 
-class GameObject {
+class GameObject implements Serializable {
   String _id;
   String get id => _id;
 
@@ -206,5 +206,19 @@ class GameObject {
       destroyComponent(component);
       _componentsToInitialize = null;
     }
+  }
+
+  /**
+   * Serialize.
+   */
+  String toJson() {
+
+  }
+
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+
   }
 }

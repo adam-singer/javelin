@@ -9,7 +9,7 @@ class SimpleCloner {
    *  - No objects are constructed. The target object must already have all
    * all the children, including collection elements, that it wants copied
    * from the source.
-   *  - List and Map elements are copies 'as is'. No recursive copying is
+   *  - List and Map elements are copied 'as is'. No recursive copying is
    * applied on them.
    *  - Any field not present in the source object will be left untouched on the
    * target object.

@@ -7,7 +7,7 @@ part of javelin_game;
  * Components are aggregated in game obejcts rather than extended, although
  * component class hierarchies are useful as well.
  */
-class Component {
+class Component implements Serializable {
 
   // We need this until dart fully supports runtimeType
   // TODO: Implement using runtimeType.toString()?
@@ -72,5 +72,19 @@ class Component {
       }
     }
     return true;
+  }
+
+  /**
+   * Serialize.
+   */
+  String toJson() {
+
+  }
+
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+
   }
 }
