@@ -236,4 +236,60 @@ void main() {
       }
     });
   });
+
+  group('PropertyContainer tests: ', () {
+
+    PropertyMap data;
+
+    setUp(() {
+      data = new PropertyMap();
+    });
+
+    test('Map base test', () {
+      data.field = "value";
+      expect(data.field, data['field']);
+    });
+
+    test('List to PropertyList conversion', () {
+      data.list = ['a', 3];
+      expect(data.list, new isInstanceOf<PropertyList>());
+      expect(data.list, orderedEquals(['a', 3]));
+    });
+
+    test('Map to PropertyMap conversion', () {
+      data.map = {'a': 'aaa', 'b': 'bbb'};
+      expect(data.map, new isInstanceOf<PropertyMap>());
+      expect(data.map.keys, unorderedEquals(['a', 'b']));
+      expect(data.map.values, unorderedEquals(['aaa', 'bbb']));
+      expect(data.map.a, 'aaa');
+    });
+
+    test('Data types', () {
+      data.map = {'a': 'aaa', 'b': 'bbb'};
+      data.num = 5.34;
+      data.str = "String";
+      data.boolean = false;
+      data.none = null;
+      data.map = {};
+      data.map.list = [1,2,3,4,5];
+      data.map.list.add(6);
+      data.map.name = 'Dan';
+      expect(data.map.name, 'Dan');
+      expect(data.map.list, orderedEquals([1,2,3,4,5,6]));
+    });
+
+    test('Unsupported data types', () {
+      // StringBuffer is not Serializable and thus it's not supported.
+      try {
+        //We expect an exception on this line.
+        data.unsupportedType = new StringBuffer();
+        expect(false, null, reason: 'Unreachable.');
+      }
+      catch (e) {
+        expect(e, isNotNull);
+      }
+    });
+
+
+  });
 }
