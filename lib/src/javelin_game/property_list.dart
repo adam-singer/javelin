@@ -75,10 +75,11 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
         buffer.add(',');
       }
       var value = _objectData[i];
-      if (value is num ||
-          value is bool ||
-          value is String) {
+      if (value is num || value is bool) {
         buffer.add(value);
+      }
+      else if (value is String) {
+        buffer.add('"${value}"');
       }
       else if (value is Serializable) {
         buffer.add(value.toJson());

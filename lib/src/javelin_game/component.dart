@@ -20,7 +20,7 @@ class Component implements Serializable {
   GameObject _owner;
   GameObject get owner => _owner;
 
-  PropertyMap _data;
+  PropertyMap _data = new PropertyMap();
   PropertyMap get data => _data;
   set data (Map<String, dynamic> value) {
     if(value is! PropertyMap) {
@@ -36,6 +36,11 @@ class Component implements Serializable {
 
   // List of dependencies to be checked when this is initialized.
   Set<String> _componentDependencies = new Set<String>();
+
+  // List of arguments that were used to construct this object (parameters to
+  // the init() function. Stored so we can serialize them and reconstruct this
+  // object).
+  PropertyList _initData;
 
   Component() {
   }
@@ -64,10 +69,10 @@ class Component implements Serializable {
    * Checks that all the dependencies on other components are satisfied.
    */
   bool checkDependencies() {
-    for(var c in _componentDependencies) {
-      if(owner.getComponent(c) == null) {
+    for(var component in _componentDependencies) {
+      if(owner.getComponent(component) == null) {
         throw 'Failed component dependency test. Component: ${type} requires'
-            'at least component of type ${c}';
+            'at least component of type ${component}';
         return false;
       }
     }
@@ -78,13 +83,15 @@ class Component implements Serializable {
    * Serialize.
    */
   String toJson() {
-
+    SceneDescriptor.serializeComponent(this);
   }
 
   /**
    * Deserialize.
    */
   void fromJson(dynamic json) {
-
+    throw 'Trying to deserialize a Component by calling fromJson() on it. '
+    'Components are special. Use '
+    'SceneDescriptor.attachComponentFromPrototype() instead.';
   }
 }

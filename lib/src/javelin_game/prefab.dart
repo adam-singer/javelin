@@ -1,13 +1,24 @@
 part of javelin_game;
 
 /**
- * Represents a prefab constructed out of a Json String.
- * This pref can be instatiated multiple times in the game.
+ * Represents a Game Object blueprint constructed out of a Json String,
+ * including its components, data and children. A whole scene can be stored
+ * as a single prefab.
+ * This prefab can be instatiated multiple times in the game.
  */
 class Prefab {
-  String _json;
-  dynamic _blueprint;
+  dynamic _prototype;
 
-  Prefab.fromJsonString(String this._json) {
+  Prefab.fromJsonString(String json) {
+    _prototype = JSON.parse(json);
+  }
+
+  Prefab.fromJsonPrototype(dynamic this._prototype);
+
+  /**
+   * Instantiates this prefab.
+   */
+  GameObject instantiate() {
+    return SceneDescriptor.createGameObjectFromPrototype(_prototype);
   }
 }

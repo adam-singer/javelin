@@ -83,10 +83,11 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
       first ? first = false : buffer.add(',');
       buffer.add('"${key}":');
       var value = _objectData[key];
-      if (value is num ||
-          value is bool ||
-          value is String) {
+      if (value is num || value is bool) {
         buffer.add(value);
+      }
+      else if (value is String) {
+        buffer.add('"${value}"');
       }
       else if (value is Serializable) {
         buffer.add(value.toJson());

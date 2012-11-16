@@ -1,5 +1,12 @@
 part of javelin_game;
 
+/**
+ * A GameObject is an entity in the game world.
+ *
+ * Do NOT extend this class.
+ *
+ * A GameObject holds components attached to it that provide functionality.
+ */
 class GameObject implements Serializable {
   String _id;
   String get id => _id;
@@ -105,7 +112,13 @@ class GameObject implements Serializable {
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
     if(scene != null) {
-      component.init(params);
+      if (params != null) {
+        component._initData = new PropertyList.from(params);
+        component.init(params);
+      }
+      else {
+        component.init();
+      }
       component.checkDependencies();
       return component;
     }
@@ -193,7 +206,13 @@ class GameObject implements Serializable {
     if(_componentsToInitialize != null){
       for(var component in _componentsToInitialize.keys) {
         var params = _componentsToInitialize[component];
-        component.init(params);
+        if (params != null) {
+          component._initData = new PropertyList.from(params);
+          component.init(params);
+        }
+        else {
+          component.init();
+        }
       }
     }
   }
@@ -212,13 +231,15 @@ class GameObject implements Serializable {
    * Serialize.
    */
   String toJson() {
-
+    return SceneDescriptor.serializeGameObject(this);
   }
 
   /**
    * Deserialize.
    */
   void fromJson(dynamic json) {
-
+    throw 'Trying to deserialize a GameObject by calling fromJson() on it. '
+          'GameObjects are special. Use '
+          'SceneDescriptor.createGameObjectFromPrototype() instead.';
   }
 }
