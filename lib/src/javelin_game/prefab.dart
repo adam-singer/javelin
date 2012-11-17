@@ -9,11 +9,21 @@ part of javelin_game;
 class Prefab {
   dynamic _prototype;
 
+  /**
+   * Contructs a Prefab from a Json String coming from a GameObject.toJson()
+   * call.
+   */
   Prefab.fromJsonString(String json) {
     _prototype = JSON.parse(json);
   }
 
-  Prefab.fromJsonPrototype(dynamic this._prototype);
+  /**
+   * Constructs a Prefab from a GameObject.
+   */
+  factory Prefab.fromGameObject(GameObject go) {
+    String json = go.toJson();
+    return new Prefab.fromJsonString(json);
+  }
 
   /**
    * Instantiates this prefab.

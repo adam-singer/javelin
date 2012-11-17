@@ -48,8 +48,7 @@ class GameObject implements Serializable {
 
   Set<Component> _components;
 
-  Map<Component, List> _componentsToInitialize;
-
+  List<Component> _componentsToInitialize;
   Set<GameObject> _childrenToRegister;
 
   /// Contructor.
@@ -105,15 +104,20 @@ class GameObject implements Serializable {
    * sent as arguments to the component's init() function.
    */
   Component attachComponent(String type, [List params]) {
+    // If we werent provided with a PropertyList, make one.
+    if (params != null && params is! PropertyList) {
+      params = new PropertyList.from(params);
+    }
+
     var component = Game.componentManager.createComponent(type, this, params);
     component._owner = this;
+    component._initData = params;
     _components.add(component);
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
     if(scene != null) {
       if (params != null) {
-        component._initData = new PropertyList.from(params);
         component.init(params);
       }
       else {
@@ -124,9 +128,9 @@ class GameObject implements Serializable {
     }
     else {
       if(_componentsToInitialize == null) {
-        _componentsToInitialize = new Map();
+        _componentsToInitialize = [];
       }
-      _componentsToInitialize[component] = params;
+      _componentsToInitialize.add(component);
       return component;
     }
   }
@@ -204,8 +208,8 @@ class GameObject implements Serializable {
    */
   void _initializeComponents() {
     if(_componentsToInitialize != null){
-      for(var component in _componentsToInitialize.keys) {
-        var params = _componentsToInitialize[component];
+      for(var component in _componentsToInitialize) {
+        var params = component._initData;
         if (params != null) {
           component._initData = new PropertyList.from(params);
           component.init(params);

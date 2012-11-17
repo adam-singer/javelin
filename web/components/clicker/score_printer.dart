@@ -2,7 +2,8 @@ part of javelin_click_demo;
 
 class ScorePrinter extends ScriptComponent {
 
-  int _score = 0;
+  int get score => data.score;
+  void set score(int value) { data.score = value; }
 
   ScorePrinter() : super('ScorePrinter');
 
@@ -10,12 +11,12 @@ class ScorePrinter extends ScriptComponent {
     return new ScorePrinter();
   }
 
-  void init([List params]) {
+  void init([PropertyList params]) {
     events.on('enemyDestroyed').add(onEnemyDestroyed);
   }
 
   void onEnemyDestroyed([List params]) {
-    _score += 10;
-    print(_score);
+    score += 10;
+    print(score);
   }
 }

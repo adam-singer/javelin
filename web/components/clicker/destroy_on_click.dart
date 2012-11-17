@@ -8,7 +8,7 @@ class DestroyOnClick extends ScriptComponent {
     return new DestroyOnClick();
   }
 
-  void init([List params]) {
+  void init([PropertyList params]) {
     requireComponent('MouseEvents');
     events.on('click').add(destroy);
   }

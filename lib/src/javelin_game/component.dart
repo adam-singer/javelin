@@ -45,7 +45,7 @@ class Component implements Serializable {
   Component() {
   }
 
-  void init([List params]) {
+  void init([PropertyList params]) {
   }
 
   void update(num timeDelta) {

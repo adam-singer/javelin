@@ -17,25 +17,18 @@ class Clicker extends Scene {
   // machine here, with functions like switchToScene, etc.)
   Clicker() : super(256) {
 
-    // Add 100 enemies to the scene. Enemy extends GameObject.
+    // Create a prefab.
+    var enemy= new GameObject();
+    enemy.attachComponent('MouseEvents');
+    dynamic enemyMesh; // TODO(demo): Get a mesh from spectre.
+    //attachComponent('RenderableMesh', [enemyMesh]);
+    enemy.attachComponent('EvadeMouse');
+    enemy.attachComponent('DestroyOnClick');
+    Prefab enemyPrefab = new Prefab.fromGameObject(enemy);
+
+    // Add enemies to the scene by instantiating the prefab.
     for(var i = 0 ; i < 10 ; i++) {
-      // root is the root of the scene graph.
-      // The constructor of Enemy will add the components it needs.
-      var enemy= new GameObject();
-      enemy.attachComponent('MouseEvents');
-
-      // RenderableMesh is another Javelin Component to display meshes.
-      // I don't know how to create a mesh in Spectre.
-      dynamic enemyMesh; // TODO(demo): Get a mesh from spectre.
-      //attachComponent('RenderableMesh', [enemyMesh]);
-
-      // Custom components (ScriptComponents):
-
-      // 20 (the speed) will be passed as parameter to the init
-      // function of EvadeMouse.
-      enemy.attachComponent('EvadeMouse', [20]);
-      enemy.attachComponent('DestroyOnClick');
-      root.addChild(enemy);
+      root.addChild(enemyPrefab.instantiate());
     }
 
     // Also add a vanilla GameObject and manually add a component to it:
@@ -81,5 +74,5 @@ void main() {
 
   Clicker clickerScene = new Clicker();
   print('initialized clicker');
-  //clickerScene.getGameObjectWithId('scoreManager');
+  print(clickerScene.root.toJson());
 }

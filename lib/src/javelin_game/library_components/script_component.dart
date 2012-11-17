@@ -11,7 +11,7 @@ class ScriptComponent extends Component {
     _type = type;
   }
 
-  void init([List params]) {
+  void init([PropertyList params]) {
   }
 
   void update(num timeDelta) {
