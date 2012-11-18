@@ -40,15 +40,15 @@ class JavelinBaseDemo {
   num _accumTime;
   num _lastYaw;
   num _lastPitch;
-  int _viewPort;
-  int _blendState;
-  int _blendState1;
-  int _depthState;
-  int _depthState1;
-  int _depthState2;
-  int _rasterizerState;
-  int _rasterizerState1;
-  int _rasterizerState2;
+  Viewport _viewPort;
+  BlendState _blendState;
+  BlendState _blendState1;
+  DepthState _depthState;
+  DepthState _depthState1;
+  DepthState _depthState2;
+  RasterizerState _rasterizerState;
+  RasterizerState _rasterizerState1;
+  RasterizerState _rasterizerState2;
   Element _element;
   GraphicsDevice _device;
   GraphicsContext _immediateContext;
@@ -120,7 +120,7 @@ class JavelinBaseDemo {
   void resize(num elementWidth, num elementHeight) {
     this.viewportWidth = elementWidth;
     this.viewportHeight = elementHeight;
-    Viewport vp = _device.getDeviceChild(_viewPort);
+    Viewport vp = _viewPort;
     if (vp == null) {
       return;
     }

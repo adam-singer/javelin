@@ -43,8 +43,6 @@ part 'demo_hfluid.dart';
 part 'demo_skybox.dart';
 part 'demo_cloth.dart';
 part 'demo_particles.dart';
-part 'demo_normal_map.dart';
-part 'demo_projector.dart';
 
 class JavelinDemoDescription {
   String name;
@@ -180,7 +178,7 @@ class JavelinDemoLaunch {
     }
     var tableSortedByType = new Map<String, List<String>>();
     _demo.device.children.forEach((name, handle) {
-      String type = _demo.device.getHandleType(handle);
+      String type = '';
       var list = tableSortedByType[type];
       if (list == null) {
         list = tableSortedByType[type] = new List<String>();
@@ -246,16 +244,9 @@ class JavelinDemoLaunch {
     resourceManager = new ResourceManager();
     var baseUrl = "${window.location.href.substring(0, window.location.href.length - "index.html".length)}data/";
     resourceManager.setBaseURL(baseUrl);
-    Future<int> debugPackLoaded = null;
-    {
-      int debugPackResourceHandle = resourceManager.registerResource('/packs/debug.pack');
-      debugPackLoaded = resourceManager.loadResource(debugPackResourceHandle);
-    }
     Completer<bool> inited = new Completer<bool>();
-    debugPackLoaded.then((resourceList) {
-      debugDrawManager.init(device);
-      inited.complete(true);
-    });
+    debugDrawManager.init(device);
+    inited.complete(true);
     return inited.future;
   }
   void run() {

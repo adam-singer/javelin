@@ -2,7 +2,6 @@ library javelin_scene;
 import 'dart:html';
 import 'dart:math' as Math;
 import 'package:vector_math/vector_math_browser.dart';
-import 'package:handle_system/handle_system.dart';
 import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';
 import 'skybox.dart';

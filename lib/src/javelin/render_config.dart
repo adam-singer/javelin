@@ -6,7 +6,7 @@ class RenderResource {
   int width;
   int height;
   String format;
-  int handle;
+  DeviceChild handle;
   RenderResource(this.name, this.type, this.width, this.height, this.format, this.handle);
 }
 
@@ -14,7 +14,7 @@ class RenderLayer {
   String name;
   String sort;
   String type;
-  int handle;
+  RenderTarget handle;
   RenderLayer(this.name, this.type, this.sort, this.handle);
 }
 
@@ -55,7 +55,7 @@ class RenderConfig {
       int width = bufferDesc['width'];
       int height = bufferDesc['height'];
       String format = bufferDesc['format'];
-      int handle = 0;
+      DeviceChild handle;
       if (type == 'depth') {
         handle = _device.createRenderBuffer(name, {
            'width': width,
@@ -86,13 +86,13 @@ class RenderConfig {
       if (color == "system" && depth == "system") {
         // Layer only depends on system, 0 handle
         spectreLog.Info('Created system render layer $name');
-        _layers[name] = new RenderLayer(name, type, sort, 0);
+        _layers[name] = new RenderLayer(name, type, sort, null);
       } else {
         if (color == "system" || depth == "system") {
           spectreLog.Error('Cannot create a layer that uses some system and some non-system buffers');
         } else {
-          int colorHandle = 0;
-          int depthHandle = 0;
+          DeviceChild colorHandle;
+          DeviceChild depthHandle;
           if (color != null) {
             RenderResource cb = _buffers[color];
             colorHandle = cb.handle;
@@ -101,7 +101,7 @@ class RenderConfig {
             RenderResource db = _buffers[depth];
             depthHandle = db.handle;
           }
-          int renderTargetHandle = 0;
+          DeviceChild renderTargetHandle;
           renderTargetHandle = _device.createRenderTarget(name, {
             'color0': colorHandle,
             'depth': depthHandle
@@ -117,12 +117,12 @@ class RenderConfig {
     });
   }
 
-  int getBufferHandle(String bufferName) {
+  DeviceChild getBuffer(String bufferName) {
     RenderResource resource = _buffers[bufferName];
     return resource.handle;
   }
 
-  int getLayerHandle(String layerName) {
+  RenderTarget getLayer(String layerName) {
     RenderLayer layer = _layers[layerName];
     return layer.handle;
   }

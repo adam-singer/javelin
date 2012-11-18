@@ -30,7 +30,7 @@ class JavelinSkyboxDemo extends JavelinBaseDemo {
     _blendTDirection = 0.05;
   }
 
-  String get demoDescription() => 'Sky Box';
+  String get demoDescription => 'Sky Box';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();

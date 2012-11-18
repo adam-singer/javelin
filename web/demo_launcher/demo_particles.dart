@@ -21,18 +21,18 @@
 */
 
 class JavelinParticlesDemo extends JavelinBaseDemo {
-  int _particlesVBOHandle;
-  int _particlesVSResourceHandle;
-  int _particlesFSResourceHandle;
-  int _particlesVSHandle;
-  int _particlesFSHandle;
-  int _particlesInputLayoutHandle;
-  int _particlesShaderProgramHandle;
-  int _particlePointSpriteResourceHandle;
-  int _particlePointSpriteHandle;
-  int _particlePointSpriteSamplerHandle;
-  int _particleDepthStateHandle;
-  int _particleBlendStateHandle;
+  VertexBuffer _particlesVBOHandle;
+  ShaderResource _particlesVSResourceHandle;
+  ShaderResource _particlesFSResourceHandle;
+  VertexShader _particlesVSHandle;
+  FragmentShader _particlesFSHandle;
+  InputLayout _particlesInputLayoutHandle;
+  ShaderProgram _particlesShaderProgramHandle;
+  ImageResource _particlePointSpriteResourceHandle;
+  Texture2D _particlePointSpriteHandle;
+  SamplerState _particlePointSpriteSamplerHandle;
+  DepthState _particleDepthStateHandle;
+  BlendState _particleBlendStateHandle;
 
   Float32Array _particlesVertexData;
 
@@ -69,7 +69,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     }
   }
 
-  String get demoDescription() => 'Particles';
+  String get demoDescription => 'Particles';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
@@ -124,7 +124,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   void drawParticles() {
     device.context.setInputLayout(_particlesInputLayoutHandle);
     device.context.setVertexBuffers(0, [_particlesVBOHandle]);
-    device.context.setIndexBuffer(0);
+    device.context.setIndexBuffer(null);
     device.context.setDepthState(_particleDepthStateHandle);
     device.context.setBlendState(_particleBlendStateHandle);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyPoints);

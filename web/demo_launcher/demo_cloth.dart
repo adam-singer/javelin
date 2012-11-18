@@ -53,20 +53,20 @@ class JavelinFlyingSphere {
 }
 
 class JavelinClothDemo extends JavelinBaseDemo {
-  int _particlesVBOHandle;
-  int _particleIBHandle;
-  int _particlesVSResourceHandle;
-  int _particlesFSResourceHandle;
-  int _particlesVSHandle;
-  int _particlesFSHandle;
-  int _particlesInputLayoutHandle;
-  int _particlesShaderProgramHandle;
-  int _particlePointSpriteResourceHandle;
-  int _particlePointSpriteHandle;
-  int _particlePointSpriteSamplerHandle;
-  int _particleDepthStateHandle;
-  int _particleBlendStateHandle;
-  int _particleRasterizerStateHandle;
+  VertexBuffer _particlesVBOHandle;
+  IndexBuffer _particleIBHandle;
+  ShaderResource _particlesVSResourceHandle;
+  ShaderResource _particlesFSResourceHandle;
+  VertexShader _particlesVSHandle;
+  FragmentShader _particlesFSHandle;
+  InputLayout _particlesInputLayoutHandle;
+  ShaderProgram _particlesShaderProgramHandle;
+  ImageResource _particlePointSpriteResourceHandle;
+  Texture2D _particlePointSpriteHandle;
+  SamplerState _particlePointSpriteSamplerHandle;
+  DepthState _particleDepthStateHandle;
+  BlendState _particleBlendStateHandle;
+  RasterizerState _particleRasterizerStateHandle;
 
   JavelinFlyingSphere _sphere;
 
