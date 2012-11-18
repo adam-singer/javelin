@@ -139,13 +139,15 @@ void main() {
       scene.root.addChild(go);
       var child = new GameObject('child');
       go.addChild(child);
-      var c = child.attachComponent('MockComponent');
+      var c1 = child.attachComponent('MockComponent');
+      var c2 = child.attachComponent('MockComponent');
       scene.destroyGameObject(child);
 
       expect(child.scene, isNull);
       expect(child.parent, isNull);
       expect(go.children, isEmpty);
-      expect(c.owner, isNull);
+      expect(c1.owner, isNull);
+      expect(c2.owner, isNull);
     });
 
     test('Attach component', () {
