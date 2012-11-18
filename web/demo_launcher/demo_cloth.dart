@@ -20,6 +20,7 @@
 
 */
 
+part of javelin_demo_launcher;
 class JavelinFlyingSphere {
   final num radius;
   final DebugDrawManager debugDrawManager;

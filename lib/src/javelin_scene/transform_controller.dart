@@ -2,7 +2,7 @@ part of javelin_scene;
 
 class TransformController {
   final TransformGraph graph;
-  final int handle;
+  final TransformGraphNode handle;
   Map transform;
   Map properties;
   num _t;

@@ -20,6 +20,8 @@
 
 */
 
+library javelin_demo_launcher;
+
 import 'dart:html';
 import 'dart:math' as Math;
 import 'package:vector_math/vector_math_browser.dart';
@@ -43,6 +45,7 @@ part 'demo_hfluid.dart';
 part 'demo_skybox.dart';
 part 'demo_cloth.dart';
 part 'demo_particles.dart';
+part 'demo_projector.dart';
 
 class JavelinDemoDescription {
   String name;

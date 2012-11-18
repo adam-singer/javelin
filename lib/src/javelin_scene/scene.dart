@@ -4,9 +4,9 @@ class Scene {
   GraphicsDevice device;
   ResourceManager resourceManager;
   Skybox skybox;
-  int skyboxVertexShader;
-  int skyboxFragmentShader;
-  int skyboxShaderProgram;
+  VertexShader skyboxVertexShader;
+  FragmentShader skyboxFragmentShader;
+  ShaderProgram skyboxShaderProgram;
   TransformGraph transformGraph;
   Map<String, Mesh> meshes;
   Map<String, Material> materials;
@@ -16,8 +16,7 @@ class Scene {
   num _blendTDirection;
 
   Scene(this.device, this.resourceManager) {
-    transformGraph = new TransformGraph(1024);
-    transformGraph.updateWorldMatrices();
+    transformGraph = new TransformGraph();
     meshes = new Map<String, Mesh>();
     materials = new Map<String, Material>();
     materialInstances = new Map<String, MaterialInstance>();

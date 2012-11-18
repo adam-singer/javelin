@@ -20,25 +20,43 @@
 
 */
 part of javelin_demo_launcher;
-class JavelinEmptyDemo extends JavelinBaseDemo {
-  JavelinEmptyDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+class JavelinProjector extends JavelinBaseDemo {
+  Loader _loader;
+  Scene _scene;
+
+  JavelinProjector(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
+    _scene = new Scene(device, resourceManager);
+    _loader = new Loader(_scene, device, resourceManager);
   }
 
-  String get demoDescription => 'Empty';
+  String get demoDescription => 'Projector';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
-    return base;
+    return base.chain((r) {
+      return _loader.loadFromUrl('/scenes/test.scene');
+    });
   }
 
   Future<JavelinDemoStatus> shutdown() {
     Future<JavelinDemoStatus> base = super.shutdown();
+    _scene.shutdown();
+    _loader.shutdown();
+    _loader = null;
+    _scene = null;
     return base;
   }
 
   void update(num time, num dt) {
     super.update(time, dt);
-
+    _scene.update(time, dt);
+    _scene.render(camera, {
+      'projectionTransform': projectionTransform,
+      'viewTransform': viewTransform,
+      'projectionViewTransform': projectionViewTransform,
+      'normalTransform': normalTransform
+    });
+    drawHolodeck(4);
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
   }

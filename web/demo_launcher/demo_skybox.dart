@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinSkyboxDemo extends JavelinBaseDemo {
   Skybox _skybox;
   num _blendT;

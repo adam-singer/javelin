@@ -19,7 +19,6 @@ class Scene {
 
   Scene(int maxGameObjects) {
   	// TODO: remove me once we have proper support for multiple scenes.
-  	_transformGraph = new TransformGraph(maxGameObjects);
   	_idMap = new Map<String, GameObject>();
   	_root = new GameObject('root');
   	_registerGameObject(root, null);

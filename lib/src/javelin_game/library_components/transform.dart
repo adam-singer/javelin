@@ -2,11 +2,15 @@ part of javelin_game;
 
 /// Wrapper around a Specre transform.
 class Transform extends Component {
-  TransformGraph graph;
-  int node;
+  mat4 _localTransform;
+  mat4 _worldTransform;
+  bool _overrideParentTransform;
 
   Transform() {
     _type = 'Transform';
+    _localTransform = new mat4.identity();
+    _worldTransform = new mat4.identity();
+    _overrideParentTransform = false;
   }
 
   static Transform componentConstructor() {
@@ -16,31 +20,34 @@ class Transform extends Component {
   /** Translates this transform by [delta]
    */
   void translate(vec3 delta) {
-    graph.refLocalMatrix(node).translate(delta);
+    _localTransform.translate(delta);
   }
 
   /**
    * Change the translation
    */
   set position(vec3 x) {
-    graph.refLocalMatrix(node).setTranslation(x);
+    _localTransform.setTranslation(x);
   }
 
   /**
    * Get the translation
    */
   vec3 get position {
-    //TODO(sethilgard): Do we want world position?
-    // No. We should have local positions and add a utility method to
-    // calculate the global position. Same applies to rotation an scale.
-    graph.refLocalMatrix(node).col3.xyz;
+    return _localTransform.col3.xyz;
   }
 
-  /**
-   * Returns a reference to the Float32Array of the final
-   * world space transformation.
-   */
-  Float32Array get wolrdTransformUniform {
-    graph.refWorldMatrixArray(node);
+  //TODO(johnmccutchan): Add support for accessing world matrix
+  void copyWorldTransformUniform(Float32Array buff, [int offset=0]) {
+    _worldTransform.copyIntoArray(buff, offset);
+  }
+
+  void updateWorldTransform(mat4 parent) {
+    if (_overrideParentTransform) {
+      // Local transform is the world transform
+      _worldTransform.copyFrom(_localTransform);
+    } else {
+      _worldTransform = parent * _localTransform;
+    }
   }
 }

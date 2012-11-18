@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinParticlesDemo extends JavelinBaseDemo {
   VertexBuffer _particlesVBOHandle;
   ShaderResource _particlesVSResourceHandle;

@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinSpinningCube extends JavelinBaseDemo {
   MeshResource cubeMeshResource;
   VertexBuffer cubeVertexBuffer;
@@ -43,7 +43,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   List _frameProgram;
   List _shutdownProgram;
   TransformGraph _transformGraph;
-  List<int> _transformNodes;
+  List<TransformGraphNode> _transformNodes;
   ConfigUI _configUI;
   String get demoDescription => 'Spinning Mesh';
 
@@ -51,8 +51,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     cameraTransform = new Float32Array(16);
     objectTransform = new Float32Array(16);
     _angle = 0.0;
-    _transformGraph = new TransformGraph(16);
-    _transformNodes = new List<int>();
+    _transformGraph = new TransformGraph();
+    _transformNodes = new List<TransformGraphNode>();
     _transformNodes.add(_transformGraph.createNode());
     _transformNodes.add(_transformGraph.createNode());
     _transformNodes.add(_transformGraph.createNode());

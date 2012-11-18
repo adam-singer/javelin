@@ -32,7 +32,7 @@ class RenderConfig {
   void cleanup() {
     _layers.forEach((k,v) {
       spectreLog.Info('Destroying render layer $k');
-      if (v.handle != 0) {
+      if (v.handle != null) {
         _device.deleteDeviceChild(v.handle);
       }
     });
@@ -69,7 +69,7 @@ class RenderConfig {
             'format': format,
         });
       }
-      if (handle == 0) {
+      if (handle == null) {
         spectreLog.Error('Could not create render buffer $bufferDesc');
       } else {
         spectreLog.Info('Creating $type buffer $name');

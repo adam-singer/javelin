@@ -2,23 +2,23 @@ part of javelin_scene;
 
 class MaterialInstance extends SceneChild {
   Material material;
-  int blendStateHandle;
-  int depthStateHandle;
-  int rasterizerStateHandle;
+  BlendState blendStateHandle;
+  DepthState depthStateHandle;
+  RasterizerState rasterizerStateHandle;
   Map uniforms;
 
-  List<int> textures;
-  List<int> samplers;
+  List<Texture> textures;
+  List<SamplerState> samplers;
   Map<String, String> textureNameToResourceName;
-  Map<String, int> textureNameToHandle;
-  Map<String, int> samplerNameToHandle;
+  Map<String, Texture> textureNameToHandle;
+  Map<String, SamplerState> samplerNameToHandle;
 
   MaterialInstance(String name, this.material, Scene scene) : super(name, scene) {
     blendStateHandle = scene.device.createBlendState('$name.bs', {});
     depthStateHandle = scene.device.createDepthState('$name.ds', {});
     rasterizerStateHandle = scene.device.createRasterizerState('$name.rs', {});
-    textureNameToHandle = new Map<String, int>();
-    samplerNameToHandle = new Map<String, int>();
+    textureNameToHandle = new Map<String, Texture>();
+    samplerNameToHandle = new Map<String, SamplerState>();
     textureNameToResourceName = new Map<String, String>();
   }
 
@@ -90,7 +90,7 @@ class MaterialInstance extends SceneChild {
     updateTextureTable(material.entity);
     updateTextureTable(entity);
     textures = Material.buildTextureHandleList(material.textureNameToUnit, textureNameToHandle);
-    samplers = Material.buildTextureHandleList(material.textureNameToUnit, samplerNameToHandle);
+    samplers = Material.buildSamplerStateHandleList(material.textureNameToUnit, samplerNameToHandle);
   }
 
   void preDraw() {
