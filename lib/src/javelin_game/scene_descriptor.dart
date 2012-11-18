@@ -98,16 +98,4 @@ class SceneDescriptor {
     var component = go.attachComponent(type, initData);
     component.data = data;
   }
-
-  static ClassMirror findClass(String qualifiedName) {
-    for (var lib in currentMirrorSystem().libraries.values) {
-      for (var clazz in lib.classes.values) {
-        if (clazz.qualifiedName == qualifiedName) {
-          return clazz;
-        }
-      }
-    }
-  }
-
-
 }

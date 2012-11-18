@@ -104,4 +104,8 @@ class PropertyList extends PropertyContainer implements List<dynamic> {
       _objectData[i] = _validate(_objectData[i]);
     }
   }
+
+  String toString() {
+    return 'PropertyMap:${_objectData.toString()}';
+  }
 }

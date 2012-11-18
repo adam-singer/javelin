@@ -113,4 +113,8 @@ class PropertyMap extends PropertyContainer implements Map<String, dynamic> {
       _objectData[key] = _validate(_objectData[key]);
     }
   }
+
+  String toString() {
+    return 'PropertyMap:${_objectData.toString()}';
+  }
 }
