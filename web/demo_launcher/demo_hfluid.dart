@@ -19,19 +19,19 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinHFluidDemo extends JavelinBaseDemo {
   HeightFieldFluid _fluid;
-  int _fluidVBOHandle;
+  VertexBuffer _fluidVBOHandle;
   int _centerColumnIndex;
-  int _fluidVSResourceHandle;
-  int _fluidFSResourceHandle;
-  int _fluidVSHandle;
-  int _fluidFSHandle;
-  int _fluidInputLayoutHandle;
-  int _fluidShaderProgramHandle;
-  int rs;
-  int ds;
+  ShaderResource _fluidVSResourceHandle;
+  ShaderResource _fluidFSResourceHandle;
+  VertexShader _fluidVSHandle;
+  FragmentShader _fluidFSHandle;
+  InputLayout _fluidInputLayoutHandle;
+  ShaderProgram _fluidShaderProgramHandle;
+  RasterizerState rs;
+  DepthState ds;
   Float32Array _fluidVertexData;
   int _fluidNumVertices;
   Float32Array _lightDirection;
@@ -78,8 +78,8 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     _fluidVSHandle = device.createVertexShader('Fluid Vertex Shader',{});
     _fluidFSHandle = device.createFragmentShader('Fluid Fragment Shader', {});
 
-    rs = device.getDeviceChildHandle('RasterizerState.CullDisabled');
-    ds = device.getDeviceChildHandle('DepthState.TestWrite');
+    rs = device.getDeviceChild('RasterizerState.CullDisabled');
+    ds = device.getDeviceChild('DepthState.TestWrite');
 
     List loadedResources = [];
     base.then((value) {
@@ -103,7 +103,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     return complete.future;
   }
 
-  String get demoDescription() => 'Height Field Fluid';
+  String get demoDescription => 'Height Field Fluid';
 
   Element makeDemoUI() {
     return _configUI.root;
@@ -120,7 +120,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   void _drawFluid() {
     device.context.setInputLayout(_fluidInputLayoutHandle);
     device.context.setVertexBuffers(0, [_fluidVBOHandle]);
-    device.context.setIndexBuffer(0);
+    device.context.setIndexBuffer(null);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
     device.context.setShaderProgram(_fluidShaderProgramHandle);
     device.context.setDepthState(ds);

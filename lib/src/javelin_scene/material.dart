@@ -1,16 +1,18 @@
+part of javelin_scene;
+
 class Material extends SceneChild {
-  int vertexShaderHandle;
-  int fragmentShaderHandle;
-  int shaderProgramHandle;
+  VertexShader vertexShaderHandle;
+  FragmentShader fragmentShaderHandle;
+  ShaderProgram shaderProgramHandle;
   Map<String, int> textureNameToUnit;
   Map entity;
 
   List<Map> meshinputs;
   Map uniformset;
   Material(String name, Scene scene) : super(name, scene) {
-    vertexShaderHandle = 0;
-    fragmentShaderHandle = 0;
-    shaderProgramHandle = 0;
+    vertexShaderHandle = null;
+    fragmentShaderHandle = null;
+    shaderProgramHandle = null;
     textureNameToUnit = new Map<String, int>();
   }
 
@@ -23,24 +25,40 @@ class Material extends SceneChild {
   void processUniforms() {
     textureNameToUnit.clear();
     int textureUnitIndex = 0;
-    scene.device.getDeviceChild(shaderProgramHandle).forEachUniforms((String name, int index, String type, int size, location) {
+    shaderProgramHandle.forEachUniforms((String name, int index, String type, int size, location) {
       if (type == 'sampler2D') {
         textureNameToUnit[name] = textureUnitIndex++;
       }
     });
   }
 
-  static List<int> buildTextureHandleList(Map nameToUnit, Map nameToHandle) {
+  static List<SamplerState> buildSamplerStateHandleList(Map nameToUnit, Map nameToHandle) {
     if (nameToUnit == null) {
       print('null nameToUnit');
     }
-    List<int> out = new List<int>(nameToUnit.length);
+    List<SamplerState> out = new List<SamplerState>(nameToUnit.length);
     nameToHandle.forEach((k, v) {
       int slot = nameToUnit[k];
       if (slot == null) {
-        print('slot null');
+        return;
       }
-      int handle = v;
+      SamplerState handle = v;
+      out[slot] = handle;
+    });
+    return out;
+  }
+
+  static List<DeviceChild> buildTextureHandleList(Map nameToUnit, Map nameToHandle) {
+    if (nameToUnit == null) {
+      print('null nameToUnit');
+    }
+    List<Texture> out = new List<Texture>(nameToUnit.length);
+    nameToHandle.forEach((k, v) {
+      int slot = nameToUnit[k];
+      if (slot == null) {
+        return;
+      }
+      Texture handle = v;
       out[slot] = handle;
     });
     return out;
@@ -57,8 +75,8 @@ class Material extends SceneChild {
       }
       // New or changed texture resource
       textureNameToResourceName[textureName] = resourceName;
-      int resourceTextureHandle = scene.device.getDeviceChildHandle(resourceName);
-      if (resourceTextureHandle != Handle.BadHandle) {
+      Texture2D resourceTextureHandle = scene.device.getDeviceChild(resourceName);
+      if (resourceTextureHandle != null) {
         // Texture already exists, update table
         textureNameToHandle[textureName] = resourceTextureHandle;
         return;
@@ -71,7 +89,7 @@ class Material extends SceneChild {
       return;
     }
     textures.forEach((textureName, _) {
-      int handle = samplerNameToHandle[textureName];
+      SamplerState handle = samplerNameToHandle[textureName];
       if (handle == null) {
         handle = scene.device.createSamplerState('$prefix.$textureName.sampler', {});
         samplerNameToHandle[textureName] = handle;
@@ -88,38 +106,37 @@ class Material extends SceneChild {
     uniformset = o['uniformset'];
     meshinputs = o['meshinputs'];
     String shaderName = o['shader'];
-    int handle = scene.resourceManager.getResourceHandle(shaderName);
-    ShaderProgramResource spr = scene.resourceManager.getResource(handle);
+    ShaderProgramResource spr = scene.resourceManager.getResource(shaderName);
     if (spr == null) {
       spectreLog.Error('Could not load $name');
       return;
     }
-    if (vertexShaderHandle == 0) {
+    if (vertexShaderHandle == null) {
       vertexShaderHandle = scene.device.createVertexShader('$shaderName.vs', {});
     }
-    if (fragmentShaderHandle == 0) {
+    if (fragmentShaderHandle == null) {
       fragmentShaderHandle = scene.device.createFragmentShader('$shaderName.fs', {});
     }
-    if (shaderProgramHandle == 0) {
+    if (shaderProgramHandle == null) {
       shaderProgramHandle = scene.device.createShaderProgram('$shaderName.sp', {});
     }
 
     bool relink = false;
-    VertexShader vs = scene.device.getDeviceChild(vertexShaderHandle);
+    VertexShader vs = vertexShaderHandle;
     if (vs.source != spr.vertexShaderSource) {
       vs.source = spr.vertexShaderSource;
       vs.compile();
       relink = true;
     }
 
-    FragmentShader fs = scene.device.getDeviceChild(fragmentShaderHandle);
+    FragmentShader fs = fragmentShaderHandle;
     if (fs.source != spr.fragmentShaderSource) {
       fs.source = spr.fragmentShaderSource;
       fs.compile();
       relink = true;
     }
 
-    ShaderProgram sp = scene.device.getDeviceChild(shaderProgramHandle);
+    ShaderProgram sp = shaderProgramHandle;
     if (!sp.linked || relink) {
       scene.device.configureDeviceChild(shaderProgramHandle, {
         'VertexProgram': vertexShaderHandle,

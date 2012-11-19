@@ -1,36 +1,37 @@
+part of javelin_scene;
 
 class Mesh extends SceneChild {
-  int indexedMesh;
+  IndexedMesh indexedMesh;
   Map attributes;
   Mesh(String name, Scene scene) : super(name, scene) {
-    indexedMesh = 0;
+    indexedMesh = null;
   }
 
   void delete() {
-    if (indexedMesh != 0) {
+    if (indexedMesh != null) {
       scene.device.deleteDeviceChild(indexedMesh);
     }
   }
 
   void load(Map o) {
-    int resourceHandle = scene.resourceManager.getResourceHandle(name);
-    MeshResource mr = scene.resourceManager.getResource(resourceHandle);
+    print('Mesh.load $name');
+    MeshResource mr = scene.resourceManager.getResource(name);
     if (mr == null) {
       spectreLog.Error('Could not find $name');
       return;
     }
-    if (indexedMesh == 0) {
+    if (indexedMesh == null) {
       indexedMesh = scene.device.createIndexedMesh(name, {
         'UpdateFromMeshResource': {
           'resourceManager': scene.resourceManager,
-          'meshResourceHandle': resourceHandle
+          'meshResourceHandle': mr
         }
       });
     } else {
       scene.device.configureDeviceChild(indexedMesh, {
         'UpdateFromMeshResource': {
           'resourceManager': scene.resourceManager,
-          'meshResourceHandle': resourceHandle
+          'meshResourceHandle': mr
         }
       });
     }
@@ -38,14 +39,14 @@ class Mesh extends SceneChild {
   }
 
   void preDraw() {
-    IndexedMesh im = scene.device.getDeviceChild(indexedMesh);
+    IndexedMesh im = indexedMesh;
     scene.device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
-    scene.device.context.setIndexBuffer(im.indexArrayHandle);
-    scene.device.context.setVertexBuffers(0, [im.vertexArrayHandle]);
+    scene.device.context.setIndexBuffer(im.indexArray);
+    scene.device.context.setVertexBuffers(0, [im.vertexArray]);
   }
 
   void draw() {
-    IndexedMesh im = scene.device.getDeviceChild(indexedMesh);
+    IndexedMesh im = indexedMesh;
     scene.device.context.drawIndexed(im.numIndices, im.indexOffset);
   }
 }

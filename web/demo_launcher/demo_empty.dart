@@ -19,12 +19,12 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinEmptyDemo extends JavelinBaseDemo {
   JavelinEmptyDemo(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
   }
 
-  String get demoDescription() => 'Empty';
+  String get demoDescription => 'Empty';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();

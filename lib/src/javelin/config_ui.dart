@@ -1,3 +1,4 @@
+part of javelin;
 
 class ConfigEditorItem {
   final String name;

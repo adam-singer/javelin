@@ -1,3 +1,5 @@
+part of javelin;
+
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
@@ -38,15 +40,15 @@ class JavelinBaseDemo {
   num _accumTime;
   num _lastYaw;
   num _lastPitch;
-  int _viewPort;
-  int _blendState;
-  int _blendState1;
-  int _depthState;
-  int _depthState1;
-  int _depthState2;
-  int _rasterizerState;
-  int _rasterizerState1;
-  int _rasterizerState2;
+  Viewport _viewPort;
+  BlendState _blendState;
+  BlendState _blendState1;
+  DepthState _depthState;
+  DepthState _depthState1;
+  DepthState _depthState2;
+  RasterizerState _rasterizerState;
+  RasterizerState _rasterizerState1;
+  RasterizerState _rasterizerState2;
   Element _element;
   GraphicsDevice _device;
   GraphicsContext _immediateContext;
@@ -63,11 +65,11 @@ class JavelinBaseDemo {
   Float32Array projectionViewTransform;
   Float32Array normalTransform;
 
-  GraphicsDevice get device() => _device;
-  GraphicsContext get immediateContext() => _immediateContext;
-  DebugDrawManager get debugDrawManager() => _debugDrawManager;
-  ResourceManager get resourceManager() => _resourceManager;
-  RenderConfig get renderConfig() => _renderConfig;
+  GraphicsDevice get device => _device;
+  GraphicsContext get immediateContext => _immediateContext;
+  DebugDrawManager get debugDrawManager => _debugDrawManager;
+  ResourceManager get resourceManager => _resourceManager;
+  RenderConfig get renderConfig => _renderConfig;
 
   RenderConfig _renderConfig;
 
@@ -77,7 +79,7 @@ class JavelinBaseDemo {
   Camera _camera;
   MouseKeyboardCameraController _cameraController;
 
-  Camera get camera() => _camera;
+  Camera get camera => _camera;
 
   int viewportWidth;
   int viewportHeight;
@@ -118,7 +120,7 @@ class JavelinBaseDemo {
   void resize(num elementWidth, num elementHeight) {
     this.viewportWidth = elementWidth;
     this.viewportHeight = elementHeight;
-    Viewport vp = _device.getDeviceChild(_viewPort);
+    Viewport vp = _viewPort;
     if (vp == null) {
       return;
     }
@@ -127,7 +129,7 @@ class JavelinBaseDemo {
     print('Resized to $elementWidth $elementHeight');
   }
 
-  String get demoDescription() => 'Base Demo';
+  String get demoDescription => 'Base Demo';
   Element makeDemoUI() {
     return null;
   }
@@ -175,7 +177,7 @@ class JavelinBaseDemo {
     window.requestAnimationFrame(_animationFrame);
   }
 
-  bool get shouldQuit() => _quit;
+  bool get shouldQuit => _quit;
 
   void _animationFrame(num highResTime) {
     if (shouldQuit) {

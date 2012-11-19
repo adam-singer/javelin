@@ -1,4 +1,4 @@
-
+part of javelin_game;
 
 /**
  * Manages multiple component systems (for multiple types of components) for
@@ -51,7 +51,7 @@ class ComponentManager {
   	// TODO: Priority rules? E.g. physics go first?
     // Yes, but I'm not sure how best to express it.
     // Could be as simple as N levels which comonent systems are binned in.
-   	for (var system in _systems.getValues()) {
+   	for (var system in _systems.values) {
     	system.updateComponents(timeDelta);	//Have fun!
     }
   }

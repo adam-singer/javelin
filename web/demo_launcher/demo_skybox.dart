@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinSkyboxDemo extends JavelinBaseDemo {
   Skybox _skybox;
   num _blendT;
@@ -30,7 +30,7 @@ class JavelinSkyboxDemo extends JavelinBaseDemo {
     _blendTDirection = 0.05;
   }
 
-  String get demoDescription() => 'Sky Box';
+  String get demoDescription => 'Sky Box';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();

@@ -1,7 +1,8 @@
+part of javelin_scene;
 
 class TransformController {
   final TransformGraph graph;
-  final int handle;
+  final TransformGraphNode handle;
   Map transform;
   Map properties;
   num _t;
@@ -10,21 +11,21 @@ class TransformController {
     _t = 0.0;
     _direction = 1.0;
   }
-  
+
   void load(Map o) {
     transform = o;
     properties = o['controller'];
     _setup();
   }
-  
+
   void _setup() {
     if (properties == null) {
       return;
     }
     _t = 0.0;
   }
-  
-  void _updateDomain() {    
+
+  void _updateDomain() {
     bool hitMax = false;
     bool hitMin = false;
     if (properties['max'] != null) {
@@ -39,7 +40,7 @@ class TransformController {
         hitMin = true;
       }
     }
-    
+
     if (hitMin) {
       if (properties['reset']) {
         _t = 0.0;
@@ -48,14 +49,14 @@ class TransformController {
         _direction *= -1.0;
       }
     }
-    
+
     if (hitMax) {
       if (properties['flip']) {
         _direction *= -1.0;
       }
     }
   }
-  
+
   num _evaluate() {
     switch (properties['function']) {
       case 'sin':
@@ -65,7 +66,7 @@ class TransformController {
     }
     return 0.0;
   }
-  
+
   void _lerp(List<num> s, List<num> e, List<num> target, num x) {
     int len = s.length;
     for (int i = 0; i < len; i++) {
@@ -73,7 +74,7 @@ class TransformController {
       target[i] = s[i] + x * d;
     }
   }
-  
+
   void _apply(num f_of_t) {
     String target = properties['target'];
     mat4 T = graph.refLocalMatrix(handle);
@@ -111,7 +112,7 @@ class TransformController {
       T.scale(scale[0], scale[1], scale[2]);
     }
   }
-  
+
   void control(num dt) {
     if (properties == null) {
       return;

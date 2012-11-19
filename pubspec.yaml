@@ -14,5 +14,3 @@ dependencies:
     git: https://github.com/johnmccutchan/DartVectorMath.git
   spectre:
     git: https://github.com/johnmccutchan/spectre.git
-  handle_system:
-    git: https://github.com/johnmccutchan/handlesystem.git

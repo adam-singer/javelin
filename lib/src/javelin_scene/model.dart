@@ -1,15 +1,15 @@
+part of javelin_scene;
 
 class Model extends SceneChild {
   MaterialInstance _materialInstance;
   Mesh _mesh;
-  int _inputLayoutHandle;
-  int transformHandle;
+  InputLayout _inputLayoutHandle;
+  TransformGraphNode transformHandle;
   TransformController controller;
 
   Model(String name, Scene scene) : super(name, scene) {
-    _inputLayoutHandle = 0;
     transformHandle = scene.transformGraph.createNode();
-    print('Spawned $name with $transformHandle');
+    print('Spawned $name');
   }
 
   void delete() {
@@ -19,7 +19,7 @@ class Model extends SceneChild {
   void update(MaterialInstance materialInstance, Mesh mesh, List layout) {
     _materialInstance = materialInstance;
     _mesh = mesh;
-    if (_inputLayoutHandle == 0) {
+    if (_inputLayoutHandle == null) {
       _inputLayoutHandle = scene.device.createInputLayout('$name.il', {});
     }
     List<InputElementDescription> descriptions = new List<InputElementDescription>();

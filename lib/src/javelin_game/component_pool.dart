@@ -1,3 +1,5 @@
+part of javelin_game;
+
 typedef Component componentConstructor();
 
 /**

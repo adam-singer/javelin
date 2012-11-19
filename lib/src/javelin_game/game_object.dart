@@ -1,4 +1,13 @@
-class GameObject {
+part of javelin_game;
+
+/**
+ * A GameObject is an entity in the game world.
+ *
+ * Do NOT extend this class.
+ *
+ * A GameObject holds components attached to it that provide functionality.
+ */
+class GameObject implements Serializable {
   String _id;
   String get id => _id;
 
@@ -8,8 +17,14 @@ class GameObject {
   Set<GameObject> _children;
   Set<GameObject> get children => _children;
 
-  PropertyBag _properties;
-  PropertyBag get properties => _properties;
+  PropertyMap _data;
+  PropertyMap get data => _data;
+  set data (Map<String, dynamic> value) {
+    if(value is! PropertyMap) {
+      value = new PropertyMap.from(value);
+    }
+    _data = value;
+  }
 
   EventListenerMap _events;
   EventListenerMap get events => _events;
@@ -31,19 +46,18 @@ class GameObject {
 
   // Private properties
 
-  Set<Component> _components;
+  Set<Component> _componentSet;
 
-  Map<Component, List> _componentsToInitialize;
-
+  List<Component> _componentsToInitialize;
   Set<GameObject> _childrenToRegister;
 
   /// Contructor.
-  GameObject(this._scene, [String this._id]) {
+  GameObject([String this._id]) {
     _parent = null;
     _children = new Set<GameObject>();
     _childrenToRegister = new Set<GameObject>();
-    _properties = new PropertyBag();
-    _components = new Set();
+    _data = new PropertyMap();
+    _componentSet = new Set();
     _events = new EventListenerMap(this);
     //TODO(johnmccutchan): Initialize the transform
   }
@@ -53,7 +67,7 @@ class GameObject {
    * Interfaces and base clases may be used, unless exactType is true.
    */
   Component getComponent(String type, [bool exactType = false]) {
-    for(var component in _components) {
+    for(var component in _componentSet) {
       // TODO: Replace by an actual type check.
       if(component._type == type) {
         return component;
@@ -66,9 +80,9 @@ class GameObject {
    * Returns all the components of the specified type.
    * Interfaces and base clases may be used, unless exactType is true.
    */
-  List<Component> getComponents(String type, [bool exactType = false]) {
+   List<Component> getComponents(String type, [bool exactType = false]) {
     var list = [];
-    for(var component in _components) {
+    for(var component in _componentSet) {
       // TODO: Replace by an actual type check.
       if(component._type == type) {
         list.add(component);
@@ -77,6 +91,12 @@ class GameObject {
     return list;
   }
 
+   /**
+    * Returns a list of all the components attached to this game object.
+    */
+   List<Component> getAllComponents() {
+    return new List.from(_componentSet);
+  }
 
   /**
    * Attaches a component of the given type to this game object.
@@ -84,22 +104,33 @@ class GameObject {
    * sent as arguments to the component's init() function.
    */
   Component attachComponent(String type, [List params]) {
+    // If we werent provided with a PropertyList, make one.
+    if (params != null && params is! PropertyList) {
+      params = new PropertyList.from(params);
+    }
+
     var component = Game.componentManager.createComponent(type, this, params);
-    component.attach(this);
-    _components.add(component);
+    component._owner = this;
+    component._initData = params;
+    _componentSet.add(component);
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
     if(scene != null) {
-      component.init(params);
+      if (params != null) {
+        component.init(params);
+      }
+      else {
+        component.init();
+      }
       component.checkDependencies();
       return component;
     }
     else {
       if(_componentsToInitialize == null) {
-        _componentsToInitialize = new Map();
+        _componentsToInitialize = [];
       }
-      _componentsToInitialize[component] = params;
+      _componentsToInitialize.add(component);
       return component;
     }
   }
@@ -111,7 +142,15 @@ class GameObject {
    * be set to null because the Component is part of an object pool.
    * */
   void destroyComponent(Component component) {
+    if(!_componentSet.contains(component)) {
+      throw 'Trying to remove a component (${component.runtimeType}) from a '
+          'game object that does not own it.';
+    }
+
     component.free();
+    component._owner = null;
+    component.enabled = false;
+    _componentSet.remove(component);
     Game.componentManager.destroyComponent(component);
     checkDependencies();
   }
@@ -119,8 +158,9 @@ class GameObject {
   /**
    * Adds a new child to this game object.
    * Reparenting and scene registration are managed automatically.
+   * Returns the game object that was added (for chaining purpuses).
    */
-  void addChild(GameObject go) {
+  GameObject addChild(GameObject go) {
     if (go.scene != null) {
       // Make sure we are not adding game object from a different scene.
       assert(go.scene == scene);
@@ -128,12 +168,12 @@ class GameObject {
 
     // Already added.
     if (_children.contains(go) || _childrenToRegister.contains(go)) {
-      return;
+      return go;
     }
 
     if (scene == null ) {
       // We are not registred yet.
-      if (_childrenToRegister = null) {
+      if (_childrenToRegister == null) {
         _childrenToRegister = new Set();
       }
       if (!_childrenToRegister.contains(go)) {
@@ -148,6 +188,7 @@ class GameObject {
         scene._registerGameObject(go, this);
       }
     }
+    return go;
   }
 
   /**
@@ -155,7 +196,7 @@ class GameObject {
    * are satisfied.
    */
   bool checkDependencies() {
-    for(var component in _components) {
+    for(var component in _componentSet) {
       component.checkDependencies();
     }
   }
@@ -167,9 +208,15 @@ class GameObject {
    */
   void _initializeComponents() {
     if(_componentsToInitialize != null){
-      for(var component in _componentsToInitialize.getKeys()) {
-        var params = _componentsToInitialize[component];
-        component.init(params);
+      for(var component in _componentsToInitialize) {
+        var params = component._initData;
+        if (params != null) {
+          component._initData = new PropertyList.from(params);
+          component.init(params);
+        }
+        else {
+          component.init();
+        }
       }
     }
   }
@@ -178,9 +225,25 @@ class GameObject {
   void _destroyAllComponents() {
     // Destroy every component we have, be extra careful to not modify the
     // lists of components as we iterate them.
-    for (var component in new List.from(_components)) {
-      destroyComponent(component);
-      _componentsToInitialize = null;
+    while (_componentSet.length > 0) {
+      destroyComponent(_componentSet.iterator().next());
     }
+    _componentsToInitialize = null;
+  }
+
+  /**
+   * Serialize.
+   */
+  String toJson() {
+    return SceneDescriptor.serializeGameObject(this);
+  }
+
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+    throw 'Trying to deserialize a GameObject by calling fromJson() on it. '
+          'GameObjects are special. Use '
+          'SceneDescriptor.createGameObjectFromPrototype() instead.';
   }
 }

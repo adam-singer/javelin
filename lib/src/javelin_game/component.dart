@@ -1,5 +1,13 @@
+part of javelin_game;
 
-class Component {
+/**
+ * Base class for all javelin components.
+ *
+ * A component adds functuonality to game objects.
+ * Components are aggregated in game obejcts rather than extended, although
+ * component class hierarchies are useful as well.
+ */
+class Component implements Serializable {
 
   // We need this until dart fully supports runtimeType
   // TODO: Implement using runtimeType.toString()?
@@ -12,8 +20,16 @@ class Component {
   GameObject _owner;
   GameObject get owner => _owner;
 
-  //Expose this properties for easy access.
-  PropertyBag get properties => owner.properties;
+  PropertyMap _data = new PropertyMap();
+  PropertyMap get data => _data;
+  set data (Map<String, dynamic> value) {
+    if(value is! PropertyMap) {
+      value = new PropertyMap.from(value);
+    }
+    _data = value;
+  }
+
+
   EventListenerMap get events => owner.events;
   Transform get transform => owner.transform;
   Scene get scene => owner.scene;
@@ -21,19 +37,15 @@ class Component {
   // List of dependencies to be checked when this is initialized.
   Set<String> _componentDependencies = new Set<String>();
 
+  // List of arguments that were used to construct this object (parameters to
+  // the init() function. Stored so we can serialize them and reconstruct this
+  // object).
+  PropertyList _initData;
+
   Component() {
   }
 
-  //TODO(sethilgard): I (johnmccutchan) made this public. Is this correct?
-  void attach(GameObject owner) {
-    this._owner = owner;
-  }
-
-  void _destroy() {
-    owner = null;
-  }
-
-  void init([List params]) {
+  void init([PropertyList params]) {
   }
 
   void update(num timeDelta) {
@@ -57,12 +69,29 @@ class Component {
    * Checks that all the dependencies on other components are satisfied.
    */
   bool checkDependencies() {
-    for(var c in _componentDependencies) {
-      if(owner.getComponent(c) == null) {
-        assert(false);
+    for(var component in _componentDependencies) {
+      if(owner.getComponent(component) == null) {
+        throw 'Failed component dependency test. Component: ${type} requires'
+            'at least component of type ${component}';
         return false;
       }
     }
     return true;
+  }
+
+  /**
+   * Serialize.
+   */
+  String toJson() {
+    SceneDescriptor.serializeComponent(this);
+  }
+
+  /**
+   * Deserialize.
+   */
+  void fromJson(dynamic json) {
+    throw 'Trying to deserialize a Component by calling fromJson() on it. '
+    'Components are special. Use '
+    'SceneDescriptor.attachComponentFromPrototype() instead.';
   }
 }

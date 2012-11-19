@@ -1,3 +1,5 @@
+part of javelin_game;
+
 class ComponentSystem<T extends Component> {
   ComponentPool<T> _componentPool;
   List<T> _liveComponents;

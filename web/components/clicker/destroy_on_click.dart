@@ -1,3 +1,4 @@
+part of javelin_click_demo;
 
 class DestroyOnClick extends ScriptComponent {
 
@@ -7,7 +8,7 @@ class DestroyOnClick extends ScriptComponent {
     return new DestroyOnClick();
   }
 
-  void init([List params]) {
+  void init([PropertyList params]) {
     requireComponent('MouseEvents');
     events.on('click').add(destroy);
   }
@@ -15,7 +16,7 @@ class DestroyOnClick extends ScriptComponent {
   void destroy([List params]) {
 
     // Before we die, let's read a property set by EvadeMouse, just for fun:
-    var message = properties.get('secretMessage');
+    var message = owner.data.secretMessage;
     if(message != null)
       print(message);
 
@@ -27,7 +28,7 @@ class DestroyOnClick extends ScriptComponent {
     // Spawn an explosion object.
     // I am doing it all in place to demonstrate that is possible but
     // you may want to have an Explosion class instead.
-    GameObject explosion = new GameObject(owner.scene);
+    GameObject explosion = new GameObject();
 
     // Remember that owner is the game object that owns this component.
     explosion.transform.position = owner.transform.position.xyz; // clone

@@ -19,44 +19,40 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinSpinningCube extends JavelinBaseDemo {
-  int cubeMeshResource;
-  int cubeVertexBuffer;
-  int cubeIndexBuffer;
+  MeshResource cubeMeshResource;
+  VertexBuffer cubeVertexBuffer;
+  IndexBuffer cubeIndexBuffer;
   int cubeNumIndices;
-  int cubeVertexShaderResource;
-  int cubeVertexShader;
-  int cubeFragmentShaderResource;
-  int cubeFragmentShader;
-  int cubeTextureResource;
-  int cubeProgram;
-  int renderConfigResource;
-  int texture;
-  int sampler;
-  int rs;
-  int il;
-  int ds;
+  ShaderResource cubeVertexShaderResource;
+  VertexShader cubeVertexShader;
+  ShaderResource cubeFragmentShaderResource;
+  FragmentShader cubeFragmentShader;
+  ImageResource cubeTextureResource;
+  ShaderProgram cubeProgram;
+  RenderConfigResource renderConfigResource;
+  Texture2D texture;
+  SamplerState sampler;
+  RasterizerState rs;
+  InputLayout il;
+  DepthState ds;
   Float32Array cameraTransform;
   Float32Array objectTransform;
   num _angle;
   List _frameProgram;
   List _shutdownProgram;
   TransformGraph _transformGraph;
-  List<int> _transformNodes;
+  List<TransformGraphNode> _transformNodes;
   ConfigUI _configUI;
-  String get demoDescription() => 'Spinning Mesh';
+  String get demoDescription => 'Spinning Mesh';
 
   JavelinSpinningCube(Element element, GraphicsDevice device, ResourceManager resourceManager, DebugDrawManager debugDrawManager) : super(element, device, resourceManager, debugDrawManager) {
-    cubeMeshResource = 0;
-    cubeVertexShaderResource = 0;
-    cubeFragmentShaderResource = 0;
-    cubeTextureResource = 0;
     cameraTransform = new Float32Array(16);
     objectTransform = new Float32Array(16);
     _angle = 0.0;
-    _transformGraph = new TransformGraph(16);
-    _transformNodes = new List<int>();
+    _transformGraph = new TransformGraph();
+    _transformNodes = new List<TransformGraphNode>();
     _transformNodes.add(_transformGraph.createNode());
     _transformNodes.add(_transformGraph.createNode());
     _transformNodes.add(_transformGraph.createNode());
@@ -98,7 +94,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       cubeIndexBuffer = device.createIndexBuffer('Cube Index Buffer', {'usage':'static'});
       cubeProgram = device.createShaderProgram('Cube Program', {});
       il = device.createInputLayout('Cube Input Layout', {});
-      ds = device.getDeviceChildHandle('DepthState.TestWrite');
+      ds = device.getDeviceChild('DepthState.TestWrite');
       resourceManager.addEventCallback(cubeMeshResource, ResourceEvents.TypeUpdate, (type, resource) {
         MeshResource cube = resource;
         var elements = [InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vPosition', 0, 'POSITION'), cube),
@@ -145,7 +141,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       });
 
       resourceManager.loadResource(renderConfigResource).then((_dd) {
-        RenderConfigResource rcr = resourceManager.getResource(renderConfigResource);
+        RenderConfigResource rcr = renderConfigResource;
         renderConfig.load(rcr.renderConfig);
         resourceManager.loadResource(cubeVertexShaderResource);
         resourceManager.loadResource(cubeFragmentShaderResource);
@@ -209,10 +205,10 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     }
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    device.context.generateMipmap(renderConfig.getBufferHandle('colorbuffer'));
+    device.context.generateMipmap(renderConfig.getBuffer('colorbuffer'));
     String postpass = JavelinConfigStorage.get('demo.postprocess');
-    SpectrePost.pass(postpass, renderConfig.getLayerHandle('final'), {
-      'textures': [renderConfig.getBufferHandle('colorbuffer')],
+    SpectrePost.pass(postpass, renderConfig.getLayer('final'), {
+      'textures': [renderConfig.getBuffer('colorbuffer')],
       'samplers': [sampler]
     });
     renderConfig.setupLayer('final');
