@@ -143,7 +143,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     _particlesVSHandle = device.createVertexShader('Cloth Vertex Shader',{});
     _particlesFSHandle = device.createFragmentShader('Cloth Fragment Shader', {});
     _particlePointSpriteResourceHandle = resourceManager.registerResource('/textures/felt.png');
-    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.TextureFormatRGBA, 'pixelFormat': Texture.PixelFormatUnsignedByte});
+    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.FormatRGBA, 'pixelFormat': Texture.FormatRGBA, 'pixelType': Texture.PixelTypeU8});
     _particlePointSpriteSamplerHandle = device.createSamplerState('Cloth Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
     _particleDepthStateHandle = device.createDepthState('Cloth Depth State', {'depthTestEnabled': true, 'depthWriteEnabled': true, 'depthComparisonOp': DepthState.DepthComparisonOpLessEqual});
     _particleBlendStateHandle = device.createBlendState('Cloth Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});

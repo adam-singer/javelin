@@ -29,7 +29,7 @@ class Demo extends JavelinBaseDemo {
               {
               'name': 'backBuffer',
               'type': 'color',
-              'format': 'R8G8B8A8',
+              'format': 'RGBA',
               'width': 640,
               'height': 480,
               },

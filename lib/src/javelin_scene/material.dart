@@ -25,9 +25,9 @@ class Material extends SceneChild {
   void processUniforms() {
     textureNameToUnit.clear();
     int textureUnitIndex = 0;
-    shaderProgramHandle.forEachUniforms((String name, int index, String type, int size, location) {
-      if (type == 'sampler2D') {
-        textureNameToUnit[name] = textureUnitIndex++;
+    shaderProgramHandle.forEachUniforms((uniform) {
+      if (uniform.type == 'sampler2D') {
+        textureNameToUnit[uniform.name] = textureUnitIndex++;
       }
     });
   }

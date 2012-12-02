@@ -8,12 +8,10 @@ class Loader {
   GraphicsDevice _device;
   ResourceManager _resourceManager;
   SceneResource sceneResourceHandle;
-  int sceneResourceCallback;
   Loader(this._scene, this._device, this._resourceManager) {
     _resourceHandleTable = new Set<ResourceBase>();
     _deviceHandleTable = new Set<DeviceChild>();
     sceneResourceHandle = null;
-    sceneResourceCallback = 0;
   }
 
   void shutdown() {
@@ -25,7 +23,7 @@ class Loader {
     });
     _deviceHandleTable.clear();
     _resourceHandleTable.clear();
-    _resourceManager.removeEventCallback(sceneResourceHandle,  ResourceEvents.TypeUpdate, sceneResourceCallback);
+    _resourceManager.removeEventCallback(sceneResourceHandle,  ResourceEvents.TypeUpdate, reload);
   }
 
   void reload(int type, SceneResource resource) {
@@ -35,7 +33,7 @@ class Loader {
 
   Future loadFromUrl(String url) {
     sceneResourceHandle = _resourceManager.registerResource(url);
-    sceneResourceCallback = _resourceManager.addEventCallback(sceneResourceHandle, ResourceEvents.TypeUpdate, reload);
+    _resourceManager.addEventCallback(sceneResourceHandle, ResourceEvents.TypeUpdate, reload);
     return _resourceManager.loadResource(sceneResourceHandle);
   }
 
