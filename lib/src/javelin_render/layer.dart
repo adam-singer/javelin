@@ -5,6 +5,14 @@ class Layer {
   final String type;
   final Map properties;
   final RenderTarget renderTarget;
+  bool clearColor = false;
+  bool clearDepth = false;
+  bool clearStencil = false;
+  num clearColorR = 0.0;
+  num clearColorG = 0.0;
+  num clearColorB = 0.0;
+  num clearColorA = 1.0;
+  num clearDepthValue = 1.0;
   static const int SortModeNone = 0;
   static const int SortModeBackToFront = 1;
   static const int SortModeFrontToBack = 2;
@@ -15,12 +23,12 @@ class Layer {
 
 class LayerConfig {
   final Renderer renderer;
-  final List<Layer> _layers = new List<Layer>();
+  final List<Layer> layers = new List<Layer>();
 
   LayerConfig(this.renderer);
 
   void _clearLayers() {
-    _layers.clear();
+    layers.clear();
   }
 
   int _sortMode(String sortMode) {
@@ -49,13 +57,19 @@ class LayerConfig {
     int sortMode = _sortMode(layerConfig['sort']);
     Layer layer = new Layer(layerConfig['name'], type, renderTarget, sortMode,
                             layerConfig);
-    _layers.add(layer);
+    // TODO(johnmccutchan): Support overriding clearColorR,G,B,A
+    layer.clearColor = layerConfig['clearColor'] != null ?
+                          layerConfig['clearColor'] : false;
+    // TODO(johnmccutchan): Support overriding clearDepthVal
+    layer.clearDepth = layerConfig['clearDepth'] != null ?
+                          layerConfig['clearDepth'] : false;
+    layers.add(layer);
   }
 
   void load(Map config) {
     _clearLayers();
-    List<Map> layers = config['layers'];
-    layers.forEach((layer) {
+    List<Map> layersConfig = config['layers'];
+    layersConfig.forEach((layer) {
       _makeLayer(layer);
     });
   }
