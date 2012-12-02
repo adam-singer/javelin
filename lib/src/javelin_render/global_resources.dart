@@ -30,6 +30,9 @@ class GlobalResources {
     Map props = {
       'width': target['width'],
       'height': target['height'],
+      'pixelFormat': Texture.FormatRGBA,
+      'pixelType': Texture.PixelTypeU8,
+      'textureFormat': Texture.FormatRGBA,
     };
     Texture2D buffer = renderer.device.createTexture2D(name, props);
     assert(buffer != null);
@@ -39,6 +42,13 @@ class GlobalResources {
   void _makeDepthTarget(Map target) {
     String name = target['name'];
     assert(name != null);
+    Map props = {
+      'width': target['width'],
+      'height': target['height'],
+      'pixelFormat': Texture.FormatDepth,
+      'pixelType': Texture.PixelTypeU16,
+      'textureFormat': Texture.FormatDepth,
+    };
     RenderBuffer buffer = renderer.device.createRenderBuffer(name, target);
     assert(buffer != null);
     _depthTargets[name] = buffer;
@@ -66,8 +76,8 @@ class GlobalResources {
         stencilTarget == 'frontBuffer') {
       return renderer.device.systemProvidedRenderTarget;
     }
-    Texture2D colorBuffer = _colorTargets[colorTarget];
-    RenderBuffer depthBuffer = _depthTargets[depthTarget];
+    var colorBuffer = _colorTargets[colorTarget];
+    var depthBuffer = _depthTargets[depthTarget];
     for (int i = 0; i < _renderTargets.length; i++) {
       RenderTarget rt = _renderTargets[i];
       if (rt.colorTarget == colorBuffer && rt.depthTarget == depthBuffer) {
@@ -79,8 +89,8 @@ class GlobalResources {
 
   RenderTarget makeRenderTarget(String colorTarget, String depthTarget,
                                 String stencilTarget) {
-    Texture2D colorBuffer = _colorTargets[colorTarget];
-    RenderBuffer depthBuffer = _depthTargets[depthTarget];
+    var colorBuffer = _colorTargets[colorTarget];
+    var depthBuffer = _depthTargets[depthTarget];
     String name = 'RT:';
     if (colorBuffer != null) {
       name = '$name CB: ${colorBuffer.name}';
