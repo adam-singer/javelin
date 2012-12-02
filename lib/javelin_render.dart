@@ -1,8 +1,10 @@
 library javelin_render;
 
+import 'dart:html';
 import 'package:spectre/spectre.dart';
+import 'package:spectre/spectre_post.dart';
 
-part 'src/javelin_render/global_config.dart';
+part 'src/javelin_render/global_resources.dart';
 part 'src/javelin_render/shader.dart';
 part 'src/javelin_render/attribute.dart';
 part 'src/javelin_render/uniform.dart';

@@ -1,17 +1,15 @@
 part of javelin_render;
 
 class Renderer {
+  final GraphicsDevice device;
+  final Map<String, Mesh> meshes = new Map<String, Mesh>();
+  final Map<String, Shader> shaders = new Map<String, Shader>();
+  final Map<String, Material> materials = new Map<String, Material>();
+  final Map<String, Texture> textures = new Map<String, Texture>();
+
   Viewport frontBufferViewport;
-  GlobalConfig config;
-
-  Map<String, Mesh> meshes;
-  Map<String, Shader> shaders;
-  Map<String, Material> materials;
-  Map<String, Texture> textures;
-
-  void resizeHandler() {
-    // Update frontBufferViewport.
-  }
+  GlobalResources globalResources;
+  LayerConfig layerConfig;
 
   void applyCameraUniforms() {
     // Walk over shaders
@@ -43,6 +41,7 @@ class Renderer {
   }
 
   void render(List<Drawable> drawables, Camera camera, Viewport viewport) {
+    return;
     // Determine list of drawables visible from camera.
     List<Drawable> visibleSet = new List<Drawable>(drawables.length);
     int visibleCount = 0;
@@ -52,5 +51,10 @@ class Renderer {
       // Sort visibleSet accordingy to layer configuration.
       // Foreach drawable:
         // Draw.
+  }
+
+  Renderer(CanvasElement frontBuffer, this.device) {
+    globalResources = new GlobalResources(this, frontBuffer);
+    layerConfig = new LayerConfig(this);
   }
 }

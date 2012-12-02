@@ -1,0 +1,103 @@
+part of javelin_render;
+
+class GlobalResources {
+  final Renderer renderer;
+  final CanvasElement frontBuffer;
+  final Map<String, RenderBuffer> _colorTargets = new Map<String, RenderBuffer>();
+  final Map<String, RenderBuffer> _depthTargets = new Map<String, RenderBuffer>();
+  final List<RenderTarget> _renderTargets = new List<RenderTarget>();
+
+  GlobalResources(this.renderer, this.frontBuffer);
+
+  void _clearTargets() {
+    _colorTargets.forEach((_, t) {
+      renderer.device.deleteDeviceChild(t);
+    });
+    _colorTargets.clear();
+    _depthTargets.forEach((_, t) {
+      renderer.device.deleteDeviceChild(t);
+    });
+    _depthTargets.clear();
+    _renderTargets.forEach((t) {
+      renderer.device.deleteDeviceChild(t);
+    });
+    _renderTargets.clear();
+  }
+
+  void _makeColorTarget(Map target) {
+    String name = target['name'];
+    assert(name != null);
+    RenderBuffer buffer = renderer.device.createRenderBuffer(name, target);
+    assert(buffer != null);
+    _colorTargets[name] = buffer;
+  }
+
+  void _makeDepthTarget(Map target) {
+    String name = target['name'];
+    assert(name != null);
+    RenderBuffer buffer = renderer.device.createRenderBuffer(name, target);
+    assert(buffer != null);
+    _depthTargets[name] = buffer;
+  }
+
+  void _configureFrontBuffer(Map target) {
+    int width = target['width'];
+    int height = target['height'];
+    frontBuffer.width = width;
+    frontBuffer.height = height;
+  }
+
+  RenderTarget findRenderTarget(String colorTarget, String depthTarget,
+                                String stencilTarget) {
+    if (colorTarget == 'frontBuffer' ||
+        depthTarget == 'frontBuffer' ||
+        stencilTarget == 'frontBuffer') {
+      return renderer.device.systemProvidedRenderTarget;
+    }
+    RenderBuffer colorBuffer = _colorTargets[colorTarget];
+    RenderBuffer depthBuffer = _depthTargets[depthTarget];
+    for (int i = 0; i < _renderTargets.length; i++) {
+      RenderTarget rt = _renderTargets[i];
+      if (rt.colorTarget == colorBuffer && rt.depthTarget == depthBuffer) {
+        return rt;
+      }
+    }
+    return null;
+  }
+
+  RenderTarget makeRenderTarget(String colorTarget, String depthTarget,
+                                String stencilTarget) {
+    RenderBuffer colorBuffer = _colorTargets[colorTarget];
+    RenderBuffer depthBuffer = _depthTargets[depthTarget];
+    String name = 'RT:';
+    if (colorBuffer != null) {
+      name = '$name CB: ${colorBuffer.name}';
+    }
+    if (depthBuffer != null) {
+      name = '$name DB: ${depthBuffer.name}';
+    }
+    RenderTarget renderTarget = renderer.device.createRenderTarget(name, {
+      'color0': colorBuffer,
+      'depth': depthBuffer,
+      'stencil': null,
+    });
+    assert(renderTarget != null);
+    _renderTargets.add(renderTarget);
+    return renderTarget;
+  }
+
+  void load(Map config) {
+    _clearTargets();
+    List<Map> targets = config['targets'];
+    targets.forEach((target) {
+      if (target['type'] == 'color') {
+        _makeColorTarget(target);
+      } else if (target['type'] == 'depth') {
+        _makeDepthTarget(target);
+      } else {
+        assert(target['name'] == 'frontBuffer');
+        _configureFrontBuffer(target);
+      }
+    });
+  }
+}
