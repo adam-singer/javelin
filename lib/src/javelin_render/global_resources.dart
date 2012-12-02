@@ -3,7 +3,7 @@ part of javelin_render;
 class GlobalResources {
   final Renderer renderer;
   final CanvasElement frontBuffer;
-  final Map<String, RenderBuffer> _colorTargets = new Map<String, RenderBuffer>();
+  final Map<String, Texture2D> _colorTargets = new Map<String, Texture2D>();
   final Map<String, RenderBuffer> _depthTargets = new Map<String, RenderBuffer>();
   final List<RenderTarget> _renderTargets = new List<RenderTarget>();
 
@@ -27,7 +27,11 @@ class GlobalResources {
   void _makeColorTarget(Map target) {
     String name = target['name'];
     assert(name != null);
-    RenderBuffer buffer = renderer.device.createRenderBuffer(name, target);
+    Map props = {
+      'width': target['width'],
+      'height': target['height'],
+    };
+    Texture2D buffer = renderer.device.createTexture2D(name, props);
     assert(buffer != null);
     _colorTargets[name] = buffer;
   }
@@ -47,6 +51,14 @@ class GlobalResources {
     frontBuffer.height = height;
   }
 
+  Texture2D findColorTarget(String colorTarget) {
+    return _colorTargets[colorTarget];
+  }
+
+  RenderBuffer findDepthBuffer(String depthTarget) {
+    return _depthTargets[depthTarget];
+  }
+
   RenderTarget findRenderTarget(String colorTarget, String depthTarget,
                                 String stencilTarget) {
     if (colorTarget == 'frontBuffer' ||
@@ -54,7 +66,7 @@ class GlobalResources {
         stencilTarget == 'frontBuffer') {
       return renderer.device.systemProvidedRenderTarget;
     }
-    RenderBuffer colorBuffer = _colorTargets[colorTarget];
+    Texture2D colorBuffer = _colorTargets[colorTarget];
     RenderBuffer depthBuffer = _depthTargets[depthTarget];
     for (int i = 0; i < _renderTargets.length; i++) {
       RenderTarget rt = _renderTargets[i];
@@ -67,7 +79,7 @@ class GlobalResources {
 
   RenderTarget makeRenderTarget(String colorTarget, String depthTarget,
                                 String stencilTarget) {
-    RenderBuffer colorBuffer = _colorTargets[colorTarget];
+    Texture2D colorBuffer = _colorTargets[colorTarget];
     RenderBuffer depthBuffer = _depthTargets[depthTarget];
     String name = 'RT:';
     if (colorBuffer != null) {
