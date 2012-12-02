@@ -47,13 +47,28 @@ class Renderer {
     String process = layer.properties['process'];
     String source = layer.properties['source'];
     if (process != null && source != null) {
-      // TODO(johnmccutchan): Support better arugments.
+      // TODO(johnmccutchan): Support better post process setup.
       Texture2D colorTexture = globalResources.findColorTarget(source);
       Map arguments = {
                        'textures': [colorTexture],
                        'samplers': [_npotSampler],
       };
       SpectrePost.pass(process, layer.renderTarget, arguments);
+    }
+  }
+
+  void _setupLayer(Layer layer) {
+    device.context.setRenderTarget(layer.renderTarget);
+    if (layer.clearColor == true) {
+      num r = layer.clearColorR;
+      num g = layer.clearColorG;
+      num b = layer.clearColorB;
+      num a = layer.clearColorA;
+      device.context.clearColorBuffer(r, g, b, a);
+    }
+    if (layer.clearDepth == true) {
+      num v = layer.clearDepthValue;
+      device.context.clearDepthBuffer(v);
     }
   }
 
@@ -68,18 +83,9 @@ class Renderer {
     int numLayers = layerConfig.layers.length;
     for (int layerIndex = 0; layerIndex < numLayers; layerIndex++) {
       Layer layer = layerConfig.layers[layerIndex];
-      device.context.setRenderTarget(layer.renderTarget);
-      if (layer.clearColor == true) {
-        num r = layer.clearColorR;
-        num g = layer.clearColorG;
-        num b = layer.clearColorB;
-        num a = layer.clearColorA;
-        device.context.clearColorBuffer(r, g, b, a);
-      }
-      if (layer.clearDepth == true) {
-        num v = layer.clearDepthValue;
-        device.context.clearDepthBuffer(v);
-      }
+
+      _setupLayer(layer);
+
       if (layer.type == 'pass') {
         _renderPassLayer(layer, drawables, camera, viewport);
       } else if (layer.type == 'fullscreen') {

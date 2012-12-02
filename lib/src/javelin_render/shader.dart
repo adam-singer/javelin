@@ -1,6 +1,7 @@
 part of javelin_render;
 
 /*
+ * FIRST STEPS:
  * Auto update uniform and attribute table.
  *
  * Allow setting uniforms setConstant(name, value) work.
@@ -13,13 +14,26 @@ part of javelin_render;
  *
  * Query for compile and link logs.
  */
+
+//Add standard camera transform uniforms
+//Add standard mesh transform uniforms
+//Shader metadata:
+//   Layer to render into
+//   Initial values for each uniform value
+//   Names of textures to use for each sampler input
+//Extract from compiler shader:
+//  Attribute inputs
+//  Uniform inputs
+//http://www.gamedev.net/topic/169710-materialshader-implmentation/
+
 class Shader {
   List<String> layers;
   final GraphicsDevice device;
-  int vertexShader;
-  int fragmentShader;
-  int shaderProgram;
+  VertexShader vertexShader;
+  FragmentShader fragmentShader;
+  ShaderProgram shaderProgram;
   int _version = 0;
+  int frameIndex = 0;
   int get version => _version;
   bool autoBuild = true;
   String _vertexSource;
