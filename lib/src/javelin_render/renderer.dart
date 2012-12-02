@@ -17,44 +17,29 @@ class Renderer {
     // Walk over shaders
   }
 
-  int _updateVisibleSet(List<Drawable> visibleSet,
-                        List<Drawable> drawables,
-                        Camera camera) {
-    int visibleCount = 0;
+  List<Drawable> _determineVisibleSet(List<Drawable> drawables, Camera camera) {
+    List<Drawable> visibleSet = new List<Drawable>();
     int numDrawables = drawables.length;
     for (int i = 0; i < numDrawables; i++) {
       Drawable drawable = drawables[i];
       bool visible = true; // drawable.visibleTo(camera);
       if (!visible)
         continue;
-      visibleSet[visibleCount++] = drawable;
+      visibleSet.add(drawable);
     }
-    return visibleCount;
+    return visibleSet;
   }
 
-  int _sortDrawables(List<Drawable> visibleSet,
-                     int numVisible,
-                     String layerName) {
-    return numVisible;
-    int drawableCount = 0;
-    for (int i = 0; i< numVisible; i++) {
-    }
-    drawableCount = 0;
+  void _sortDrawables(List<Drawable> visibleSet, int sortMode) {
   }
 
   void _renderPassLayer(Layer layer, List<Drawable> drawables, Camera camera,
                         Viewport viewport) {
-    // TODO: Sort according to layer
-    /*
-    for (int drawableIndex = 0;
-        drawableIndex < visibleCount;
-        drawableIndex++) {
-      Drawable drawable = visibleSet[drawableIndex];
+    drawables.forEach((drawable) {
       // Apply material settings
       // Bind mesh
       // Draw
-    }
-    */
+    });
   }
 
   void _renderFullscreenLayer(Layer layer, List<Drawable> drawables,
@@ -78,9 +63,8 @@ class Renderer {
       'height': frontBuffer.height,
     });
     device.context.setViewport(viewport);
-    List<Drawable> visibleSet = new List<Drawable>(drawables.length);
-    int visibleCount = 0;
-    visibleCount = _updateVisibleSet(visibleSet, drawables, camera);
+    List<Drawable> visibleSet;
+    visibleSet = _determineVisibleSet(drawables, camera);
     int numLayers = layerConfig.layers.length;
     for (int layerIndex = 0; layerIndex < numLayers; layerIndex++) {
       Layer layer = layerConfig.layers[layerIndex];
