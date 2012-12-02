@@ -51,11 +51,13 @@ class Demo extends JavelinBaseDemo {
           'layers':
             [
               {
-              'name': 'opaque',
-              'colorTarget': 'backBuffer',
-              'depthTarget': 'depthBuffer',
-              'type': 'pass',
-              'sort': 'none',
+                'name': 'opaque',
+                'colorTarget': 'backBuffer',
+                'depthTarget': 'depthBuffer',
+                'type': 'pass',
+                'sort': 'none',
+                'clearColor': true,
+                'clearDepth': true,
               },
               {
                 'name': 'alpha',
@@ -63,27 +65,17 @@ class Demo extends JavelinBaseDemo {
                 'depthTarget': 'depthBuffer',
                 'type': 'pass',
                 'sort': 'BackToFront',
+                'clearColor': false,
+                'clearDepth': false,
               },
               {
                 'name': 'present',
                 'colorTarget': 'frontBuffer',
+                'depthTarget': 'frontBuffer',
                 'type': 'fullscreen',
+                'process': 'blit',
                 'source': 'backBuffer',
               }
-            ]
-          }
-    );
-    renderer.layerConfig.load(
-        {
-          'layers':
-            [
-              {
-              'name': 'opaque',
-              'colorTarget': 'frontBuffer',
-              'depthTarget': 'frontBuffer',
-              'type': 'pass',
-              'sort': 'none',
-              },
             ]
           }
     );
@@ -107,8 +99,6 @@ class Demo extends JavelinBaseDemo {
     base.then((_) {
       setupGlobalResources();
       setupLayers();
-      setupLayers();
-      setupLayers();
       setupShaders();
       setupMeshes();
       setupMaterials();
@@ -121,7 +111,8 @@ class Demo extends JavelinBaseDemo {
 
   void update(num time, num dt) {
     super.update(time, dt);
-    renderer.render(drawables, camera, renderer.frontBufferViewport);
+
+    renderer.render([null, null], camera, renderer.frontBufferViewport);
   }
 }
 
