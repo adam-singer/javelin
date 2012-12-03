@@ -80,7 +80,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     _particlesVSHandle = device.createVertexShader('Particle Vertex Shader',{});
     _particlesFSHandle = device.createFragmentShader('Particle Fragment Shader', {});
     _particlePointSpriteResourceHandle = resourceManager.registerResource('/textures/particle.png');
-    _particlePointSpriteHandle = device.createTexture2D('Particle Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.TextureFormatRGBA, 'pixelFormat': Texture.PixelFormatUnsignedByte});
+    _particlePointSpriteHandle = device.createTexture2D('Particle Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.FormatRGBA, 'pixelFormat': Texture.FormatRGBA, 'pixelType': Texture.PixelTypeU8});
     _particlePointSpriteSamplerHandle = device.createSamplerState('Particle Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
     _particleDepthStateHandle = device.createDepthState('Particle Depth State', {});
     _particleBlendStateHandle = device.createBlendState('Particle Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
