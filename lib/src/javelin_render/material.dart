@@ -1,19 +1,36 @@
 part of javelin_render;
 
-// Specialization of shader.
-// Shader is used as basic state
-// Material overrides any of those settings.
+/** A material is a configuration applied to a shader.
+ * The shader defines the basic functionality and the material defines
+ * the inputs to the shader
+ */
 class Material {
+    final Renderer renderer;
     final Shader shader;
-    Map<String, Texture> textures = new Map<String, Texture>();
-    Map<String, SamplerState> samplers = new Map<String, SamplerState>();
+    // A mapping from uniform name to uniform value.
+    final Map<String, dynamic> uniforms = new Map<String, dynamic>();
+    // A mapping from sampler name to texture name.
+    final Map<String, String> textures = new Map<String, String>();
 
-    DepthState depthState;
-    RasterizerState rasterizerState;
-    BlendState blendState;
+    DepthState _depthState;
+    DepthState get depthState => _depthState;
+    RasterizerState _rasterizerState;
+    RasterizerState get rasterizerState => _rasterizerState;
+    BlendState _blendState;
+    BlendState get blendState => _blendState;
 
-    Material(this.shader);
+    Material(this.renderer, this.shader) {
+    }
 
-    void apply() {
+    /** Clone the material and return the clone. */
+    Material clone() {
+      Material clone = new Material(renderer, shader);
+    }
+
+    /** Apply this material to be used for rendering */
+    void apply(GraphicsDevice device) {
+      device.context.setBlendState(_blendState);
+      device.context.setRasterizerState(_rasterizerState);
+      device.context.setDepthState(_depthState);
     }
 }

@@ -2,14 +2,11 @@ part of javelin_render;
 
 /*
  * FIRST STEPS:
- * Auto update uniform and attribute table.
  *
  * Allow setting uniforms setConstant(name, value) work.
- *
  * Allow setting of texture names to texture units.
  *
  * Default values for each uniform value.
- *
  * Clone a material with all default values set.
  *
  * Query for compile and link logs.
@@ -27,27 +24,23 @@ part of javelin_render;
 //http://www.gamedev.net/topic/169710-materialshader-implmentation/
 
 class Shader {
-  List<String> layers;
   final GraphicsDevice device;
-  VertexShader vertexShader;
-  FragmentShader fragmentShader;
-  ShaderProgram shaderProgram;
+  final String name;
+  VertexShader _vertexShader;
+  FragmentShader _fragmentShader;
+  ShaderProgram _shaderProgram;
+  List<String> layers;
+  int get version => _version;
   int _version = 0;
   int frameIndex = 0;
-  int get version => _version;
   bool autoBuild = true;
-  String _vertexSource;
-  String _fragmentSource;
-  Map<String, Uniform> _uniforms;
-  Map<String, Attribute> _attributes;
-  Shader(this.device) {
-    _uniforms = new Map<String, Uniform>();
-  }
 
-  void _refreshUniforms() {
-  }
-
-  void _refreshAttributes() {
+  Shader(this.name, this.device) {
+    _vertexShader = device.createVertexShader('$name[VS]', {});
+    _fragmentShader = device.createFragmentShader('$name[FS]', {});
+    _shaderProgram = device.createShaderProgram('$name[SP]', {});
+    _shaderProgram.attach(_vertexShader);
+    _shaderProgram.attach(_fragmentShader);
   }
 
   void rebuild() {
@@ -60,20 +53,22 @@ class Shader {
     _version++;
   }
 
-  String get vertexSource => _vertexSource;
+  String get vertexSource => _vertexShader.source;
   set vertexSource(String source) {
-    _vertexSource = source;
+    _vertexShader.source = source;
     if (autoBuild)
       rebuild();
   }
 
-  String get fragmentSource => _fragmentSource;
+  String get fragmentSource => _fragmentShader.source;
   set fragmentSource(String source) {
-    _fragmentSource = source;
+    _fragmentShader.source = source;
     if (autoBuild)
       rebuild();
   }
+
   void setConstant(String name, dynamic value) {
+    ShaderProgramUniform uniform = _shaderProgram.uniforms[]
     Uniform uniform = _uniforms[name];
     if (uniform == null) {
       return;
