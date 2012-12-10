@@ -134,7 +134,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   }
 
   void _updateFluidVertexData() {
-    device.context.updateBuffer(_fluidVBOHandle, _fluidVertexData);
+    _fluidVBOHandle.uploadData(_fluidVertexData, _fluidVBOHandle.usage);
   }
 
   void _buildFluidVertexData() {

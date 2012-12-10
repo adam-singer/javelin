@@ -89,7 +89,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       cubeFragmentShader = device.createFragmentShader('Cube Fragment Shader', {});
       sampler = device.createSamplerState('Cube Texture Sampler', {});
       rs = device.createRasterizerState('Cube Rasterizer State', {'cullEnabled': true, 'cullMode': RasterizerState.CullBack, 'cullFrontFace': RasterizerState.FrontCCW});
-      texture = device.createTexture2D('Cube Texture', { 'width': 512, 'height': 512, 'textureFormat' : Texture.FormatRGB, 'pixelFormat' : Texture.FormatRGB, 'pixelType': Texture.PixelTypeU8});
+      texture = device.createTexture2D('Cube Texture', { 'width': 512, 'height': 512, 'textureFormat' : Texture.FormatRGBA});
       cubeVertexBuffer = device.createVertexBuffer('Cube Vertex Buffer', {'usage':'static'});
       cubeIndexBuffer = device.createIndexBuffer('Cube Index Buffer', {'usage':'static'});
       cubeProgram = device.createShaderProgram('Cube Program', {});
@@ -105,8 +105,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
 
         cubeNumIndices = cube.numIndices;
 
-        immediateContext.updateBuffer(cubeVertexBuffer, cube.vertexArray);
-        immediateContext.updateBuffer(cubeIndexBuffer, cube.indexArray);
+        cubeVertexBuffer.uploadData(cube.vertexArray, SpectreBuffer.UsageStatic);
+        cubeIndexBuffer.uploadData(cube.indexArray, SpectreBuffer.UsageStatic);
 
         // Build frame program
         CommandListBuilder pb = new CommandListBuilder();

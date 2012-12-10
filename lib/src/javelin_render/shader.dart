@@ -68,11 +68,10 @@ class Shader {
   }
 
   void setConstant(String name, dynamic value) {
-    ShaderProgramUniform uniform = _shaderProgram.uniforms[]
-    Uniform uniform = _uniforms[name];
+    ShaderProgramUniform uniform = _shaderProgram.uniforms[name];
     if (uniform == null) {
       return;
     }
-    uniform.apply(uniform._location, value);
+    //uniform.apply(uniform._location, value);
   }
 }

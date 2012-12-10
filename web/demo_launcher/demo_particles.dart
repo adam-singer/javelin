@@ -118,7 +118,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    device.context.updateBuffer(_particlesVBOHandle, _particlesVertexData);
+    _particlesVBOHandle.uploadData(_particlesVertexData, _particlesVBOHandle.usage);
   }
 
   void drawParticles() {

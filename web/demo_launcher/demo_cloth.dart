@@ -115,7 +115,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
 
-    _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {'usage':'static', 'size':2*(_gridWidth-1)*(_gridWidth-1)*6});
+    _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {});
 
     {
       Uint16Array indexArray = new Uint16Array((_gridWidth-1)*(_gridWidth-1)*6);
@@ -134,7 +134,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
           indexArray[out++] = southEast;
         }
       }
-      immediateContext.updateBuffer(_particleIBHandle, indexArray);
+      _particleIBHandle.uploadData(indexArray, SpectreBuffer.UsageStatic);
     }
 
     _particlesVBOHandle = device.createVertexBuffer('Cloth Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
@@ -195,7 +195,8 @@ class JavelinClothDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    device.context.updateBuffer(_particlesVBOHandle, _particlesVertexData);
+    _particlesVBOHandle.uploadData(_particlesVertexData,
+                                   _particlesVBOHandle.usage);
   }
 
   void drawParticles() {

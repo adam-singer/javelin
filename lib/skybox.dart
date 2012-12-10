@@ -362,8 +362,8 @@ class Skybox {
     }
 
     skyboxVertexResource.array = vb;
-
-    device.context.updateBuffer(_deviceHandles[_vertexBufferHandleIndex], skyboxVertexResource.array);
+    var vbo = _deviceHandles[_vertexBufferHandleIndex];
+    vbo.uploadData(vb, vbo.usage);
   }
 
   void fini() {
