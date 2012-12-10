@@ -5,14 +5,14 @@
                                 "type": "color",
                                 "width": 1024,
                                 "height": 1024,
-                                "format": "RGB"
+                                "format": "RGBA"
                             },
                             {
                                 "name": "depthbuffer",
                                 "type": "depth",
                                 "width": 1024,
                                 "height": 1024,
-                                "format": "DEPTH"
+                                "format": "Depth"
                             }
                         ],
     "layers":   [

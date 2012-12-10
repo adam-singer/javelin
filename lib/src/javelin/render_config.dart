@@ -57,17 +57,14 @@ class RenderConfig {
       String format = bufferDesc['format'];
       DeviceChild handle;
       if (type == 'depth') {
-        handle = _device.createRenderBuffer(name, {
-           'width': width,
-           'height': height,
-           'format': format,
-        });
+        RenderBuffer rb = _device.createRenderBuffer(name, {});
+        rb.allocateStorage(width, height, RenderBuffer.stringToFormat(format));
+        handle = rb;
       } else {
-        handle = _device.createTexture2D(name, {
-            'width': width,
-            'height': height,
-            'format': format,
-        });
+        Texture2D t2d = _device.createTexture2D(name, {});
+        t2d.textureFormat = Texture.stringToFormat(format);
+        t2d.uploadPixelArray(width, height, null);
+        handle = t2d;
       }
       if (handle == null) {
         spectreLog.Error('Could not create render buffer $bufferDesc');
