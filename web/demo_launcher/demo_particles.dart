@@ -131,10 +131,10 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     device.context.setShaderProgram(_particlesShaderProgramHandle);
     device.context.setTextures(0, [_particlePointSpriteHandle]);
     device.context.setSamplers(0, [_particlePointSpriteSamplerHandle]);
-    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.context.setUniformMatrix4('viewTransform', viewTransform);
-    device.context.setUniformMatrix4('normalTransform', normalTransform);
+    device.context.setConstant('projectionViewTransform', projectionViewTransform);
+    device.context.setConstant('projectionTransform', projectionTransform);
+    device.context.setConstant('viewTransform', viewTransform);
+    device.context.setConstant('normalTransform', normalTransform);
     device.context.draw(_numParticles, 0);
   }
 

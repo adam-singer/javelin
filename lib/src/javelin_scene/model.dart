@@ -40,10 +40,10 @@ class Model extends SceneChild {
     _mesh.preDraw();
     _materialInstance.preDraw();
     globalUniforms.forEach((k,v) {
-      scene.device.context.setUniformMatrix4(k, v);
+      scene.device.context.setConstant(k, v);
     });
     Float32Array objectTransformArray = scene.transformGraph.refWorldMatrixArray(transformHandle);
-    scene.device.context.setUniformMatrix4('objectTransform', objectTransformArray);
+    scene.device.context.setConstant('objectTransform', objectTransformArray);
     _mesh.draw();
   }
 }

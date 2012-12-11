@@ -125,11 +125,11 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     device.context.setShaderProgram(_fluidShaderProgramHandle);
     device.context.setDepthState(ds);
     device.context.setRasterizerState(rs);
-    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.context.setUniformMatrix4('viewTransform', viewTransform);
-    device.context.setUniformMatrix4('normalTransform', normalTransform);
-    device.context.setUniformVector3('lightDir', _lightDirection);
+    device.context.setConstant('projectionViewTransform', projectionViewTransform);
+    device.context.setConstant('projectionTransform', projectionTransform);
+    device.context.setConstant('viewTransform', viewTransform);
+    device.context.setConstant('normalTransform', normalTransform);
+    device.context.setConstant('lightDir', _lightDirection);
     device.context.draw(_fluidNumVertices, 0);
   }
 

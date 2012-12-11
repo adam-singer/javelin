@@ -150,7 +150,7 @@ class Material extends SceneChild {
     scene.device.context.setShaderProgram(shaderProgramHandle);
     if (uniformset != null) {
       uniformset.forEach((name, value) {
-        scene.device.context.setUniform3f(name, value[0], value[1], value[2]);
+        scene.device.context.setConstant(name, value);
       });
     }
   }

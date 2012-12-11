@@ -3,7 +3,7 @@ part of javelin_render;
 /*
  * FIRST STEPS:
  *
- * Allow setting uniforms setConstant(name, value) work.
+ *
  * Allow setting of texture names to texture units.
  *
  * Default values for each uniform value.

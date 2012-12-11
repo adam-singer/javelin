@@ -387,10 +387,10 @@ class Skybox {
     device.context.setVertexBuffers(0, [_deviceHandles[_vertexBufferHandleIndex]]);
     device.context.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
-    device.context.setUniformInt('sampler1', 0);
-    device.context.setUniformInt('sampler2', 1);
-    device.context.setUniformNum('t', blendT);
-    device.context.setUniformMatrix4('cameraTransform', _lookatMatrix);
+    device.context.setConstant('sampler1', 0);
+    device.context.setConstant('sampler2', 1);
+    device.context.setConstant('t', blendT);
+    device.context.setConstant('cameraTransform', _lookatMatrix);
     device.context.draw(36, 0);
   }
 }
