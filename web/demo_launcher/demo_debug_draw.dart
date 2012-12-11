@@ -66,7 +66,7 @@ class JavelinDebugDrawTest extends JavelinBaseDemo {
     super.update(time, dt);
 
 
-    if (keyboard.pressed(JavelinKeyCodes.KeyR)) {
+    if (keyboard.isDown(JavelinKeyCodes.KeyR)) {
       num x = mouse.X.toDouble();
       num y = mouse.Y.toDouble();
       vec3 rayNear = new vec3.zero();

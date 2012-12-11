@@ -198,7 +198,7 @@ class JavelinBaseDemo {
     _accumTime += dt;
 
     update(_accumTime/1000.0, dt/1000.0);
-
+    keyboard.frame();
     window.requestAnimationFrame(_animationFrame);
   }
 
@@ -241,10 +241,10 @@ class JavelinBaseDemo {
 
   void update(num time, num dt) {
 
-    _cameraController.forward = keyboard.pressed(JavelinKeyCodes.KeyW);
-    _cameraController.backward = keyboard.pressed(JavelinKeyCodes.KeyS);
-    _cameraController.strafeLeft = keyboard.pressed(JavelinKeyCodes.KeyA);
-    _cameraController.strafeRight = keyboard.pressed(JavelinKeyCodes.KeyD);
+    _cameraController.forward = keyboard.isDown(JavelinKeyCodes.KeyW);
+    _cameraController.backward = keyboard.isDown(JavelinKeyCodes.KeyS);
+    _cameraController.strafeLeft = keyboard.isDown(JavelinKeyCodes.KeyA);
+    _cameraController.strafeRight = keyboard.isDown(JavelinKeyCodes.KeyD);
     _cameraController.UpdateCamera(dt, _camera);
     {
       _camera.copyViewMatrix(viewMatrix);

@@ -78,15 +78,17 @@ class JavelinKeyCodes {
   static final int KeyZ = 90;
 }
 
+/** Keyboard state manager. Supports temporal keyboard queries, for example,
+ * was the key pressed in the previous frame and released this frame?
+ */
 class JavelinKeyboard {
-  Map<int, bool> keyboardState;
+  final List<Map<int, bool>> _keyboardStates = [new Map<int, bool>(),
+                                                new Map<int, bool>()];
+  int _currentIndex = 0;
+  int _previousIndex = 1;
 
-  JavelinKeyboard() {
-    keyboardState = new Map<int, bool>();
-  }
-
-  bool pressed(int keycode) {
-    bool r = keyboardState[keycode];
+  bool _isDown(Map<int, bool> keyboardState, int keyCode) {
+    bool r = keyboardState[keyCode];
     if (r == null) {
       // Never seen
       return false;
@@ -94,7 +96,60 @@ class JavelinKeyboard {
     return r;
   }
 
+  /** Is [keyCode] up this frame? */
+  bool isUp(int keyCode) {
+    return !_isDown(_keyboardStates[_currentIndex], keyCode);
+  }
+
+  /** Was [keyCode] up in the previous frame? */
+  bool wasUp(int keyCode) {
+    return !_isDown(_keyboardStates[_previousIndex], keyCode);
+  }
+
+  /** Is [keyCode] down this frame? */
+  bool isDown(int keyCode) {
+    return _isDown(_keyboardStates[_currentIndex], keyCode);
+  }
+
+  /** Was [keyCode] down in the previous frame? */
+  bool wasDown(int keyCode) {
+    return _isDown(_keyboardStates[_previousIndex], keyCode);
+  }
+
+  /** Was [keyCode] down in the previous frame and up in this frame? */
+  bool wasReleased(int keyCode) {
+    return wasDown(keyCode) && isUp(keyCode);
+  }
+
+  /** Was [keyCode] up in the previous frame and down in this frame? */
+  bool wasPressed(int keyCode) {
+    return wasUp(keyCode) && isDown(keyCode);
+  }
+
+  /** This function must be called once and only once per logical game
+   * frame. After calling this function all keyboard events for the current
+   * frame should be processed.
+   *
+   * NOTE: This function should be thought of as internal.
+   */
+  void frame() {
+    // Swap map indices.
+    int temp = _currentIndex;
+    _currentIndex = _previousIndex;
+    _previousIndex = temp;
+    // Clear current frame state.
+    _keyboardStates[_currentIndex].clear();
+    // Start current frame state at same point as previous frame.
+    _keyboardStates[_previousIndex].forEach((k, v) {
+      _keyboardStates[_currentIndex][k] = v;
+    });
+  }
+
+  /** Process a keyboard event for the current frame.
+   *
+   * NOTE: This function should be thought of as internal.
+   * */
   void keyboardEvent(KeyboardEvent event, bool down) {
-    keyboardState[event.keyCode] = down;
+    _keyboardStates[_currentIndex][event.keyCode] = down;
   }
 }

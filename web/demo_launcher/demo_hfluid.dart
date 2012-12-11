@@ -249,11 +249,11 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     super.update(time, dt);
     Profiler.exit();
 
-    if (keyboard.pressed(JavelinKeyCodes.KeyP)) {
+    if (keyboard.wasReleased(JavelinKeyCodes.KeyP)) {
       _makeWave(3, JavelinConfigStorage.get('demo.hfluid.waveheight'));
       _makeWave(2, JavelinConfigStorage.get('demo.hfluid.waveheight'));
     }
-    if (keyboard.pressed(JavelinKeyCodes.KeyO)) {
+    if (keyboard.wasReleased(JavelinKeyCodes.KeyO)) {
       _makeDrop(_centerColumnIndex, JavelinConfigStorage.get('demo.hfluid.dropheight'));
     }
 

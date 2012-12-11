@@ -241,7 +241,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     _particles.copyPositions(_particlesVertexData, _particleVertexSize);
     updateParticles();
 
-    if (keyboard.pressed(JavelinKeyCodes.KeyZ)) {
+    if (keyboard.isDown(JavelinKeyCodes.KeyZ)) {
       _particles.pick(3, 8, new vec3.raw(0.0, 0.0, 0.0));
     }
     Profiler.exit();
