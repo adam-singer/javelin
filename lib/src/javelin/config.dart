@@ -1,3 +1,4 @@
+part of javelin;
 /*
 
   Copyright (C) 2012 John McCutchan <john@johnmccutchan.com>
@@ -21,8 +22,8 @@
 */
 
 abstract class JavelinConfigType {
-  abstract String serialize(dynamic o);
-  abstract dynamic deserialize(String data);
+  String serialize(dynamic o);
+  dynamic deserialize(String data);
   bool istype(dynamic o) => false;
 }
 

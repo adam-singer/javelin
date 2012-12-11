@@ -68,8 +68,8 @@
 			"type": "skybox",
 			"shader": "/shaders/skybox.sp",
 			"textures": {
-				"0": "/textures/skybox1.png",
-				"1": "/textures/skybox1.png"
+				"0": "/textures/skybox2.png",
+				"1": "/textures/skybox2.png"
 			}
 		},
 		{
@@ -110,7 +110,7 @@
 				"parent": "cone",
 				"translate": [0.0, 3.0, 0.0],
 				"controller": {
-					"target": "ff",
+					"target": "translate",
 					"function": "sin",
 					"translate_start": [0.0, 3.0, 0.0],
 					"translate_end": [0.0, 10.0, 0.0]

@@ -20,6 +20,7 @@
 
 */
 
+part of javelin_demo_launcher;
 class JavelinFlyingSphere {
   final num radius;
   final DebugDrawManager debugDrawManager;
@@ -53,20 +54,20 @@ class JavelinFlyingSphere {
 }
 
 class JavelinClothDemo extends JavelinBaseDemo {
-  int _particlesVBOHandle;
-  int _particleIBHandle;
-  int _particlesVSResourceHandle;
-  int _particlesFSResourceHandle;
-  int _particlesVSHandle;
-  int _particlesFSHandle;
-  int _particlesInputLayoutHandle;
-  int _particlesShaderProgramHandle;
-  int _particlePointSpriteResourceHandle;
-  int _particlePointSpriteHandle;
-  int _particlePointSpriteSamplerHandle;
-  int _particleDepthStateHandle;
-  int _particleBlendStateHandle;
-  int _particleRasterizerStateHandle;
+  VertexBuffer _particlesVBOHandle;
+  IndexBuffer _particleIBHandle;
+  ShaderResource _particlesVSResourceHandle;
+  ShaderResource _particlesFSResourceHandle;
+  VertexShader _particlesVSHandle;
+  FragmentShader _particlesFSHandle;
+  InputLayout _particlesInputLayoutHandle;
+  ShaderProgram _particlesShaderProgramHandle;
+  ImageResource _particlePointSpriteResourceHandle;
+  Texture2D _particlePointSpriteHandle;
+  SamplerState _particlePointSpriteSamplerHandle;
+  DepthState _particleDepthStateHandle;
+  BlendState _particleBlendStateHandle;
+  RasterizerState _particleRasterizerStateHandle;
 
   JavelinFlyingSphere _sphere;
 
@@ -114,7 +115,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
 
-    _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {'usage':'static', 'size':2*(_gridWidth-1)*(_gridWidth-1)*6});
+    _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {});
 
     {
       Uint16Array indexArray = new Uint16Array((_gridWidth-1)*(_gridWidth-1)*6);
@@ -133,7 +134,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
           indexArray[out++] = southEast;
         }
       }
-      immediateContext.updateBuffer(_particleIBHandle, indexArray);
+      _particleIBHandle.uploadData(indexArray, SpectreBuffer.UsageStatic);
     }
 
     _particlesVBOHandle = device.createVertexBuffer('Cloth Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
@@ -142,7 +143,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     _particlesVSHandle = device.createVertexShader('Cloth Vertex Shader',{});
     _particlesFSHandle = device.createFragmentShader('Cloth Fragment Shader', {});
     _particlePointSpriteResourceHandle = resourceManager.registerResource('/textures/felt.png');
-    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.TextureFormatRGBA, 'pixelFormat': Texture.PixelFormatUnsignedByte});
+    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.FormatRGBA, 'pixelFormat': Texture.FormatRGBA, 'pixelType': Texture.PixelTypeU8});
     _particlePointSpriteSamplerHandle = device.createSamplerState('Cloth Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
     _particleDepthStateHandle = device.createDepthState('Cloth Depth State', {'depthTestEnabled': true, 'depthWriteEnabled': true, 'depthComparisonOp': DepthState.DepthComparisonOpLessEqual});
     _particleBlendStateHandle = device.createBlendState('Cloth Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
@@ -194,7 +195,8 @@ class JavelinClothDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    device.context.updateBuffer(_particlesVBOHandle, _particlesVertexData);
+    _particlesVBOHandle.uploadData(_particlesVertexData,
+                                   _particlesVBOHandle.usage);
   }
 
   void drawParticles() {
@@ -208,10 +210,10 @@ class JavelinClothDemo extends JavelinBaseDemo {
     device.context.setShaderProgram(_particlesShaderProgramHandle);
     device.context.setTextures(0, [_particlePointSpriteHandle]);
     device.context.setSamplers(0, [_particlePointSpriteSamplerHandle]);
-    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.context.setUniformMatrix4('viewTransform', viewTransform);
-    device.context.setUniformMatrix4('normalTransform', normalTransform);
+    device.context.setConstant('projectionViewTransform', projectionViewTransform);
+    device.context.setConstant('projectionTransform', projectionTransform);
+    device.context.setConstant('viewTransform', viewTransform);
+    device.context.setConstant('normalTransform', normalTransform);
     //device.immediateContext.draw(_numParticles, 0);
     device.context.drawIndexed((_gridWidth-1)*(_gridWidth-1)*6, 0);
   }

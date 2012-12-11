@@ -1,3 +1,4 @@
+part of javelin_game;
 
 /**
  * Provides a way of using html elements as GameObjects.
@@ -18,7 +19,7 @@ class HtmlElement extends Component {
   }
 
   /// First element of the list is the element's id on the page.
-  void init([List params]) {
+  void init([PropertyList params]) {
     _htmlId = params[0];
     _element = query(_htmlId);
   }

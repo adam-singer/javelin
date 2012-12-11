@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinProjector extends JavelinBaseDemo {
   Loader _loader;
   Scene _scene;
@@ -29,7 +29,7 @@ class JavelinProjector extends JavelinBaseDemo {
     _loader = new Loader(_scene, device, resourceManager);
   }
 
-  String get demoDescription() => 'Projector';
+  String get demoDescription => 'Projector';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();

@@ -1,3 +1,4 @@
+part of javelin_game;
 
 typedef void EventListener([List params]);
 

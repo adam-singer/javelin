@@ -42,13 +42,13 @@ class Skybox {
   static final String _skyboxSamplerName = 'Skybox.Sampler';
   static final String _inputLayoutName = 'Skybox.InputLayout';
 
-  List<int> _deviceHandles;
+  List<DeviceChild> _deviceHandles;
 
   static final int _skyboxVertexResourceHandleIndex = 0;
 
   static final String _skyboxVertexResourceName = 'SkyBoxVBO';
 
-  List<int> _resourceHandles;
+  List<ResourceBase> _resourceHandles;
 
   GraphicsDevice device;
   ResourceManager resourceManager;
@@ -57,12 +57,12 @@ class Skybox {
   Float32Array _blendT;
 
   Float32ArrayResource skyboxVertexResource;
-  int skyboxTexture1Handle;
-  int skyboxTexture2Handle;
-  int shaderProgramHandle;
+  Texture2D skyboxTexture1Handle;
+  Texture2D skyboxTexture2Handle;
+  ShaderProgram shaderProgramHandle;
   Skybox(this.device, this.resourceManager, this.shaderProgramHandle, this.skyboxTexture1Handle, this.skyboxTexture2Handle) {
-    _deviceHandles = new List<int>();
-    _resourceHandles = new List<int>();
+    _deviceHandles = new List<DeviceChild>();
+    _resourceHandles = new List<ResourceBase>();
     skyboxVertexResource = new Float32ArrayResource(_skyboxVertexResourceName, resourceManager);
     _lookatMatrix = new Float32Array(16);
     _blendT = new Float32Array(4);
@@ -80,8 +80,8 @@ class Skybox {
     var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, 20, 0, 0), new InputElementDescription('vTexCoord', GraphicsDevice.DeviceFormatFloat2, 20, 0, 12)];
 
     device.configureDeviceChild(_deviceHandles[_inputLayoutHandleIndex], {'elements': elements, 'shaderProgram': shaderProgramHandle});
-
-    _resourceHandles.add(resourceManager.registerDynamicResource(skyboxVertexResource));
+    resourceManager.registerDynamicResource(skyboxVertexResource);
+    _resourceHandles.add(skyboxVertexResource);
 
     buildVertexBuffer();
   }
@@ -362,8 +362,8 @@ class Skybox {
     }
 
     skyboxVertexResource.array = vb;
-
-    device.context.updateBuffer(_deviceHandles[_vertexBufferHandleIndex], skyboxVertexResource.array);
+    var vbo = _deviceHandles[_vertexBufferHandleIndex];
+    vbo.uploadData(vb, vbo.usage);
   }
 
   void fini() {
@@ -387,10 +387,10 @@ class Skybox {
     device.context.setVertexBuffers(0, [_deviceHandles[_vertexBufferHandleIndex]]);
     device.context.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
-    device.context.setUniformInt('sampler1', 0);
-    device.context.setUniformInt('sampler2', 1);
-    device.context.setUniformNum('t', blendT);
-    device.context.setUniformMatrix4('cameraTransform', _lookatMatrix);
+    device.context.setConstant('sampler1', 0);
+    device.context.setConstant('sampler2', 1);
+    device.context.setConstant('t', blendT);
+    device.context.setConstant('cameraTransform', _lookatMatrix);
     device.context.draw(36, 0);
   }
 }

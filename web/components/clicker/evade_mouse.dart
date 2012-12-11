@@ -1,3 +1,4 @@
+part of javelin_click_demo;
 
 class EvadeMouse extends ScriptComponent {
 
@@ -7,22 +8,20 @@ class EvadeMouse extends ScriptComponent {
     return new EvadeMouse();
   }
 
-  // Components can have private properties. This data does not need to be
-  // exposed to any other component, so we don't use the property bag.
-  num _speed = 20;
+  num get speed => data.speed;
+  void set speed(num value) { data.speed = value; }
 
-  num _mouseX;
-  num _mouseY;
+  num get mouseX => data.mouseX;
+  void set mouseX(num value) { data.mouseX = value; }
+
+  num get mouseY => data.mouseY;
+  void set mouseY(num value) { data.mouseY = value; }
 
   // Constructors are a terible idea for components.
   // Use init instead.
   // Parameters for init are provided as a list when you create the component.
   // Internally we use Function.apply to get this to work.
-  void init([List params]) {
-    // Cannot use constructor's syntax sugar because this is not a
-    // constructor :(
-    _speed = params[0];
-
+  void init([PropertyList params]) {
     // This throws an exception if MouseEvents component is not present on the
     // Game Object.
     requireComponent('MouseEvents');
@@ -32,14 +31,14 @@ class EvadeMouse extends ScriptComponent {
 
     // Just for fun, set a property in the property bag so that other
     // components can read it. In this case, DestroyOnClick will read it.
-    properties.set('secretMessage', 'Hi! I am a property!');
+    owner.data.secretMessage = 'Hi! I am a property!';
   }
 
   // The signature for this callback should be specified in the
   // MouseEvents component API.
   void captureMouse([List params]) {
-    _mouseX = params[0];
-    _mouseY = params[1];
+    mouseX = params[0];
+    mouseY = params[1];
   }
 
   // This is not an event handler.
@@ -58,7 +57,7 @@ class EvadeMouse extends ScriptComponent {
     // owner.transform is a shortcut for owner.getComponent('Transform')
     vec3 delta = mouseProjection - owner.transform.position;
     if(delta.length2 < 100*100) {
-      delta = delta * (-1 *_speed * timeDelta);
+      delta = delta * (-1 * speed * timeDelta);
       owner.transform.translate(delta);
     }
   }

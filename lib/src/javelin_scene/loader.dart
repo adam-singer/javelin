@@ -1,18 +1,17 @@
+part of javelin_scene;
 
 class Loader {
-  Set<int> _resourceHandleTable;
-  Set<int> _deviceHandleTable;
+  Set<ResourceBase> _resourceHandleTable;
+  Set<DeviceChild> _deviceHandleTable;
   Map _sceneDescription;
   Scene _scene;
   GraphicsDevice _device;
   ResourceManager _resourceManager;
-  int sceneResourceHandle;
-  int sceneResourceCallback;
+  SceneResource sceneResourceHandle;
   Loader(this._scene, this._device, this._resourceManager) {
-    _resourceHandleTable = new Set<int>();
-    _deviceHandleTable = new Set<int>();
-    sceneResourceHandle = 0;
-    sceneResourceCallback = 0;
+    _resourceHandleTable = new Set<ResourceBase>();
+    _deviceHandleTable = new Set<DeviceChild>();
+    sceneResourceHandle = null;
   }
 
   void shutdown() {
@@ -24,7 +23,7 @@ class Loader {
     });
     _deviceHandleTable.clear();
     _resourceHandleTable.clear();
-    _resourceManager.removeEventCallback(sceneResourceHandle,  ResourceEvents.TypeUpdate, sceneResourceCallback);
+    _resourceManager.removeEventCallback(sceneResourceHandle,  ResourceEvents.TypeUpdate, reload);
   }
 
   void reload(int type, SceneResource resource) {
@@ -34,15 +33,8 @@ class Loader {
 
   Future loadFromUrl(String url) {
     sceneResourceHandle = _resourceManager.registerResource(url);
-    sceneResourceCallback = _resourceManager.addEventCallback(sceneResourceHandle, ResourceEvents.TypeUpdate, reload);
+    _resourceManager.addEventCallback(sceneResourceHandle, ResourceEvents.TypeUpdate, reload);
     return _resourceManager.loadResource(sceneResourceHandle);
-    /*
-    Future r = _resourceManager.loadResource(handle);
-    return r.chain((result) {
-      SceneResource sr = _resourceManager.getResource(handle);
-      return load(sr.sceneDescription);
-    });
-    */
   }
 
   Future _loadResources(Map sceneDescription) {
@@ -78,15 +70,15 @@ class Loader {
       }
     });
     resources.forEach((r) {
-      int handle = _resourceManager.getResourceHandle(r);
-      if (handle != Handle.BadHandle) {
+      ResourceBase handle = _resourceManager.getResource(r);
+      if (handle != null) {
         // Duplicate
         return;
       }
       handle = _resourceManager.registerResource(r);
-      ResourceBase rb = _resourceManager.getResource(handle);
+      ResourceBase rb = handle;
       if (rb is ImageResource) {
-        int textureHandle = _device.createTexture2D(rb.url, {});
+        Texture2D textureHandle = _device.createTexture2D(rb.url, {});
         _resourceManager.addEventCallback(handle, ResourceEvents.TypeUpdate, (type, resource) {
           _device.context.updateTexture2DFromResource(textureHandle, handle, _resourceManager);
           _device.context.generateMipmap(textureHandle);
@@ -101,6 +93,7 @@ class Loader {
 
   Mesh _loadMesh(Map entity) {
     final String name = entity['mesh'];
+    print('_loadMesh $name');
     Mesh mesh = _scene.meshes[name];
     if (mesh == null) {
       mesh = new Mesh(name, _scene);
@@ -149,9 +142,7 @@ class Loader {
 
     String shaderName = entity['shader'];
 
-    int sprHandle = _scene.resourceManager.getResourceHandle(shaderName);
-
-    ShaderProgramResource spr = _scene.resourceManager.getResource(sprHandle);
+    ShaderProgramResource spr = _scene.resourceManager.getResource(shaderName);
 
     if (_scene.skyboxVertexShader == null) {
       _scene.skyboxVertexShader = _scene.device.createVertexShader('$shaderName.vs', {});
@@ -164,21 +155,21 @@ class Loader {
     }
 
     bool relink = false;
-    VertexShader vs = _scene.device.getDeviceChild(_scene.skyboxVertexShader);
+    VertexShader vs = _scene.skyboxVertexShader;
     if (vs.source != spr.vertexShaderSource) {
       vs.source = spr.vertexShaderSource;
       vs.compile();
       relink = true;
     }
 
-    FragmentShader fs = _scene.device.getDeviceChild(_scene.skyboxFragmentShader);
+    FragmentShader fs = _scene.skyboxFragmentShader;
     if (fs.source != spr.fragmentShaderSource) {
       fs.source = spr.fragmentShaderSource;
       fs.compile();
       relink = true;
     }
 
-    ShaderProgram sp = _scene.device.getDeviceChild(_scene.skyboxShaderProgram);
+    ShaderProgram sp = _scene.skyboxShaderProgram;
     if (!sp.linked || relink) {
       _scene.device.configureDeviceChild(_scene.skyboxShaderProgram, {
         'VertexProgram': _scene.skyboxVertexShader,
@@ -188,8 +179,8 @@ class Loader {
 
     String texture0 = entity['textures']['0'];
     String texture1 = entity['textures']['1'];
-    int texture0Handle = _scene.device.getDeviceChildHandle(texture0);
-    int texture1Handle = _scene.device.getDeviceChildHandle(texture1);
+    Texture2D texture0Handle = _scene.device.getDeviceChild(texture0);
+    Texture2D texture1Handle = _scene.device.getDeviceChild(texture1);
     _scene.skybox = new Skybox(_device, _scene.resourceManager,
                                 _scene.skyboxShaderProgram,
                                 texture0Handle,
@@ -214,12 +205,12 @@ class Loader {
     if (model == null) {
       return;
     }
-    int xformHandle = model.transformHandle;
+    TransformGraphNode node = model.transformHandle;
     if (transform['controller'] != null) {
-      model.controller = new TransformController(_scene.transformGraph, xformHandle);
+      model.controller = new TransformController(_scene.transformGraph, node);
       model.controller.load(transform);
     }
-    mat4 T = _scene.transformGraph.refLocalMatrix(xformHandle);
+    mat4 T = _scene.transformGraph.refLocalMatrix(node);
     T.setIdentity();
     num rotateX = transform['rotateX'];
     num rotateY = transform['rotateY'];
@@ -243,10 +234,10 @@ class Loader {
     }
     String parent = transform['parent'];
     if (parent != null) {
-      _scene.transformGraph.unparent(xformHandle);
+      _scene.transformGraph.unparent(node);
       Model parentModel = _scene.models[parent];
       if (parentModel != null) {
-        _scene.transformGraph.reparent(xformHandle, parentModel.transformHandle);
+        _scene.transformGraph.reparent(node, parentModel.transformHandle);
       }
     }
   }

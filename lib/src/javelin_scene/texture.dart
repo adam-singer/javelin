@@ -1,4 +1,1 @@
-
-class Texture {
-  
-}
+part of javelin_scene;

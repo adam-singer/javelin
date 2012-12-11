@@ -19,20 +19,20 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-
+part of javelin_demo_launcher;
 class JavelinParticlesDemo extends JavelinBaseDemo {
-  int _particlesVBOHandle;
-  int _particlesVSResourceHandle;
-  int _particlesFSResourceHandle;
-  int _particlesVSHandle;
-  int _particlesFSHandle;
-  int _particlesInputLayoutHandle;
-  int _particlesShaderProgramHandle;
-  int _particlePointSpriteResourceHandle;
-  int _particlePointSpriteHandle;
-  int _particlePointSpriteSamplerHandle;
-  int _particleDepthStateHandle;
-  int _particleBlendStateHandle;
+  VertexBuffer _particlesVBOHandle;
+  ShaderResource _particlesVSResourceHandle;
+  ShaderResource _particlesFSResourceHandle;
+  VertexShader _particlesVSHandle;
+  FragmentShader _particlesFSHandle;
+  InputLayout _particlesInputLayoutHandle;
+  ShaderProgram _particlesShaderProgramHandle;
+  ImageResource _particlePointSpriteResourceHandle;
+  Texture2D _particlePointSpriteHandle;
+  SamplerState _particlePointSpriteSamplerHandle;
+  DepthState _particleDepthStateHandle;
+  BlendState _particleBlendStateHandle;
 
   Float32Array _particlesVertexData;
 
@@ -69,7 +69,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     }
   }
 
-  String get demoDescription() => 'Particles';
+  String get demoDescription => 'Particles';
 
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
@@ -80,7 +80,7 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     _particlesVSHandle = device.createVertexShader('Particle Vertex Shader',{});
     _particlesFSHandle = device.createFragmentShader('Particle Fragment Shader', {});
     _particlePointSpriteResourceHandle = resourceManager.registerResource('/textures/particle.png');
-    _particlePointSpriteHandle = device.createTexture2D('Particle Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.TextureFormatRGBA, 'pixelFormat': Texture.PixelFormatUnsignedByte});
+    _particlePointSpriteHandle = device.createTexture2D('Particle Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.FormatRGBA, 'pixelFormat': Texture.FormatRGBA, 'pixelType': Texture.PixelTypeU8});
     _particlePointSpriteSamplerHandle = device.createSamplerState('Particle Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
     _particleDepthStateHandle = device.createDepthState('Particle Depth State', {});
     _particleBlendStateHandle = device.createBlendState('Particle Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
@@ -118,23 +118,23 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    device.context.updateBuffer(_particlesVBOHandle, _particlesVertexData);
+    _particlesVBOHandle.uploadData(_particlesVertexData, _particlesVBOHandle.usage);
   }
 
   void drawParticles() {
     device.context.setInputLayout(_particlesInputLayoutHandle);
     device.context.setVertexBuffers(0, [_particlesVBOHandle]);
-    device.context.setIndexBuffer(0);
+    device.context.setIndexBuffer(null);
     device.context.setDepthState(_particleDepthStateHandle);
     device.context.setBlendState(_particleBlendStateHandle);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyPoints);
     device.context.setShaderProgram(_particlesShaderProgramHandle);
     device.context.setTextures(0, [_particlePointSpriteHandle]);
     device.context.setSamplers(0, [_particlePointSpriteSamplerHandle]);
-    device.context.setUniformMatrix4('projectionViewTransform', projectionViewTransform);
-    device.context.setUniformMatrix4('projectionTransform', projectionTransform);
-    device.context.setUniformMatrix4('viewTransform', viewTransform);
-    device.context.setUniformMatrix4('normalTransform', normalTransform);
+    device.context.setConstant('projectionViewTransform', projectionViewTransform);
+    device.context.setConstant('projectionTransform', projectionTransform);
+    device.context.setConstant('viewTransform', viewTransform);
+    device.context.setConstant('normalTransform', normalTransform);
     device.context.draw(_numParticles, 0);
   }
 

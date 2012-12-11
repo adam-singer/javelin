@@ -1,7 +1,7 @@
-#library('particle_system');
-#import('package:vector_math/vector_math_browser.dart');
-#import('package:spectre/spectre.dart');
-#import('dart:math', prefix:'Math');
+library particle_system;
+import 'package:vector_math/vector_math_browser.dart';
+import 'package:spectre/spectre.dart';
+import 'dart:math' as Math;
 
 abstract class ParticleSystemBackend {
   int _numParticles;
@@ -77,12 +77,12 @@ abstract class ParticleSystemBackend {
 
   }
 
-  int get readIndex() => _index;
-  int get writeIndex() => (_index+1)%2;
-  abstract void applyForces();
-  abstract void integrate();
-  abstract void satisfyConstraints();
-  abstract void copyPositions(dynamic out, int stride);
+  int get readIndex => _index;
+  int get writeIndex => (_index+1)%2;
+  void applyForces();
+  void integrate();
+  void satisfyConstraints();
+  void copyPositions(dynamic out, int stride);
 
   void update() {
     applyForces();
