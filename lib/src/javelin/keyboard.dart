@@ -126,6 +126,11 @@ class JavelinKeyboard {
     return wasUp(keyCode) && isDown(keyCode);
   }
 
+  /** Is [keyCode] being held down? */
+  bool isHeld(int keyCode) {
+    return wasDown(keyCode) && isDown(keyCode);
+  }
+
   /** This function must be called once and only once per logical game
    * frame. After calling this function all keyboard events for the current
    * frame should be processed.
