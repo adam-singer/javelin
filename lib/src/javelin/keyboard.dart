@@ -82,18 +82,13 @@ class JavelinKeyCodes {
  * was the key pressed in the previous frame and released this frame?
  */
 class JavelinKeyboard {
-  final List<Map<int, bool>> _keyboardStates = [new Map<int, bool>(),
-                                                new Map<int, bool>()];
+  final List<Set<int>> _keyboardStates = [new Set<int>(),
+                                          new Set<int>()];
   int _currentIndex = 0;
   int _previousIndex = 1;
 
-  bool _isDown(Map<int, bool> keyboardState, int keyCode) {
-    bool r = keyboardState[keyCode];
-    if (r == null) {
-      // Never seen
-      return false;
-    }
-    return r;
+  bool _isDown(Set<int> keyboardState, int keyCode) {
+    return keyboardState.contains(keyCode);
   }
 
   /** Is [keyCode] up this frame? */
@@ -131,6 +126,16 @@ class JavelinKeyboard {
     return wasDown(keyCode) && isDown(keyCode);
   }
 
+  /** Is [keyCode] down this frame or was it down in the previous frame? */
+  bool isDownFuzzy(int keyCode) {
+    return isDown(keyCode) || wasDown(keyCode);
+  }
+
+  /** Is [keyCode] up this frame or was it up in the previous frame? */
+  bool isUpFuzzy(int keyCode) {
+    return isUp(keyCode) || wasUp(keyCode);
+  }
+
   /** This function must be called once and only once per logical game
    * frame. After calling this function all keyboard events for the current
    * frame should be processed.
@@ -145,8 +150,8 @@ class JavelinKeyboard {
     // Clear current frame state.
     _keyboardStates[_currentIndex].clear();
     // Start current frame state at same point as previous frame.
-    _keyboardStates[_previousIndex].forEach((k, v) {
-      _keyboardStates[_currentIndex][k] = v;
+    _keyboardStates[_previousIndex].forEach((k) {
+      _keyboardStates[_currentIndex].add(k);
     });
   }
 
@@ -155,6 +160,11 @@ class JavelinKeyboard {
    * NOTE: This function should be thought of as internal.
    * */
   void keyboardEvent(KeyboardEvent event, bool down) {
-    _keyboardStates[_currentIndex][event.keyCode] = down;
+    if (down) {
+      _keyboardStates[_currentIndex].add(event.keyCode);
+    } else {
+      _keyboardStates[_currentIndex].remove(event.keyCode);
+    }
+
   }
 }
