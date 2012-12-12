@@ -74,7 +74,7 @@ class GlobalResources {
     if (colorTarget == 'frontBuffer' ||
         depthTarget == 'frontBuffer' ||
         stencilTarget == 'frontBuffer') {
-      return renderer.device.systemProvidedRenderTarget;
+      return RenderTarget.systemRenderTarget;
     }
     var colorBuffer = _colorTargets[colorTarget];
     var depthBuffer = _depthTargets[depthTarget];
