@@ -88,27 +88,22 @@ class RenderConfig {
         if (color == "system" || depth == "system") {
           spectreLog.Error('Cannot create a layer that uses some system and some non-system buffers');
         } else {
-          DeviceChild colorHandle;
-          DeviceChild depthHandle;
+          DeviceChild colorBuffer;
+          DeviceChild depthBuffer;
           if (color != null) {
             RenderResource cb = _buffers[color];
-            colorHandle = cb.handle;
+            colorBuffer = cb.handle;
           }
           if (depth != null) {
             RenderResource db = _buffers[depth];
-            depthHandle = db.handle;
+            depthBuffer = db.handle;
           }
-          DeviceChild renderTargetHandle;
-          renderTargetHandle = _device.createRenderTarget(name, {
-            'color0': colorHandle,
-            'depth': depthHandle
-          });
-          if (renderTargetHandle == 0) {
-            spectreLog.Error('Could not create render $layerDesc');
-          } else {
-            spectreLog.Info('Created render layer $name');
-            _layers[name] = new RenderLayer(name, type, sort, renderTargetHandle);
-          }
+          RenderTarget renderTargetHandle;
+          renderTargetHandle = _device.createRenderTarget(name, {});
+          renderTargetHandle.colorTarget = colorBuffer;
+          renderTargetHandle.depthTarget = depthBuffer;
+          spectreLog.Info('Created render layer $name');
+          _layers[name] = new RenderLayer(name, type, sort, renderTargetHandle);
         }
       }
     });
