@@ -1,7 +1,7 @@
 part of javelin_scene;
 
 class Mesh extends SceneChild {
-  IndexedMesh indexedMesh;
+  SingleArrayIndexedMesh indexedMesh;
   Map attributes;
   Mesh(String name, Scene scene) : super(name, scene) {
     indexedMesh = null;
@@ -21,32 +21,35 @@ class Mesh extends SceneChild {
       return;
     }
     if (indexedMesh == null) {
-      indexedMesh = scene.device.createIndexedMesh(name, {
-        'UpdateFromMeshResource': {
-          'resourceManager': scene.resourceManager,
-          'meshResourceHandle': mr
-        }
-      });
-    } else {
-      scene.device.configureDeviceChild(indexedMesh, {
-        'UpdateFromMeshResource': {
-          'resourceManager': scene.resourceManager,
-          'meshResourceHandle': mr
-        }
-      });
+      indexedMesh = scene.device.createSingleArrayIndexedMesh(name);
     }
-    attributes = mr.meshData['meshes'][0]['attributes'];
+    indexedMesh.attributes.clear();
+    indexedMesh.vertexArray.uploadData(mr.vertexArray,
+                                       SpectreBuffer.UsageStatic);
+    indexedMesh.indexArray.uploadData(mr.indexArray,
+                                      SpectreBuffer.UsageStatic);
+    mr.meshData['meshes'][0]['attributes'].forEach((name, attribute) {
+      int numComponents = attribute['numElements'];
+      int stride = attribute['stride'];
+      int offset = attribute['offset'];
+      indexedMesh.attributes[name] = new SpectreMeshAttribute(name,
+                                                              'float',
+                                                              numComponents,
+                                                              offset,
+                                                              stride,
+                                                              false);
+    });
   }
 
   void preDraw() {
-    IndexedMesh im = indexedMesh;
+    SingleArrayIndexedMesh im = indexedMesh;
     scene.device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
     scene.device.context.setIndexBuffer(im.indexArray);
     scene.device.context.setVertexBuffers(0, [im.vertexArray]);
   }
 
   void draw() {
-    IndexedMesh im = indexedMesh;
-    scene.device.context.drawIndexed(im.numIndices, im.indexOffset);
+    SingleArrayIndexedMesh im = indexedMesh;
+    scene.device.context.drawIndexed(im.numIndices, 0);
   }
 }

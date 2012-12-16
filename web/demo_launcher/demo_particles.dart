@@ -21,7 +21,7 @@
 */
 part of javelin_demo_launcher;
 class JavelinParticlesDemo extends JavelinBaseDemo {
-  VertexBuffer _particlesVBOHandle;
+  SingleArrayMesh _particlesMesh;
   ShaderResource _particlesVSResourceHandle;
   ShaderResource _particlesFSResourceHandle;
   VertexShader _particlesVSHandle;
@@ -74,7 +74,27 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
 
-    _particlesVBOHandle = device.createVertexBuffer('Particles Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
+    _particlesMesh = device.createSingleArrayMesh('Particles Mesh');
+    _particlesMesh.vertexArray.allocate(_numParticles*_particleVertexSize*4,
+                                        SpectreBuffer.UsageStream);
+    _particlesMesh.attributes['vPosition'] = new SpectreMeshAttribute(
+        'vPosition',
+        'float',
+        3,
+        0,
+        24,
+        false);
+    _particlesMesh.attributes['vColor'] = new SpectreMeshAttribute(
+        'vColor',
+        'float',
+        3,
+        12,
+        24,
+        false);
+
+    int vertexStride = _particleVertexSize*4;
+    _particlesInputLayoutHandle = device.createInputLayout('Particles.IL');
+    _particlesInputLayoutHandle.mesh = _particlesMesh;
     _particlesVSResourceHandle = resourceManager.registerResource('/shaders/simple_particle.vs');
     _particlesFSResourceHandle = resourceManager.registerResource('/shaders/simple_particle.fs');
     _particlesVSHandle = device.createVertexShader('Particle Vertex Shader',{});
@@ -95,13 +115,14 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
-      immediateContext.compileShaderFromResource(_particlesVSHandle, _particlesVSResourceHandle, resourceManager);
-      immediateContext.compileShaderFromResource(_particlesFSHandle, _particlesFSResourceHandle, resourceManager);
-      _particlesShaderProgramHandle = device.createShaderProgram('Particle Shader Program', { 'VertexProgram': _particlesVSHandle, 'FragmentProgram': _particlesFSHandle});
-      int vertexStride = _particleVertexSize*4;
-      var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 0),
-                      new InputElementDescription('vColor', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 12)];
-      _particlesInputLayoutHandle = device.createInputLayout('Particles Input Layout', {'elements':elements, 'shaderProgram':_particlesShaderProgramHandle});
+      _particlesVSHandle.source = _particlesVSResourceHandle.source;
+      _particlesFSHandle.source = _particlesFSResourceHandle.source;
+      _particlesShaderProgramHandle = device.createShaderProgram('Particle.SP', {});
+      _particlesShaderProgramHandle.vertexShader = _particlesVSHandle;
+      _particlesShaderProgramHandle.fragmentShader = _particlesFSHandle;
+      _particlesShaderProgramHandle.link();
+      assert(_particlesShaderProgramHandle.linked == true);
+      _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
       immediateContext.updateTexture2DFromResource(_particlePointSpriteHandle, _particlePointSpriteResourceHandle, resourceManager);
       immediateContext.generateMipmap(_particlePointSpriteHandle);
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
@@ -113,17 +134,17 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
     Future<JavelinDemoStatus> base = super.shutdown();
     _particlesVertexData = null;
     resourceManager.batchDeregister([_particlesVSResourceHandle, _particlesFSResourceHandle, _particlePointSpriteResourceHandle]);
-    device.batchDeleteDeviceChildren([_particlesVBOHandle, _particlesShaderProgramHandle, _particlesVSHandle, _particlesFSHandle, _particlesInputLayoutHandle, _particlePointSpriteHandle, _particleDepthStateHandle, _particleBlendStateHandle, _particlePointSpriteSamplerHandle]);
+    device.batchDeleteDeviceChildren([_particlesMesh, _particlesShaderProgramHandle, _particlesVSHandle, _particlesFSHandle, _particlesInputLayoutHandle, _particlePointSpriteHandle, _particleDepthStateHandle, _particleBlendStateHandle, _particlePointSpriteSamplerHandle]);
     return base;
   }
 
   void updateParticles() {
-    _particlesVBOHandle.uploadData(_particlesVertexData, _particlesVBOHandle.usage);
+    _particlesMesh.vertexArray.uploadSubData(0, _particlesVertexData);
   }
 
   void drawParticles() {
     device.context.setInputLayout(_particlesInputLayoutHandle);
-    device.context.setVertexBuffers(0, [_particlesVBOHandle]);
+    device.context.setVertexBuffers(0, [_particlesMesh.vertexArray]);
     device.context.setIndexBuffer(null);
     device.context.setDepthState(_particleDepthStateHandle);
     device.context.setBlendState(_particleBlendStateHandle);

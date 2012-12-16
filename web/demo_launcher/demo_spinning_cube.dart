@@ -22,9 +22,7 @@
 part of javelin_demo_launcher;
 class JavelinSpinningCube extends JavelinBaseDemo {
   MeshResource cubeMeshResource;
-  VertexBuffer cubeVertexBuffer;
-  IndexBuffer cubeIndexBuffer;
-  int cubeNumIndices;
+  SingleArrayIndexedMesh cubeMesh;
   ShaderResource cubeVertexShaderResource;
   VertexShader cubeVertexShader;
   ShaderResource cubeFragmentShaderResource;
@@ -90,23 +88,35 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       sampler = device.createSamplerState('Cube Texture Sampler', {});
       rs = device.createRasterizerState('Cube Rasterizer State', {'cullEnabled': true, 'cullMode': RasterizerState.CullBack, 'cullFrontFace': RasterizerState.FrontCCW});
       texture = device.createTexture2D('Cube Texture', { 'width': 512, 'height': 512, 'textureFormat' : Texture.FormatRGBA});
-      cubeVertexBuffer = device.createVertexBuffer('Cube Vertex Buffer', {'usage':'static'});
-      cubeIndexBuffer = device.createIndexBuffer('Cube Index Buffer', {'usage':'static'});
+      cubeMesh = device.createSingleArrayIndexedMesh('Cube Mesh');
       cubeProgram = device.createShaderProgram('Cube Program', {});
-      il = device.createInputLayout('Cube Input Layout', {});
+      il = device.createInputLayout('Cube Input Layout');
       ds = device.getDeviceChild('DepthState.TestWrite');
+      il.shaderProgram = cubeProgram;
+      il.mesh = cubeMesh;
       resourceManager.addEventCallback(cubeMeshResource, ResourceEvents.TypeUpdate, (type, resource) {
         MeshResource cube = resource;
-        var elements = [InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vPosition', 0, 'POSITION'), cube),
-                        InputLayoutHelper.inputElementDescriptionFromMesh(new InputLayoutDescription('vTexCoord', 0, 'TEXCOORD0'), cube)];
-
-        device.configureDeviceChild(il, {'elements': elements});
-        device.configureDeviceChild(il, {'shaderProgram': cubeProgram});
-
-        cubeNumIndices = cube.numIndices;
-
-        cubeVertexBuffer.uploadData(cube.vertexArray, SpectreBuffer.UsageStatic);
-        cubeIndexBuffer.uploadData(cube.indexArray, SpectreBuffer.UsageStatic);
+        cubeMesh.attributes.clear();
+        cubeMesh.attributes['vPosition'] = new SpectreMeshAttribute(
+            'vPosition',
+            'float',
+            3,
+            cube.meshData['meshes'][0]['attributes']['POSITION']['offset'],
+            cube.meshData['meshes'][0]['attributes']['POSITION']['stride'],
+            false);
+        cubeMesh.attributes['vTexCoord'] = new SpectreMeshAttribute(
+            'vTexCoord',
+            'float',
+            2,
+            cube.meshData['meshes'][0]['attributes']['TEXCOORD0']['offset'],
+            cube.meshData['meshes'][0]['attributes']['TEXCOORD0']['stride'],
+            false);
+        cubeMesh.numIndices = cube.numIndices;
+        il.mesh = cubeMesh;
+        cubeMesh.vertexArray.uploadData(cube.vertexArray,
+                                        SpectreBuffer.UsageStatic);
+        cubeMesh.indexArray.uploadData(cube.indexArray,
+                                       SpectreBuffer.UsageStatic);
 
         // Build frame program
         CommandListBuilder pb = new CommandListBuilder();
@@ -119,9 +129,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
         pb.setTextures(0, [texture]);
         pb.setSamplers(0, [sampler]);
         pb.setInputLayout(il);
-        pb.setIndexBuffer(cubeIndexBuffer);
-        pb.setVertexBuffers(0, [cubeVertexBuffer]);
-        pb.drawIndexed(cubeNumIndices, 0);
+        pb.setIndexedMesh(cubeMesh);
+        pb.drawIndexedMesh(cubeMesh);
         _frameProgram = pb.ops;
       });
 
@@ -131,13 +140,19 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       });
 
       resourceManager.addEventCallback(cubeVertexShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
-        immediateContext.compileShaderFromResource(cubeVertexShader, cubeVertexShaderResource, resourceManager);
-        device.configureDeviceChild(cubeProgram, { 'VertexProgram': cubeVertexShader });
+        cubeVertexShader.source = cubeVertexShaderResource.source;
+        assert(cubeVertexShader.compiled == true);
+        cubeProgram.vertexShader = cubeVertexShader;
+        cubeProgram.link();
+        il.shaderProgram = cubeProgram;
       });
 
       resourceManager.addEventCallback(cubeFragmentShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
-        immediateContext.compileShaderFromResource(cubeFragmentShader, cubeFragmentShaderResource, resourceManager);
-        device.configureDeviceChild(cubeProgram, { 'FragmentProgram': cubeFragmentShader });
+        cubeFragmentShader.source = cubeFragmentShaderResource.source;
+        assert(cubeFragmentShader.compiled == true);
+        cubeProgram.fragmentShader = cubeFragmentShader;
+        cubeProgram.link();
+        il.shaderProgram = cubeProgram;
       });
 
       resourceManager.loadResource(renderConfigResource).then((_dd) {
@@ -160,7 +175,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     CommandListBuilder pb = new CommandListBuilder();
     renderConfig.cleanup();
     pb.deregisterResources([cubeMeshResource, cubeVertexShaderResource, cubeFragmentShaderResource, cubeTextureResource]);
-    pb.deleteDeviceChildren([il, rs, sampler, texture, cubeProgram, cubeVertexBuffer, cubeIndexBuffer, cubeVertexShader, cubeFragmentShader]);
+    pb.deleteDeviceChildren([il, rs, sampler, texture, cubeProgram, cubeMesh, cubeVertexShader, cubeFragmentShader]);
     _shutdownProgram = pb.ops;
 
     interpreter.run(_shutdownProgram, device, resourceManager, immediateContext);

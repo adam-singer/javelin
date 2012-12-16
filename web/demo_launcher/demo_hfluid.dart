@@ -22,7 +22,8 @@
 part of javelin_demo_launcher;
 class JavelinHFluidDemo extends JavelinBaseDemo {
   HeightFieldFluid _fluid;
-  VertexBuffer _fluidVBOHandle;
+  SingleArrayMesh _fluidMesh;
+
   int _centerColumnIndex;
   ShaderResource _fluidVSResourceHandle;
   ShaderResource _fluidFSResourceHandle;
@@ -72,7 +73,16 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     _fluidVertexData = new Float32Array(vboSize);
     // Each float needs 4 bytes
     vboSize *= 4;
-    _fluidVBOHandle = device.createVertexBuffer('Fluid Vertex Buffer', {'usage':'stream', 'size':vboSize});
+    _fluidMesh = device.createSingleArrayMesh('Fluid Vertex Buffer');
+    _fluidMesh.attributes['vPosition'] = new SpectreMeshAttribute('vPosition',
+                                                                  'float',
+                                                                  3, 0, 24,
+                                                                  false);
+    _fluidMesh.attributes['vNormal'] = new SpectreMeshAttribute('vNormal',
+                                                                'float',
+                                                                3, 12, 24,
+                                                                false);
+    _fluidMesh.vertexArray.allocate(vboSize, SpectreBuffer.UsageStream);
     _fluidVSResourceHandle = resourceManager.registerResource('/shaders/simple_fluid.vs');
     _fluidFSResourceHandle = resourceManager.registerResource('/shaders/simple_fluid.fs');
     _fluidVSHandle = device.createVertexShader('Fluid Vertex Shader',{});
@@ -91,13 +101,21 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
-      immediateContext.compileShaderFromResource(_fluidVSHandle, _fluidVSResourceHandle, resourceManager);
-      immediateContext.compileShaderFromResource(_fluidFSHandle, _fluidFSResourceHandle, resourceManager);
-      _fluidShaderProgramHandle = device.createShaderProgram('Fluid Shader Program', { 'VertexProgram': _fluidVSHandle, 'FragmentProgram': _fluidFSHandle});
+      _fluidVSHandle.source = _fluidVSResourceHandle.source;
+      assert(_fluidVSHandle.compiled == true);
+      _fluidFSHandle.source = _fluidFSResourceHandle.source;
+      assert(_fluidFSHandle.compiled == true);
+      _fluidShaderProgramHandle = device.createShaderProgram(
+          'Fluid Shader Program', {});
+      _fluidShaderProgramHandle.vertexShader = _fluidVSHandle;
+      _fluidShaderProgramHandle.fragmentShader = _fluidFSHandle;
+      _fluidShaderProgramHandle.link();
+      assert(_fluidShaderProgramHandle.linked == true);
       int vertexStride = 2*3*4;
-      var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 0),
-                      new InputElementDescription('vNormal', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 12)];
-      _fluidInputLayoutHandle = device.createInputLayout('Fluid Input Layout', {'elements':elements, 'shaderProgram':_fluidShaderProgramHandle});
+      _fluidInputLayoutHandle = device.createInputLayout('Fluid Input Layout');
+      _fluidInputLayoutHandle.shaderProgram = _fluidShaderProgramHandle;
+      _fluidInputLayoutHandle.mesh = _fluidMesh;
+      assert(_fluidInputLayoutHandle.ready == true);
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
     });
     return complete.future;
@@ -113,13 +131,13 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     Future<JavelinDemoStatus> base = super.shutdown();
     _fluidVertexData = null;
     resourceManager.batchDeregister([_fluidVSResourceHandle, _fluidFSResourceHandle]);
-    device.batchDeleteDeviceChildren([_fluidVBOHandle, _fluidShaderProgramHandle, _fluidVSHandle, _fluidFSHandle, _fluidInputLayoutHandle]);
+    device.batchDeleteDeviceChildren([_fluidMesh, _fluidShaderProgramHandle, _fluidVSHandle, _fluidFSHandle, _fluidInputLayoutHandle]);
     return base;
   }
 
   void _drawFluid() {
     device.context.setInputLayout(_fluidInputLayoutHandle);
-    device.context.setVertexBuffers(0, [_fluidVBOHandle]);
+    device.context.setVertexBuffers(0, [_fluidMesh.vertexArray]);
     device.context.setIndexBuffer(null);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
     device.context.setShaderProgram(_fluidShaderProgramHandle);
@@ -134,7 +152,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
   }
 
   void _updateFluidVertexData() {
-    _fluidVBOHandle.uploadData(_fluidVertexData, _fluidVBOHandle.usage);
+    _fluidMesh.vertexArray.uploadSubData(0, _fluidVertexData);
   }
 
   void _buildFluidVertexData() {

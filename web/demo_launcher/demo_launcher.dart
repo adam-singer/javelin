@@ -324,7 +324,7 @@ void main() {
   Profiler.init();
   JavelinConfigStorage.init();
   // Comment out the following line to reset defaults
-  JavelinConfigStorage.load();
+  //JavelinConfigStorage.load();
   //JavelinConfigStorage.set('demo.postprocess', 'blit', true);
   spectreLog = new HtmlLogger('#SpectreLog');
   {

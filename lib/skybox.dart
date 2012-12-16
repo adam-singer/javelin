@@ -29,14 +29,13 @@ class Skybox {
   static final int _depthStateHandleIndex = 0;
   static final int _blendStateHandleIndex = 1;
   static final int _rasterizerStateHandleIndex = 2;
-  static final int _vertexBufferHandleIndex = 3;
-  static final int _skyboxSamplerHandleIndex = 4;
-  static final int _inputLayoutHandleIndex = 5;
+  static final int _skyboxSamplerHandleIndex = 3;
+  static final int _inputLayoutHandleIndex = 4;
 
   static final String _depthStateName = 'Skybox.Depth State';
   static final String _blendStateName = 'Skybox.Blend State';
   static final String _rasterizerStateName = 'Skybox.Rasterizer State';
-  static final String _vertexBufferName = 'Skybox.Vertex Buffer';
+  static final String _vertexBufferName = 'Skybox.Mesh';
   static final String _skyboxTexture1Name = 'Skybox.Texture1';
   static final String _skyboxTexture2Name = 'Skybox.Texture2';
   static final String _skyboxSamplerName = 'Skybox.Sampler';
@@ -49,6 +48,8 @@ class Skybox {
   static final String _skyboxVertexResourceName = 'SkyBoxVBO';
 
   List<ResourceBase> _resourceHandles;
+
+  SingleArrayMesh mesh;
 
   GraphicsDevice device;
   ResourceManager resourceManager;
@@ -72,15 +73,26 @@ class Skybox {
     _deviceHandles.add(device.createDepthState(_depthStateName, {'depthTestEnabled': false, 'depthWriteEnabled': false}));
     _deviceHandles.add(device.createBlendState(_blendStateName, {}));
     _deviceHandles.add(device.createRasterizerState(_rasterizerStateName, {'cullEnabled': false}));
-    _deviceHandles.add(device.createVertexBuffer(_vertexBufferName, {}));
     _deviceHandles.add(device.createSamplerState(_skyboxSamplerName, {}));
-    _deviceHandles.add(device.createInputLayout(_inputLayoutName, {}));
+    _deviceHandles.add(device.createInputLayout(_inputLayoutName));
 
-    //   InputElementDescription(this.name, this.format, this.elementStride, this.vertexBufferSlot, this.vertexBufferOffset);
-    var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, 20, 0, 0), new InputElementDescription('vTexCoord', GraphicsDevice.DeviceFormatFloat2, 20, 0, 12)];
+    mesh = device.createSingleArrayMesh(_vertexBufferName);
+    mesh.attributes['vPosition'] = new SpectreMeshAttribute('vPosition',
+                                                            'float',
+                                                            3,
+                                                            0,
+                                                            20,
+                                                            false);
+    mesh.attributes['vTexCoord'] = new SpectreMeshAttribute('vTexCoord',
+                                                            'float',
+                                                            2,
+                                                            12,
+                                                            20,
+                                                            false);
 
-    device.configureDeviceChild(_deviceHandles[_inputLayoutHandleIndex], {'elements': elements, 'shaderProgram': shaderProgramHandle});
-    resourceManager.registerDynamicResource(skyboxVertexResource);
+    InputLayout il = _deviceHandles[_inputLayoutHandleIndex];
+    il.mesh = mesh;
+    il.shaderProgram = shaderProgramHandle;
     _resourceHandles.add(skyboxVertexResource);
 
     buildVertexBuffer();
@@ -361,9 +373,7 @@ class Skybox {
 
     }
 
-    skyboxVertexResource.array = vb;
-    var vbo = _deviceHandles[_vertexBufferHandleIndex];
-    vbo.uploadData(vb, vbo.usage);
+    mesh.vertexArray.uploadData(vb, SpectreBuffer.UsageStatic);
   }
 
   void fini() {
@@ -384,7 +394,7 @@ class Skybox {
     device.context.setShaderProgram(shaderProgramHandle);
     device.context.setTextures(0, [skyboxTexture1Handle, skyboxTexture2Handle]);
     device.context.setSamplers(0, [_deviceHandles[_skyboxSamplerHandleIndex], _deviceHandles[_skyboxSamplerHandleIndex]]);
-    device.context.setVertexBuffers(0, [_deviceHandles[_vertexBufferHandleIndex]]);
+    device.context.setVertexBuffers(0, [mesh.vertexArray]);
     device.context.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
     device.context.setConstant('sampler1', 0);

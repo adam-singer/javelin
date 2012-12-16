@@ -54,8 +54,7 @@ class JavelinFlyingSphere {
 }
 
 class JavelinClothDemo extends JavelinBaseDemo {
-  VertexBuffer _particlesVBOHandle;
-  IndexBuffer _particleIBHandle;
+  SingleArrayIndexedMesh _particlesMesh;
   ShaderResource _particlesVSResourceHandle;
   ShaderResource _particlesFSResourceHandle;
   VertexShader _particlesVSHandle;
@@ -115,7 +114,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
   Future<JavelinDemoStatus> startup() {
     Future<JavelinDemoStatus> base = super.startup();
 
-    _particleIBHandle = device.createIndexBuffer('Cloth Index Buffer', {});
+    _particlesMesh = device.createSingleArrayIndexedMesh('Cloth Mesh');
 
     {
       Uint16Array indexArray = new Uint16Array((_gridWidth-1)*(_gridWidth-1)*6);
@@ -134,10 +133,37 @@ class JavelinClothDemo extends JavelinBaseDemo {
           indexArray[out++] = southEast;
         }
       }
-      _particleIBHandle.uploadData(indexArray, SpectreBuffer.UsageStatic);
+      _particlesMesh.indexArray.uploadData(indexArray,
+                                           SpectreBuffer.UsageStatic);
     }
-
-    _particlesVBOHandle = device.createVertexBuffer('Cloth Vertex Buffer', {'usage':'stream', 'size':_numParticles*_particleVertexSize});
+    _particlesMesh.vertexArray.allocate(_numParticles*_particleVertexSize*4,
+                                        SpectreBuffer.UsageStream);
+    int vertexStride = _particleVertexSize*4;
+    _particlesMesh.attributes['vPosition'] = new SpectreMeshAttribute(
+        'vPosition',
+        'float',
+        3,
+        0,
+        vertexStride,
+        false);
+    _particlesMesh.attributes['vColor'] = new SpectreMeshAttribute(
+        'vColor',
+        'float',
+        3,
+        12,
+        vertexStride,
+        false);
+    _particlesMesh.attributes['vTexCoord'] = new SpectreMeshAttribute(
+        'vTexCoord',
+        'float',
+        2,
+        24,
+        vertexStride,
+        false);
+    _particlesMesh.numIndices = (_gridWidth-1)*(_gridWidth-1)*6;
+    _particlesInputLayoutHandle = device.createInputLayout('Cloth Input Layout');
+    _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
+    _particlesInputLayoutHandle.mesh = _particlesMesh;
     _particlesVSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.vs');
     _particlesFSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.fs');
     _particlesVSHandle = device.createVertexShader('Cloth Vertex Shader',{});
@@ -161,12 +187,13 @@ class JavelinClothDemo extends JavelinBaseDemo {
     allLoaded.then((list) {
       immediateContext.compileShaderFromResource(_particlesVSHandle, _particlesVSResourceHandle, resourceManager);
       immediateContext.compileShaderFromResource(_particlesFSHandle, _particlesFSResourceHandle, resourceManager);
-      _particlesShaderProgramHandle = device.createShaderProgram('Cloth Shader Program', { 'VertexProgram': _particlesVSHandle, 'FragmentProgram': _particlesFSHandle});
+      _particlesShaderProgramHandle = device.createShaderProgram('Cloth Shader Program', {});
+      _particlesShaderProgramHandle.vertexShader = _particlesVSHandle;
+      _particlesShaderProgramHandle.fragmentShader = _particlesFSHandle;
+      _particlesShaderProgramHandle.link();
+      assert(_particlesShaderProgramHandle.linked == true);
+      _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
       int vertexStride = _particleVertexSize*4;
-      var elements = [new InputElementDescription('vPosition', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 0),
-                      new InputElementDescription('vColor', GraphicsDevice.DeviceFormatFloat3, vertexStride, 0, 12),
-                      new InputElementDescription('vTexCoord', GraphicsDevice.DeviceFormatFloat2, vertexStride, 0, 24)];
-      _particlesInputLayoutHandle = device.createInputLayout('Cloth Input Layout', {'elements':elements, 'shaderProgram':_particlesShaderProgramHandle});
       immediateContext.updateTexture2DFromResource(_particlePointSpriteHandle, _particlePointSpriteResourceHandle, resourceManager);
       immediateContext.generateMipmap(_particlePointSpriteHandle);
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
@@ -180,8 +207,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     resourceManager.batchDeregister([_particlesVSResourceHandle,
                                      _particlesFSResourceHandle,
                                      _particlePointSpriteResourceHandle]);
-    device.batchDeleteDeviceChildren([_particlesVBOHandle,
-                                      _particleIBHandle,
+    device.batchDeleteDeviceChildren([_particlesMesh,
                                       _particlesShaderProgramHandle,
                                       _particlesVSHandle,
                                       _particlesFSHandle,
@@ -195,14 +221,12 @@ class JavelinClothDemo extends JavelinBaseDemo {
   }
 
   void updateParticles() {
-    _particlesVBOHandle.uploadData(_particlesVertexData,
-                                   _particlesVBOHandle.usage);
+    _particlesMesh.vertexArray.uploadSubData(0, _particlesVertexData);
   }
 
   void drawParticles() {
     device.context.setInputLayout(_particlesInputLayoutHandle);
-    device.context.setVertexBuffers(0, [_particlesVBOHandle]);
-    device.context.setIndexBuffer(_particleIBHandle);
+    device.context.setIndexedMesh(_particlesMesh);
     device.context.setDepthState(_particleDepthStateHandle);
     device.context.setBlendState(_particleBlendStateHandle);
     device.context.setRasterizerState(_particleRasterizerStateHandle);
@@ -214,8 +238,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     device.context.setConstant('projectionTransform', projectionTransform);
     device.context.setConstant('viewTransform', viewTransform);
     device.context.setConstant('normalTransform', normalTransform);
-    //device.immediateContext.draw(_numParticles, 0);
-    device.context.drawIndexed((_gridWidth-1)*(_gridWidth-1)*6, 0);
+    device.context.drawIndexedMesh(_particlesMesh);
   }
 
   void mouseButtonEventHandler(MouseEvent event, bool down) {

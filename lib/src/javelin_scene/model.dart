@@ -3,7 +3,7 @@ part of javelin_scene;
 class Model extends SceneChild {
   MaterialInstance _materialInstance;
   Mesh _mesh;
-  InputLayout _inputLayoutHandle;
+  InputLayout _inputLayout;
   TransformGraphNode transformHandle;
   TransformController controller;
 
@@ -13,30 +13,21 @@ class Model extends SceneChild {
   }
 
   void delete() {
-    scene.device.deleteDeviceChild(_inputLayoutHandle);
+    scene.device.deleteDeviceChild(_inputLayout);
   }
 
   void update(MaterialInstance materialInstance, Mesh mesh, List layout) {
     _materialInstance = materialInstance;
     _mesh = mesh;
-    if (_inputLayoutHandle == null) {
-      _inputLayoutHandle = scene.device.createInputLayout('$name.il', {});
+    if (_inputLayout == null) {
+      _inputLayout = scene.device.createInputLayout('$name.il');
     }
-    List<InputElementDescription> descriptions = new List<InputElementDescription>();
-    layout.forEach((e) {
-      InputLayoutDescription ild = new InputLayoutDescription(e['name'], 0, e['type']);
-      InputElementDescription ied = InputLayoutHelper.inputElementDescriptionFromAttributes(ild, _mesh.attributes);
-      descriptions.add(ied);
-    });
-
-    scene.device.configureDeviceChild(_inputLayoutHandle, {
-      'shaderProgram': _materialInstance.material.shaderProgramHandle,
-      'elements': descriptions
-    });
+    _inputLayout.shaderProgram = _materialInstance.material.shaderProgramHandle;
+    _inputLayout.mesh = mesh.indexedMesh;
   }
 
   void draw(Camera camera, Map globalUniforms) {
-    scene.device.context.setInputLayout(_inputLayoutHandle);
+    scene.device.context.setInputLayout(_inputLayout);
     _mesh.preDraw();
     _materialInstance.preDraw();
     globalUniforms.forEach((k,v) {
