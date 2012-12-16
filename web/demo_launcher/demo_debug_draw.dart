@@ -113,6 +113,33 @@ class JavelinDebugDrawTest extends JavelinBaseDemo {
       debugDrawManager.addCircle(new vec3(10.0, 0.0, 0.0), _rotateX.transformed3(_unitZ), 3.14, _colors['Blue']);
     }
 
+    {
+      debugDrawManager.addArc(new vec3(0.0, 0.0, 0.0),
+                              new vec3(0.0, 1.0, 0.0),
+                              3.0,
+                              0.0,
+                              3.14159 * 0.5,
+                              _colors['Red']);
+      debugDrawManager.addArc(new vec3(0.0, 0.0, 0.0),
+                              new vec3(0.0, 1.0, 0.0),
+                              3.0,
+                              3.14159 * 0.5,
+                              3.14159 * 1.0,
+                              _colors['Green']);
+      debugDrawManager.addArc(new vec3(0.0, 0.0, 0.0),
+                              new vec3(0.0, 1.0, 0.0),
+                              3.0,
+                              3.14159 * 1.0,
+                              3.14159 * 1.5,
+                              _colors['Blue']);
+      debugDrawManager.addArc(new vec3(0.0, 0.0, 0.0),
+                              new vec3(0.0, 1.0, 0.0),
+                              3.0,
+                              3.14159 * 1.5,
+                              3.14159 * 2.0,
+                              _colors['Orange']);
+    }
+
 
     // AABB and a line from min to max
     {

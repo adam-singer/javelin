@@ -248,7 +248,6 @@ class JavelinDemoLaunch {
     var baseUrl = "${window.location.href.substring(0, window.location.href.length - "index.html".length)}data/";
     resourceManager.setBaseURL(baseUrl);
     Completer<bool> inited = new Completer<bool>();
-    debugDrawManager.init();
     inited.complete(true);
     return inited.future;
   }
