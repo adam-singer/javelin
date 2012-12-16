@@ -123,8 +123,9 @@ class JavelinParticlesDemo extends JavelinBaseDemo {
       _particlesShaderProgramHandle.link();
       assert(_particlesShaderProgramHandle.linked == true);
       _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
-      immediateContext.updateTexture2DFromResource(_particlePointSpriteHandle, _particlePointSpriteResourceHandle, resourceManager);
-      immediateContext.generateMipmap(_particlePointSpriteHandle);
+      _particlePointSpriteHandle.uploadElement(
+          _particlePointSpriteResourceHandle.image);
+      _particlePointSpriteHandle.generateMipmap();
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
     });
     return complete.future;

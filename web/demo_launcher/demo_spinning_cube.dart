@@ -118,8 +118,8 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       });
 
       resourceManager.addEventCallback(cubeTextureResource, ResourceEvents.TypeUpdate, (type, resource) {
-        immediateContext.updateTexture2DFromResource(texture, cubeTextureResource, resourceManager);
-        immediateContext.generateMipmap(texture);
+        texture.uploadElement(cubeTextureResource.image);
+        texture.generateMipmap();
       });
 
       resourceManager.addEventCallback(cubeVertexShaderResource, ResourceEvents.TypeUpdate, (type, resource) {
@@ -214,7 +214,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     }
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    device.context.generateMipmap(renderConfig.getBuffer('colorbuffer'));
+    renderConfig.getBuffer('colorbuffer').generateMipmap();
     String postpass = JavelinConfigStorage.get('demo.postprocess');
     SpectrePost.pass(postpass, renderConfig.getLayer('final'), {
       'textures': [renderConfig.getBuffer('colorbuffer')],

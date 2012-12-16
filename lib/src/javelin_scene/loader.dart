@@ -80,8 +80,8 @@ class Loader {
       if (rb is ImageResource) {
         Texture2D textureHandle = _device.createTexture2D(rb.url, {});
         _resourceManager.addEventCallback(handle, ResourceEvents.TypeUpdate, (type, resource) {
-          _device.context.updateTexture2DFromResource(textureHandle, handle, _resourceManager);
-          _device.context.generateMipmap(textureHandle);
+          textureHandle.uploadElement(handle.image);
+          textureHandle.generateMipmap();
           spectreLog.Info('Updated texture - ${rb.url}');
         });
         _deviceHandleTable.add(textureHandle);

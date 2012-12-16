@@ -185,8 +185,8 @@ class JavelinClothDemo extends JavelinBaseDemo {
     Future allLoaded = Futures.wait(loadedResources);
     Completer<JavelinDemoStatus> complete = new Completer<JavelinDemoStatus>();
     allLoaded.then((list) {
-      immediateContext.compileShaderFromResource(_particlesVSHandle, _particlesVSResourceHandle, resourceManager);
-      immediateContext.compileShaderFromResource(_particlesFSHandle, _particlesFSResourceHandle, resourceManager);
+      _particlesVSHandle.source = _particlesVSResourceHandle.source;
+      _particlesFSHandle.source = _particlesFSResourceHandle.source;
       _particlesShaderProgramHandle = device.createShaderProgram('Cloth Shader Program', {});
       _particlesShaderProgramHandle.vertexShader = _particlesVSHandle;
       _particlesShaderProgramHandle.fragmentShader = _particlesFSHandle;
@@ -194,8 +194,9 @@ class JavelinClothDemo extends JavelinBaseDemo {
       assert(_particlesShaderProgramHandle.linked == true);
       _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
       int vertexStride = _particleVertexSize*4;
-      immediateContext.updateTexture2DFromResource(_particlePointSpriteHandle, _particlePointSpriteResourceHandle, resourceManager);
-      immediateContext.generateMipmap(_particlePointSpriteHandle);
+      _particlePointSpriteHandle.uploadElement(
+          _particlePointSpriteResourceHandle.image);
+      _particlePointSpriteHandle.generateMipmap();
       complete.complete(new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, ''));
     });
     return complete.future;
