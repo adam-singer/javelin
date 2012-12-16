@@ -28,6 +28,7 @@ class Mesh extends SceneChild {
                                        SpectreBuffer.UsageStatic);
     indexedMesh.indexArray.uploadData(mr.indexArray,
                                       SpectreBuffer.UsageStatic);
+    indexedMesh.numIndices = mr.numIndices;
     mr.meshData['meshes'][0]['attributes'].forEach((name, attribute) {
       int numComponents = attribute['numElements'];
       int stride = attribute['stride'];
@@ -39,6 +40,7 @@ class Mesh extends SceneChild {
                                                               stride,
                                                               false);
     });
+    // print(indexedMesh.attributes);
   }
 
   void preDraw() {
