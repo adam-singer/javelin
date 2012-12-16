@@ -38,8 +38,6 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   Float32Array cameraTransform;
   Float32Array objectTransform;
   num _angle;
-  List _frameProgram;
-  List _shutdownProgram;
   TransformGraph _transformGraph;
   List<TransformGraphNode> _transformNodes;
   ConfigUI _configUI;
@@ -117,21 +115,6 @@ class JavelinSpinningCube extends JavelinBaseDemo {
                                         SpectreBuffer.UsageStatic);
         cubeMesh.indexArray.uploadData(cube.indexArray,
                                        SpectreBuffer.UsageStatic);
-
-        // Build frame program
-        CommandListBuilder pb = new CommandListBuilder();
-        pb.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
-        pb.setRasterizerState(rs);
-        pb.setDepthState(ds);
-        pb.setShaderProgram(cubeProgram);
-        pb.setUniformMatrix4('objectTransform', objectTransform);
-        pb.setUniformMatrix4('cameraTransform', cameraTransform);
-        pb.setTextures(0, [texture]);
-        pb.setSamplers(0, [sampler]);
-        pb.setInputLayout(il);
-        pb.setIndexedMesh(cubeMesh);
-        pb.drawIndexedMesh(cubeMesh);
-        _frameProgram = pb.ops;
       });
 
       resourceManager.addEventCallback(cubeTextureResource, ResourceEvents.TypeUpdate, (type, resource) {
@@ -170,29 +153,40 @@ class JavelinSpinningCube extends JavelinBaseDemo {
   }
 
   Future<JavelinDemoStatus> shutdown() {
-    Interpreter interpreter = new Interpreter();
-    // Build shutdown program
-    CommandListBuilder pb = new CommandListBuilder();
-    renderConfig.cleanup();
-    pb.deregisterResources([cubeMeshResource, cubeVertexShaderResource, cubeFragmentShaderResource, cubeTextureResource]);
-    pb.deleteDeviceChildren([il, rs, sampler, texture, cubeProgram, cubeMesh, cubeVertexShader, cubeFragmentShader]);
-    _shutdownProgram = pb.ops;
-
-    interpreter.run(_shutdownProgram, device, resourceManager, immediateContext);
+    resourceManager.batchDeregister([cubeMeshResource,
+                                     cubeVertexShaderResource,
+                                     cubeFragmentShaderResource,
+                                     cubeTextureResource]);
+    device.batchDeleteDeviceChildren([il,
+                                      rs,
+                                      sampler,
+                                      texture,
+                                      cubeProgram,
+                                      cubeMesh,
+                                      cubeVertexShader,
+                                      cubeFragmentShader]);
     Future<JavelinDemoStatus> base = super.shutdown();
     return base;
   }
 
   void drawCube(mat4 T) {
-    {
-      mat4 pm = camera.projectionMatrix;
-      mat4 la = camera.lookAtMatrix;
-      pm.multiply(la);
-      pm.copyIntoArray(cameraTransform);
-      T.copyIntoArray(objectTransform);
-    }
-    Interpreter interpreter = new Interpreter();
-    interpreter.run(_frameProgram, device, resourceManager, immediateContext);
+    mat4 pm = camera.projectionMatrix;
+    mat4 la = camera.lookAtMatrix;
+    pm.multiply(la);
+    pm.copyIntoArray(cameraTransform);
+    T.copyIntoArray(objectTransform);
+    device.context.setPrimitiveTopology(
+        GraphicsContext.PrimitiveTopologyTriangles);
+    device.context.setRasterizerState(rs);
+    device.context.setDepthState(ds);
+    device.context.setShaderProgram(cubeProgram);
+    device.context.setConstant('objectTransform', objectTransform);
+    device.context.setConstant('cameraTransform', cameraTransform);
+    device.context.setTextures(0, [texture]);
+    device.context.setSamplers(0, [sampler]);
+    device.context.setInputLayout(il);
+    device.context.setIndexedMesh(cubeMesh);
+    device.context.drawIndexedMesh(cubeMesh);
   }
 
   Element makeDemoUI() {

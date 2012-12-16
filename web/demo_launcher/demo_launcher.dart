@@ -243,12 +243,12 @@ class JavelinDemoLaunch {
     WebGLRenderingContext webGL = canvas.getContext("experimental-webgl");
     device = new GraphicsDevice(webGL);
     SpectrePost.init(device);
-    debugDrawManager = new DebugDrawManager();
+    debugDrawManager = new DebugDrawManager(device);
     resourceManager = new ResourceManager();
     var baseUrl = "${window.location.href.substring(0, window.location.href.length - "index.html".length)}data/";
     resourceManager.setBaseURL(baseUrl);
     Completer<bool> inited = new Completer<bool>();
-    debugDrawManager.init(device);
+    debugDrawManager.init();
     inited.complete(true);
     return inited.future;
   }
