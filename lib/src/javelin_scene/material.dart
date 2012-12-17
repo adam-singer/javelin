@@ -91,7 +91,7 @@ class Material extends SceneChild {
     textures.forEach((textureName, _) {
       SamplerState handle = samplerNameToHandle[textureName];
       if (handle == null) {
-        handle = scene.device.createSamplerState('$prefix.$textureName.sampler', {});
+        handle = scene.device.createSamplerState('$prefix.$textureName.sampler');
         samplerNameToHandle[textureName] = handle;
       }
       Map sampler = samplers[textureName];
@@ -112,13 +112,13 @@ class Material extends SceneChild {
       return;
     }
     if (vertexShaderHandle == null) {
-      vertexShaderHandle = scene.device.createVertexShader('$shaderName.vs', {});
+      vertexShaderHandle = scene.device.createVertexShader('$shaderName.vs');
     }
     if (fragmentShaderHandle == null) {
-      fragmentShaderHandle = scene.device.createFragmentShader('$shaderName.fs', {});
+      fragmentShaderHandle = scene.device.createFragmentShader('$shaderName.fs');
     }
     if (shaderProgramHandle == null) {
-      shaderProgramHandle = scene.device.createShaderProgram('$shaderName.sp', {});
+      shaderProgramHandle = scene.device.createShaderProgram('$shaderName.sp');
     }
 
     bool relink = false;

@@ -166,14 +166,28 @@ class JavelinClothDemo extends JavelinBaseDemo {
     _particlesInputLayoutHandle.mesh = _particlesMesh;
     _particlesVSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.vs');
     _particlesFSResourceHandle = resourceManager.registerResource('/shaders/simple_cloth.fs');
-    _particlesVSHandle = device.createVertexShader('Cloth Vertex Shader',{});
-    _particlesFSHandle = device.createFragmentShader('Cloth Fragment Shader', {});
+    _particlesVSHandle = device.createVertexShader('Cloth Vertex Shader');
+    _particlesFSHandle = device.createFragmentShader('Cloth Fragment Shader');
     _particlePointSpriteResourceHandle = resourceManager.registerResource('/textures/felt.png');
-    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture', { 'width': 128, 'height': 128, 'textureFormat' : Texture.FormatRGBA, 'pixelFormat': Texture.FormatRGBA, 'pixelType': Texture.PixelTypeU8});
-    _particlePointSpriteSamplerHandle = device.createSamplerState('Cloth Sampler', {'wrapS':SamplerState.TextureWrapClampToEdge, 'wrapT':SamplerState.TextureWrapClampToEdge,'minFilter':SamplerState.TextureMagFilterNearest,'magFilter':SamplerState.TextureMagFilterLinear});
-    _particleDepthStateHandle = device.createDepthState('Cloth Depth State', {'depthTestEnabled': true, 'depthWriteEnabled': true, 'depthComparisonOp': DepthState.DepthComparisonOpLessEqual});
-    _particleBlendStateHandle = device.createBlendState('Cloth Blend State', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
-    _particleRasterizerStateHandle = device.createRasterizerState('Cloth Rasterizer State', {'cullEnabled':false});
+    _particlePointSpriteHandle = device.createTexture2D('Cloth Texture');
+    _particlePointSpriteSamplerHandle = device.createSamplerState('Cloth Sampler');
+    _particlePointSpriteSamplerHandle.wrapS = SamplerState.TextureWrapClampToEdge;
+    _particlePointSpriteSamplerHandle.wrapT = SamplerState.TextureWrapClampToEdge;
+    _particlePointSpriteSamplerHandle.minFilter = SamplerState.TextureMagFilterNearest;
+    _particlePointSpriteSamplerHandle.magFilter = SamplerState.TextureMagFilterLinear;
+    _particleDepthStateHandle = device.createDepthState('Cloth Depth State');
+    _particleDepthStateHandle.depthTestEnabled = true;
+    _particleDepthStateHandle.depthWriteEnabled = true;
+    _particleDepthStateHandle.depthComparisonOp = DepthState.DepthComparisonOpLessEqual;
+    _particleBlendStateHandle = device.createBlendState('Cloth Blend State');
+    _particleBlendStateHandle.blendEnable = true;
+    _particleBlendStateHandle.blendSourceColorFunc = BlendState.BlendSourceShaderAlpha;
+    _particleBlendStateHandle.blendDestColorFunc = BlendState.BlendSourceShaderInverseAlpha;
+    _particleBlendStateHandle.blendSourceAlphaFunc =  BlendState.BlendSourceShaderAlpha;
+    _particleBlendStateHandle.blendDestAlphaFunc = BlendState.BlendSourceShaderInverseAlpha;
+    _particleRasterizerStateHandle = device.createRasterizerState('Cloth Rasterizer State');
+    _particleRasterizerStateHandle.cullEnabled = false;
+
     List loadedResources = [];
     base.then((value) {
       // Once the base is done, we load our resources
@@ -187,7 +201,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
     allLoaded.then((list) {
       _particlesVSHandle.source = _particlesVSResourceHandle.source;
       _particlesFSHandle.source = _particlesFSResourceHandle.source;
-      _particlesShaderProgramHandle = device.createShaderProgram('Cloth Shader Program', {});
+      _particlesShaderProgramHandle = device.createShaderProgram('Cloth Shader Program');
       _particlesShaderProgramHandle.vertexShader = _particlesVSHandle;
       _particlesShaderProgramHandle.fragmentShader = _particlesFSHandle;
       _particlesShaderProgramHandle.link();

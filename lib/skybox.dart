@@ -26,11 +26,11 @@ import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 
 class Skybox {
-  static final int _depthStateHandleIndex = 0;
-  static final int _blendStateHandleIndex = 1;
-  static final int _rasterizerStateHandleIndex = 2;
-  static final int _skyboxSamplerHandleIndex = 3;
-  static final int _inputLayoutHandleIndex = 4;
+  DepthState _depth;
+  BlendState _blend;
+  RasterizerState _rasterizer;
+  SamplerState _sampler;
+  InputLayout _inputLayout;
 
   static final String _depthStateName = 'Skybox.Depth State';
   static final String _blendStateName = 'Skybox.Blend State';
@@ -70,11 +70,14 @@ class Skybox {
   }
 
   void init() {
-    _deviceHandles.add(device.createDepthState(_depthStateName, {'depthTestEnabled': false, 'depthWriteEnabled': false}));
-    _deviceHandles.add(device.createBlendState(_blendStateName, {}));
-    _deviceHandles.add(device.createRasterizerState(_rasterizerStateName, {'cullEnabled': false}));
-    _deviceHandles.add(device.createSamplerState(_skyboxSamplerName, {}));
-    _deviceHandles.add(device.createInputLayout(_inputLayoutName));
+    _depth = device.createDepthState(_depthStateName);
+    _depth.depthTestEnabled = false;
+    _depth.depthWriteEnabled = false;
+    _blend = device.createBlendState(_blendStateName);
+    _rasterizer = device.createRasterizerState(_rasterizerStateName);
+    _rasterizer.cullEnabled = false;
+    _sampler = device.createSamplerState(_skyboxSamplerName);
+    _inputLayout = device.createInputLayout(_inputLayoutName);
 
     mesh = device.createSingleArrayMesh(_vertexBufferName);
     mesh.attributes['vPosition'] = new SpectreMeshAttribute('vPosition',
@@ -90,9 +93,8 @@ class Skybox {
                                                             20,
                                                             false);
 
-    InputLayout il = _deviceHandles[_inputLayoutHandleIndex];
-    il.mesh = mesh;
-    il.shaderProgram = shaderProgramHandle;
+    _inputLayout.mesh = mesh;
+    _inputLayout.shaderProgram = shaderProgramHandle;
     _resourceHandles.add(skyboxVertexResource);
 
     buildVertexBuffer();
@@ -388,14 +390,14 @@ class Skybox {
       T.multiply(L);
       T.copyIntoArray(_lookatMatrix);
     }
-    device.context.setDepthState(_deviceHandles[_depthStateHandleIndex]);
-    device.context.setBlendState(_deviceHandles[_blendStateHandleIndex]);
-    device.context.setRasterizerState(_deviceHandles[_rasterizerStateHandleIndex]);
+    device.context.setDepthState(_depth);
+    device.context.setBlendState(_blend);
+    device.context.setRasterizerState(_rasterizer);
     device.context.setShaderProgram(shaderProgramHandle);
     device.context.setTextures(0, [skyboxTexture1Handle, skyboxTexture2Handle]);
-    device.context.setSamplers(0, [_deviceHandles[_skyboxSamplerHandleIndex], _deviceHandles[_skyboxSamplerHandleIndex]]);
+    device.context.setSamplers(0, [_sampler, _sampler]);
     device.context.setVertexBuffers(0, [mesh.vertexArray]);
-    device.context.setInputLayout(_deviceHandles[_inputLayoutHandleIndex]);
+    device.context.setInputLayout(_inputLayout);
     device.context.setPrimitiveTopology(GraphicsContext.PrimitiveTopologyTriangles);
     device.context.setConstant('sampler1', 0);
     device.context.setConstant('sampler2', 1);

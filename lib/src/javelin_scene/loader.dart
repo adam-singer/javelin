@@ -78,7 +78,7 @@ class Loader {
       handle = _resourceManager.registerResource(r);
       ResourceBase rb = handle;
       if (rb is ImageResource) {
-        Texture2D textureHandle = _device.createTexture2D(rb.url, {});
+        Texture2D textureHandle = _device.createTexture2D(rb.url);
         _resourceManager.addEventCallback(handle, ResourceEvents.TypeUpdate, (type, resource) {
           textureHandle.uploadElement(handle.image);
           textureHandle.generateMipmap();
@@ -145,13 +145,13 @@ class Loader {
     ShaderProgramResource spr = _scene.resourceManager.getResource(shaderName);
 
     if (_scene.skyboxVertexShader == null) {
-      _scene.skyboxVertexShader = _scene.device.createVertexShader('$shaderName.vs', {});
+      _scene.skyboxVertexShader = _scene.device.createVertexShader('$shaderName.vs');
     }
     if (_scene.skyboxFragmentShader == null) {
-      _scene.skyboxFragmentShader = _scene.device.createFragmentShader('$shaderName.fs', {});
+      _scene.skyboxFragmentShader = _scene.device.createFragmentShader('$shaderName.fs');
     }
     if (_scene.skyboxShaderProgram == null) {
-      _scene.skyboxShaderProgram = _scene.device.createShaderProgram('$shaderName.sp', {});
+      _scene.skyboxShaderProgram = _scene.device.createShaderProgram('$shaderName.sp');
     }
 
     bool relink = false;

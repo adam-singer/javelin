@@ -81,13 +81,17 @@ class JavelinSpinningCube extends JavelinBaseDemo {
       cubeVertexShaderResource = resourceManager.registerResource('/shaders/simple_texture.vs');
       cubeFragmentShaderResource = resourceManager.registerResource('/shaders/simple_texture.fs');
       cubeTextureResource = resourceManager.registerResource('/textures/WoodPlank.jpg');
-      cubeVertexShader = device.createVertexShader('Cube Vertex Shader',{});
-      cubeFragmentShader = device.createFragmentShader('Cube Fragment Shader', {});
-      sampler = device.createSamplerState('Cube Texture Sampler', {});
-      rs = device.createRasterizerState('Cube Rasterizer State', {'cullEnabled': true, 'cullMode': RasterizerState.CullBack, 'cullFrontFace': RasterizerState.FrontCCW});
-      texture = device.createTexture2D('Cube Texture', { 'width': 512, 'height': 512, 'textureFormat' : Texture.FormatRGBA});
+      cubeVertexShader = device.createVertexShader('Cube Vertex Shader');
+      cubeFragmentShader = device.createFragmentShader('Cube Fragment Shader');
+      sampler = device.createSamplerState('Cube Texture Sampler');
+      rs = device.createRasterizerState('Cube Rasterizer State');
+      rs.cullEnabled = true;
+      rs.cullMode = RasterizerState.CullBack;
+      rs.cullFrontFace = RasterizerState.FrontCCW;
+
+      texture = device.createTexture2D('Cube Texture');
       cubeMesh = device.createSingleArrayIndexedMesh('Cube Mesh');
-      cubeProgram = device.createShaderProgram('Cube Program', {});
+      cubeProgram = device.createShaderProgram('Cube Program');
       il = device.createInputLayout('Cube Input Layout');
       ds = device.getDeviceChild('DepthState.TestWrite');
       il.shaderProgram = cubeProgram;

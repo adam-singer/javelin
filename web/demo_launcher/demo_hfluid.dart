@@ -85,8 +85,8 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
     _fluidMesh.vertexArray.allocate(vboSize, SpectreBuffer.UsageStream);
     _fluidVSResourceHandle = resourceManager.registerResource('/shaders/simple_fluid.vs');
     _fluidFSResourceHandle = resourceManager.registerResource('/shaders/simple_fluid.fs');
-    _fluidVSHandle = device.createVertexShader('Fluid Vertex Shader',{});
-    _fluidFSHandle = device.createFragmentShader('Fluid Fragment Shader', {});
+    _fluidVSHandle = device.createVertexShader('Fluid Vertex Shader');
+    _fluidFSHandle = device.createFragmentShader('Fluid Fragment Shader');
 
     rs = device.getDeviceChild('RasterizerState.CullDisabled');
     ds = device.getDeviceChild('DepthState.TestWrite');
@@ -106,7 +106,7 @@ class JavelinHFluidDemo extends JavelinBaseDemo {
       _fluidFSHandle.source = _fluidFSResourceHandle.source;
       assert(_fluidFSHandle.compiled == true);
       _fluidShaderProgramHandle = device.createShaderProgram(
-          'Fluid Shader Program', {});
+          'Fluid Shader Program');
       _fluidShaderProgramHandle.vertexShader = _fluidVSHandle;
       _fluidShaderProgramHandle.fragmentShader = _fluidFSHandle;
       _fluidShaderProgramHandle.link();

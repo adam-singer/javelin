@@ -57,11 +57,11 @@ class RenderConfig {
       String format = bufferDesc['format'];
       DeviceChild handle;
       if (type == 'depth') {
-        RenderBuffer rb = _device.createRenderBuffer(name, {});
+        RenderBuffer rb = _device.createRenderBuffer(name);
         rb.allocateStorage(width, height, RenderBuffer.stringToFormat(format));
         handle = rb;
       } else {
-        Texture2D t2d = _device.createTexture2D(name, {});
+        Texture2D t2d = _device.createTexture2D(name);
         t2d.textureFormat = Texture.stringToFormat(format);
         t2d.uploadPixelArray(width, height, null);
         handle = t2d;
@@ -99,7 +99,7 @@ class RenderConfig {
             depthBuffer = db.handle;
           }
           RenderTarget renderTargetHandle;
-          renderTargetHandle = _device.createRenderTarget(name, {});
+          renderTargetHandle = _device.createRenderTarget(name);
           renderTargetHandle.colorTarget = colorBuffer;
           renderTargetHandle.depthTarget = depthBuffer;
           spectreLog.Info('Created render layer $name');

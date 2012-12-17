@@ -138,19 +138,40 @@ class JavelinBaseDemo {
     JavelinDemoStatus status = new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, 'Base OKAY');
     completer.complete(status);
     {
-      _viewPort = _device.createViewport('Default VP', {});
+      _viewPort = _device.createViewport('Default VP');
       _viewPort.x = 0;
       _viewPort.y = 0;
       _viewPort.width = viewportWidth;
       _viewPort.height = viewportHeight;
-      _blendState = _device.createBlendState('BlendState.AlphaBlend', {'blendEnable':true, 'blendSourceColorFunc': BlendState.BlendSourceShaderAlpha, 'blendDestColorFunc': BlendState.BlendSourceShaderInverseAlpha, 'blendSourceAlphaFunc': BlendState.BlendSourceShaderAlpha, 'blendDestAlphaFunc': BlendState.BlendSourceShaderInverseAlpha});
-      _blendState1 = _device.createBlendState('BlendState.Opaque', {});
-      _depthState = _device.createDepthState('DepthState.TestWrite', {'depthTestEnabled': true, 'depthWriteEnabled': true, 'depthComparisonOp': DepthState.DepthComparisonOpLess});
-      _depthState1 = _device.createDepthState('DepthState.Test', {'depthTestEnabled': true, 'depthComparisonOp': DepthState.DepthComparisonOpLess});
-      _depthState2 = _device.createDepthState('DepthState.Write', {'depthWriteEnabled': true});
-      _rasterizerState = _device.createRasterizerState('RasterizerState.CCW.CullBack', {'cullEnabled': true, 'cullMode': RasterizerState.CullBack, 'cullFrontFace': RasterizerState.FrontCCW});
-      _rasterizerState1 = _device.createRasterizerState('RasterizerState.CCW.CullFront', {'cullEnabled': true, 'cullMode': RasterizerState.CullFront, 'cullFrontFace': RasterizerState.FrontCCW});
-      _rasterizerState2 = _device.createRasterizerState('RasterizerState.CullDisabled', {'cullEnabled': false});
+      _blendState = _device.createBlendState('BlendState.AlphaBlend');
+      _blendState.blendEnable = true;
+      _blendState.blendSourceColorFunc = BlendState.BlendSourceShaderAlpha;
+      _blendState.blendDestColorFunc = BlendState.BlendSourceShaderInverseAlpha;
+      _blendState.blendSourceAlphaFunc = BlendState.BlendSourceShaderAlpha;
+      _blendState.blendDestAlphaFunc = BlendState.BlendSourceShaderInverseAlpha;
+      _blendState1 = _device.createBlendState('BlendState.Opaque');
+      _depthState = _device.createDepthState('DepthState.TestWrite');
+      _depthState.depthTestEnabled = true;
+      _depthState.depthWriteEnabled = true;
+      _depthState.depthComparisonOp = DepthState.DepthComparisonOpLess;
+      _depthState1 = _device.createDepthState('DepthState.Test');
+      _depthState1.depthTestEnabled = true;
+      _depthState1.depthComparisonOp = DepthState.DepthComparisonOpLess;
+      _depthState2 = _device.createDepthState('DepthState.Write');
+      _depthState2.depthWriteEnabled = true;
+      _rasterizerState = _device.createRasterizerState(
+          'RasterizerState.CCW.CullBack');
+      _rasterizerState.cullEnabled = true;
+      _rasterizerState.cullMode = RasterizerState.CullBack;
+      _rasterizerState.cullFrontFace = RasterizerState.FrontCCW;
+      _rasterizerState1 = _device.createRasterizerState(
+          'RasterizerState.CCW.CullFront');
+      _rasterizerState1.cullEnabled = true;
+      _rasterizerState1.cullMode = RasterizerState.CullFront;
+      _rasterizerState1.cullFrontFace = RasterizerState.FrontCCW;
+      _rasterizerState2 = _device.createRasterizerState(
+          'RasterizerState.CullDisabled');
+      _rasterizerState2.cullEnabled = false;
     }
     document.on.keyDown.add(_keyDownHandler);
     document.on.keyUp.add(_keyUpHandler);

@@ -14,9 +14,9 @@ class MaterialInstance extends SceneChild {
   Map<String, SamplerState> samplerNameToHandle;
 
   MaterialInstance(String name, this.material, Scene scene) : super(name, scene) {
-    blendStateHandle = scene.device.createBlendState('$name.bs', {});
-    depthStateHandle = scene.device.createDepthState('$name.ds', {});
-    rasterizerStateHandle = scene.device.createRasterizerState('$name.rs', {});
+    blendStateHandle = scene.device.createBlendState('$name.bs');
+    depthStateHandle = scene.device.createDepthState('$name.ds');
+    rasterizerStateHandle = scene.device.createRasterizerState('$name.rs');
     textureNameToHandle = new Map<String, Texture>();
     samplerNameToHandle = new Map<String, SamplerState>();
     textureNameToResourceName = new Map<String, String>();
