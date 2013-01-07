@@ -111,7 +111,7 @@ class JavelinDemoLaunch {
 
   void updateStatus(String message) {
     // the HTML library defines a global "document" variable
-    document.query('#DartStatus').innerHTML = message;
+    document.query('#DartStatus').innerHtml = message;
   }
 
   void refreshDemoList(String listDiv) {
@@ -125,7 +125,7 @@ class JavelinDemoLaunch {
       demod.on.click.add((Event event) {
         switchToDemo(jdd.name);
       });
-      demod.innerHTML = '${jdd.name}';
+      demod.innerHtml = '${jdd.name}';
       demod.classes.add('DemoButton');
       d.nodes.add(demod);
     }
@@ -139,20 +139,20 @@ class JavelinDemoLaunch {
     }
     d.nodes.clear();
     ParagraphElement pe = new ParagraphElement();
-    pe.innerHTML = 'Loaded Resources:';
+    pe.innerHtml = 'Loaded Resources:';
     d.nodes.add(pe);
     resourceManager.children.forEach((name, resource) {
       DivElement resourceDiv = new DivElement();
       DivElement resourceNameDiv = new DivElement();
       DivElement resourceUnloadDiv = new DivElement();
       DivElement resourceLoadDiv = new DivElement();
-      resourceNameDiv.innerHTML = '${name}';
-      resourceLoadDiv.innerHTML = 'Reload';
+      resourceNameDiv.innerHtml = '${name}';
+      resourceLoadDiv.innerHtml = 'Reload';
       resourceLoadDiv.on.click.add((Event event) {
         resourceManager.loadResource(resource);
       });
       resourceLoadDiv.style.float = 'right';
-      resourceUnloadDiv.innerHTML = 'Unload';
+      resourceUnloadDiv.innerHtml = 'Unload';
       resourceUnloadDiv.on.click.add((Event event) {
         resourceManager.unloadResource(resource);
       });
@@ -171,7 +171,7 @@ class JavelinDemoLaunch {
     DivElement d = document.query(divName);
     d.nodes.clear();
     ParagraphElement pe = new ParagraphElement();
-    pe.innerHTML = 'Device Objects:';
+    pe.innerHtml = 'Device Objects:';
     d.nodes.add(pe);
     if (d == null) {
       return;
@@ -196,7 +196,7 @@ class JavelinDemoLaunch {
       d.nodes.add(label);
       names.forEach((name) {
         DivElement resourceDiv = new DivElement();
-        resourceDiv.innerHTML = '${name}';
+        resourceDiv.innerHtml = '${name}';
         resourceDiv.style.marginLeft = '20px';
         d.nodes.add(resourceDiv);
       });
@@ -303,7 +303,7 @@ class JavelinDemoLaunch {
           {
             DivElement elem = document.query('#DemoDescription');
             elem.nodes.clear();
-            elem.innerHTML = '<p>${_demo.demoDescription}</p>';
+            elem.innerHtml = '<p>${_demo.demoDescription}</p>';
           }
           {
             DivElement elem = document.query('#DemoUI');

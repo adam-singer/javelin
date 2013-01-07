@@ -218,7 +218,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
     }
     debugDrawManager.prepareForRender();
     debugDrawManager.render(camera);
-    renderConfig.getBuffer('colorbuffer').generateMipmap();
+    (renderConfig.getBuffer('colorbuffer') as Texture2D).generateMipmap();
     String postpass = JavelinConfigStorage.get('demo.postprocess');
     SpectrePost.pass(postpass, renderConfig.getLayer('final'), {
       'textures': [renderConfig.getBuffer('colorbuffer')],
