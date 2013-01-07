@@ -1,10 +1,28 @@
+/*
+  Copyright (C) 2013 John McCutchan <john@johnmccutchan.com>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 part of javelin_render;
 
 class Renderer {
   final GraphicsDevice device;
   final CanvasElement frontBuffer;
-  final Map<String, Mesh> meshes = new Map<String, Mesh>();
-  final Map<String, Shader> shaders = new Map<String, Shader>();
   final Map<String, Material> materials = new Map<String, Material>();
   final Map<String, Texture> textures = new Map<String, Texture>();
 
@@ -17,32 +35,34 @@ class Renderer {
     // Walk over shaders
   }
 
-  List<Drawable> _determineVisibleSet(List<Drawable> drawables, Camera camera) {
-    List<Drawable> visibleSet = new List<Drawable>();
-    int numDrawables = drawables.length;
-    for (int i = 0; i < numDrawables; i++) {
-      Drawable drawable = drawables[i];
+  List<Renderable> _determineVisibleSet(List<Renderable> renderables,
+                                        Camera camera) {
+    List<Renderable> visibleSet = new List<Renderable>();
+    int numRenderables = renderables.length;
+    for (int i = 0; i < numRenderables; i++) {
+      Renderable renderable = renderables[i];
       bool visible = true; // drawable.visibleTo(camera);
       if (!visible)
         continue;
-      visibleSet.add(drawable);
+      visibleSet.add(renderable);
     }
     return visibleSet;
   }
 
-  void _sortDrawables(List<Drawable> visibleSet, int sortMode) {
+  void _sortDrawables(List<Renderable> visibleSet, int sortMode) {
   }
 
-  void _renderPassLayer(Layer layer, List<Drawable> drawables, Camera camera,
-                        Viewport viewport) {
-    drawables.forEach((drawable) {
-      // Apply material settings
-      // Bind mesh
-      // Draw
+  void _renderPassLayer(Layer layer, List<Renderable> renderables,
+                        Camera camera, Viewport viewport) {
+    renderables.forEach((renderable) {
+      renderable.material.updateCameraConstants(camera);
+      renderable.material.updateObjectTransformConstant(renderable.T);
+      renderable.material.updateViewportConstants(viewport);
+      renderable._render();
     });
   }
 
-  void _renderFullscreenLayer(Layer layer, List<Drawable> drawables,
+  void _renderFullscreenLayer(Layer layer, List<Renderable> drawables,
                               Camera camera, Viewport viewport) {
     String process = layer.properties['process'];
     String source = layer.properties['source'];
@@ -59,27 +79,25 @@ class Renderer {
 
   void _setupLayer(Layer layer) {
     device.context.setRenderTarget(layer.renderTarget);
-    if (layer.clearColor == true) {
+    if (layer.clearColorTarget == true) {
       num r = layer.clearColorR;
       num g = layer.clearColorG;
       num b = layer.clearColorB;
       num a = layer.clearColorA;
       device.context.clearColorBuffer(r, g, b, a);
     }
-    if (layer.clearDepth == true) {
+    if (layer.clearDepthTarget == true) {
       num v = layer.clearDepthValue;
       device.context.clearDepthBuffer(v);
     }
   }
 
-  void render(List<Drawable> drawables, Camera camera, Viewport viewport) {
-    device.configureDeviceChild(frontBufferViewport, {
-      'width': frontBuffer.width,
-      'height': frontBuffer.height,
-    });
+  void render(List<Renderable> renderables, Camera camera, Viewport viewport) {
+    frontBufferViewport.width = frontBuffer.width;
+    frontBufferViewport.height = frontBuffer.height;
     device.context.setViewport(viewport);
-    List<Drawable> visibleSet;
-    visibleSet = _determineVisibleSet(drawables, camera);
+    List<Renderable> visibleSet;
+    visibleSet = _determineVisibleSet(renderables, camera);
     int numLayers = layerConfig.layers.length;
     for (int layerIndex = 0; layerIndex < numLayers; layerIndex++) {
       Layer layer = layerConfig.layers[layerIndex];
@@ -87,9 +105,9 @@ class Renderer {
       _setupLayer(layer);
 
       if (layer.type == 'pass') {
-        _renderPassLayer(layer, drawables, camera, viewport);
+        _renderPassLayer(layer, renderables, camera, viewport);
       } else if (layer.type == 'fullscreen') {
-        _renderFullscreenLayer(layer, drawables, camera, viewport);
+        _renderFullscreenLayer(layer, renderables, camera, viewport);
       }
     }
   }
@@ -98,15 +116,13 @@ class Renderer {
     globalResources = new GlobalResources(this, frontBuffer);
     layerConfig = new LayerConfig(this);
     SpectrePost.init(device);
-    _npotSampler = device.createSamplerState('_npotSampler', {
-      'wrapS': SamplerState.TextureWrapClampToEdge,
-      'wrapT': SamplerState.TextureWrapClampToEdge,
-      'minFilter': SamplerState.TextureMinFilterNearest,
-      'magFilter': SamplerState.TextureMagFilterNearest,
-    });
-    frontBufferViewport = device.createViewport('Renderer.Viewport', {
-      'width': frontBuffer.width,
-      'height': frontBuffer.height,
-    });
+    _npotSampler = device.createSamplerState('_npotSampler');
+    _npotSampler.wrapS = SamplerState.TextureWrapClampToEdge;
+    _npotSampler.wrapT = SamplerState.TextureWrapClampToEdge;
+    _npotSampler.minFilter = SamplerState.TextureMinFilterNearest;
+    _npotSampler.magFilter = SamplerState.TextureMagFilterNearest;
+    frontBufferViewport = device.createViewport('Renderer.Viewport');
+    frontBufferViewport.width = frontBuffer.width;
+    frontBufferViewport.height = frontBuffer.height;
   }
 }

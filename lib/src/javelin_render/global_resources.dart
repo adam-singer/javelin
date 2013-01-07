@@ -1,3 +1,23 @@
+/*
+  Copyright (C) 2013 John McCutchan <john@johnmccutchan.com>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 part of javelin_render;
 
 class GlobalResources {
@@ -27,14 +47,10 @@ class GlobalResources {
   void _makeColorTarget(Map target) {
     String name = target['name'];
     assert(name != null);
-    Map props = {
-      'width': target['width'],
-      'height': target['height'],
-      'pixelFormat': Texture.FormatRGBA,
-      'pixelType': Texture.PixelTypeU8,
-      'textureFormat': Texture.FormatRGBA,
-    };
-    Texture2D buffer = renderer.device.createTexture2D(name, props);
+    Texture2D buffer = renderer.device.createTexture2D(name);
+    int width = target['width'];
+    int height = target['height'];
+    buffer.uploadPixelArray(width, height, null);
     assert(buffer != null);
     _colorTargets[name] = buffer;
   }
@@ -42,14 +58,10 @@ class GlobalResources {
   void _makeDepthTarget(Map target) {
     String name = target['name'];
     assert(name != null);
-    Map props = {
-      'width': target['width'],
-      'height': target['height'],
-      'pixelFormat': Texture.FormatDepth,
-      'pixelType': Texture.PixelTypeU16,
-      'textureFormat': Texture.FormatDepth,
-    };
-    RenderBuffer buffer = renderer.device.createRenderBuffer(name, target);
+    RenderBuffer buffer = renderer.device.createRenderBuffer(name);
+    int width = target['width'];
+    int height = target['height'];
+    buffer.allocateStorage(width, height, RenderBuffer.FormatDepth);
     assert(buffer != null);
     _depthTargets[name] = buffer;
   }
@@ -98,11 +110,9 @@ class GlobalResources {
     if (depthBuffer != null) {
       name = '$name DB: ${depthBuffer.name}';
     }
-    RenderTarget renderTarget = renderer.device.createRenderTarget(name, {
-      'color0': colorBuffer,
-      'depth': depthBuffer,
-      'stencil': null,
-    });
+    RenderTarget renderTarget = renderer.device.createRenderTarget(name);
+    renderTarget.colorTarget = colorBuffer;
+    renderTarget.depthTarget = depthBuffer;
     assert(renderTarget != null);
     _renderTargets.add(renderTarget);
     return renderTarget;
