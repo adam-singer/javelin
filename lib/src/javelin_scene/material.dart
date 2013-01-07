@@ -138,10 +138,8 @@ class Material extends SceneChild {
 
     ShaderProgram sp = shaderProgramHandle;
     if (!sp.linked || relink) {
-      scene.device.configureDeviceChild(shaderProgramHandle, {
-        'VertexProgram': vertexShaderHandle,
-        'FragmentProgram': fragmentShaderHandle,
-      });
+      shaderProgramHandle.vertexShader = vertexShaderHandle;
+      shaderProgramHandle.fragmentShader = fragmentShaderHandle;
       processUniforms();
     }
   }
