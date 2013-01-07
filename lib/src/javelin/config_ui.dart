@@ -148,7 +148,7 @@ class ConfigUI {
       {
         TableCellElement label = new TableCellElement();
         label.classes.add('configlabel');
-        label.innerHTML = '${configitem.name}';
+        label.innerHtml = '${configitem.name}';
         item.nodes.add(label);
       }
       {
