@@ -81,8 +81,8 @@ class JavelinBaseDemo {
 
   Camera get camera => _camera;
 
-  int viewportWidth;
-  int viewportHeight;
+  int viewportWidth = 640;
+  int viewportHeight = 480;
 
   JavelinBaseDemo(Element element, GraphicsDevice device,
                   ResourceManager resourceManager,
@@ -124,6 +124,8 @@ class JavelinBaseDemo {
     if (vp == null) {
       return;
     }
+    vp.x = 0;
+    vp.y = 0;
     vp.width = elementWidth;
     vp.height = elementHeight;
     print('Resized to $elementWidth $elementHeight');
