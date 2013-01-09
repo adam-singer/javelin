@@ -26,7 +26,9 @@ import 'dart:html';
 import 'dart:json';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
-import 'package:marker_prof/profiler.dart';
+import 'package:game_loop/game_loop.dart';
+import 'package:javelin/javelin_render.dart';
+import 'package:asset_pack/asset_pack.dart';
 
 part 'src/javelin/config.dart';
 part 'src/javelin/config_ui.dart';
@@ -34,3 +36,5 @@ part 'src/javelin/keyboard.dart';
 part 'src/javelin/mouse.dart';
 part 'src/javelin/base_demo.dart';
 part 'src/javelin/render_config.dart';
+part 'src/javelin/application.dart';
+part 'src/javelin/launcher.dart';

@@ -37,6 +37,10 @@ class Renderable {
     _link();
   }
 
+  void cleanup() {
+    renderer.device.deleteDeviceChild(_inputLayout);
+  }
+
   SpectreMesh get mesh => _mesh;
   set mesh(SpectreMesh m) {
     _mesh = m;

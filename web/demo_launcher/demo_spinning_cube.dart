@@ -113,7 +113,7 @@ class JavelinSpinningCube extends JavelinBaseDemo {
             cube.meshData['meshes'][0]['attributes']['TEXCOORD0']['offset'],
             cube.meshData['meshes'][0]['attributes']['TEXCOORD0']['stride'],
             false);
-        cubeMesh.numIndices = cube.numIndices;
+        cubeMesh.count = cube.numIndices;
         il.mesh = cubeMesh;
         cubeMesh.vertexArray.uploadData(cube.vertexArray,
                                         SpectreBuffer.UsageStatic);

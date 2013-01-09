@@ -160,7 +160,7 @@ class JavelinClothDemo extends JavelinBaseDemo {
         24,
         vertexStride,
         false);
-    _particlesMesh.numIndices = (_gridWidth-1)*(_gridWidth-1)*6;
+    _particlesMesh.count = (_gridWidth-1)*(_gridWidth-1)*6;
     _particlesInputLayoutHandle = device.createInputLayout('Cloth Input Layout');
     _particlesInputLayoutHandle.shaderProgram = _particlesShaderProgramHandle;
     _particlesInputLayoutHandle.mesh = _particlesMesh;

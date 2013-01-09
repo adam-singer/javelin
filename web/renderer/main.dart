@@ -22,12 +22,9 @@ import 'dart:html';
 import 'package:spectre/spectre.dart';
 import 'package:javelin/javelin.dart';
 import 'package:javelin/javelin_render.dart';
+import 'package:game_loop/game_loop.dart';
 import 'package:asset_pack/asset_pack.dart';
 import 'package:spectre/spectre_asset_pack.dart';
-
-AssetManager assetManager;
-ShaderProgram skyBoxShaderProgram;
-ShaderProgram objectShaderProgram;
 
 // Use until importer is hooked up.
 ShaderProgram _makeShaderProgram(GraphicsDevice device,
@@ -54,16 +51,45 @@ ShaderProgram _makeShaderProgram(GraphicsDevice device,
   return sp;
 }
 
-class Demo extends JavelinBaseDemo {
-  Renderer renderer;
+class SkyBoxExample extends JavelinApplication {
+  final List<Renderable> renderables = new List<Renderable>();
+  final Camera camera = new Camera();
+  final cameraController = new MouseKeyboardCameraController();
+  ShaderProgram skyBoxShaderProgram;
+  ShaderProgram objectShaderProgram;
+  SkyBoxExample(String name,
+                Renderer renderer,
+                GameLoop gameLoop,
+                GraphicsDevice device,
+                GraphicsContext context,
+                DebugDrawManager ddm,
+                JavelinLauncher launcher,
+                AssetManager assetManager)
+      : super(name,
+              renderer,
+              gameLoop,
+              device,
+              context,
+              ddm,
+              launcher,
+              assetManager) {
+  }
 
-  List<Renderable> renderables = new List<Renderable>();
+  Future loadAssets() {
+    return assetManager.loadPack('assets', '${launcher.baseUrl}/assets.pack');
+  }
 
-  Demo(Element element,
-       GraphicsDevice device,
-       ResourceManager resourceManager,
-       DebugDrawManager debugDrawManager) :
-         super(element, device, resourceManager, debugDrawManager) {
+  Future unloadAssets() {
+    print('before unload:');
+    print('');
+    print('');
+    device.dumpChildren();
+    assetManager.unloadPack('assets');
+    print('after unload:');
+    print('');
+    print('');
+    device.dumpChildren();
+    return new Future.immediate(this);
   }
 
   void setupGlobalResources() {
@@ -141,6 +167,10 @@ class Demo extends JavelinBaseDemo {
     renderer.textures['space'] = spaceTexture;
   }
 
+  void teardownTextures() {
+    renderer.textures.remove('space');
+  }
+
   void setupShaders() {
     // Create shader programs here.
     // TODO(johnmccutchan): Add shader program importer.
@@ -149,6 +179,12 @@ class Demo extends JavelinBaseDemo {
         'skyBoxShader',
         assetManager.assets.skyBoxVertexShader,
         assetManager.assets.skyBoxFragmentShader);
+  }
+
+  void teardownShaders() {
+    device.deleteDeviceChild(skyBoxShaderProgram.vertexShader);
+    device.deleteDeviceChild(skyBoxShaderProgram.fragmentShader);
+    device.deleteDeviceChild(skyBoxShaderProgram);
   }
 
   void setupMeshes() {
@@ -162,6 +198,10 @@ class Demo extends JavelinBaseDemo {
     renderer.materials['skyBoxMaterial'] = skyBoxMaterial;
   }
 
+  void teardownMaterials() {
+    renderer.materials.remove('skyBoxMaterial');
+  }
+
   void setupRenderables() {
     Renderable skyBox = new Renderable(renderer, 'skyBox',
                                        assetManager.assets.skyBox,
@@ -169,49 +209,97 @@ class Demo extends JavelinBaseDemo {
     renderables.add(skyBox);
   }
 
-  Future<JavelinDemoStatus> startup() {
-    var base = super.startup();
-    Completer completer = new Completer();
-    base.then((_) {
-      setupGlobalResources();
-      setupLayers();
-      setupTextures();
-      setupShaders();
-      setupMeshes();
-      setupMaterials();
-      setupRenderables();
-      var status = new JavelinDemoStatus(JavelinDemoStatus.DemoStatusOKAY, '');
-      completer.complete(status);
+  Future launch() {
+    assetManager.assets.forEach((k, v) {
+      print('Asset: $k');
     });
-    return completer.future;
+    var blah = assetManager.assets.skyBox;
+    assert(blah != null);
+    setupGlobalResources();
+    setupLayers();
+    setupTextures();
+    setupShaders();
+    setupMeshes();
+    setupMaterials();
+    setupRenderables();
+    return new Future.immediate(this);
   }
 
-  void update(num time, num dt) {
-    super.update(time, dt);
+  Future shutdown() {
+    teardownMaterials();
+    teardownShaders();
+    teardownTextures();
+    renderables.forEach((renderable) {
+      renderable.cleanup();
+    });
+    return new Future.immediate(this);
+  }
 
+  void onUpdate(GameLoop gameLoop) {
+    cameraController.forward =
+        gameLoop.keyboard.buttons[GameLoopKeyboard.W].down;
+    cameraController.backward =
+        gameLoop.keyboard.buttons[GameLoopKeyboard.S].down;
+    cameraController.strafeLeft =
+        gameLoop.keyboard.buttons[GameLoopKeyboard.A].down;
+    cameraController.strafeRight =
+        gameLoop.keyboard.buttons[GameLoopKeyboard.D].down;
+    if (gameLoop.pointerLock.locked) {
+      cameraController.accumDX = gameLoop.mouse.dx;
+      cameraController.accumDY = gameLoop.mouse.dy;
+    }
+    cameraController.UpdateCamera(gameLoop.dt, camera);
     renderer.render(renderables, camera, renderer.frontBufferViewport);
+  }
+
+  void onResize(GameLoop gameLoop) {
   }
 }
 
+SkyBoxExample SkyBoxExampleFactory(String name,
+                                   Renderer renderer,
+                                   GameLoop gameLoop,
+                                   GraphicsDevice device,
+                                   GraphicsContext context,
+                                   DebugDrawManager ddm,
+                                   JavelinLauncher launcher,
+                                   AssetManager assetManager) {
+  return new SkyBoxExample(name, renderer, gameLoop, device, context, ddm,
+                           launcher, assetManager);
+}
+
 main() {
-  final String baseUrl = "${window.location.href.substring(0, window.location.href.length - "index.html".length)}";
-  JavelinConfigStorage.init();
-  CanvasElement frontBuffer = query("#webGLFrontBuffer");
+  final CanvasElement frontBuffer = query("#webGLFrontBuffer");
+  if (frontBuffer == null) {
+    print('Cannot find #webGLFrontBuffer in DOM.');
+    return;
+  }
   WebGLRenderingContext webGL = frontBuffer.getContext("experimental-webgl");
-  GraphicsDevice device = new GraphicsDevice(webGL);
-  assetManager = new AssetManager();
-  DebugDrawManager debugDrawManager = new DebugDrawManager(device);
-  ResourceManager resourceManager = new ResourceManager();
+  if (webGL == null) {
+    print('WebGL not supported.');
+    return;
+  }
+  final GraphicsDevice device = new GraphicsDevice(webGL);
+  final GraphicsContext context = device.context;
+  final DebugDrawManager debugDrawManager = new DebugDrawManager(device);
+  final GameLoop gameLoop = new GameLoop(frontBuffer);
+  final AssetManager assetManager = new AssetManager();
+  Renderer renderer = new Renderer(frontBuffer, device);
+  final String baseUrl = window.location.href.substring(
+      0,
+      window.location.href.length - "index.html".length);
+  final JavelinLauncher launcher = new JavelinLauncher(gameLoop,
+                                                       device,
+                                                       context,
+                                                       debugDrawManager,
+                                                       assetManager,
+                                                       renderer,
+                                                       baseUrl);
   registerSpectreWithAssetManager(device, assetManager);
   spectreLog = new HtmlLogger('#SpectreLog');
-  resourceManager.setBaseURL(baseUrl);
-  Demo demo = new Demo(frontBuffer, device, resourceManager, debugDrawManager);
-  Renderer renderer = new Renderer(frontBuffer, device);
-  demo.renderer = renderer;
-  Future assets = assetManager.loadPack('assets', '$baseUrl/assets.pack');
-  assets.then((_) {
-    demo.startup().then((_) {
-      demo.run();
-    });
+  launcher.applications['SkyBox'] = SkyBoxExampleFactory;
+  launcher.launch('SkyBox').then((_) {
+    //launcher.launch('SkyBox');
   });
+  gameLoop.start();
 }

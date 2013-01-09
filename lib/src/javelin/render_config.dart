@@ -62,7 +62,7 @@ class RenderConfig {
         handle = rb;
       } else {
         Texture2D t2d = _device.createTexture2D(name);
-        t2d.textureFormat = Texture.stringToFormat(format);
+        t2d.textureFormat = SpectreTexture.stringToFormat(format);
         t2d.uploadPixelArray(width, height, null);
         handle = t2d;
       }

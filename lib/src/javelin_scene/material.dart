@@ -52,13 +52,13 @@ class Material extends SceneChild {
     if (nameToUnit == null) {
       print('null nameToUnit');
     }
-    List<Texture> out = new List<Texture>(nameToUnit.length);
+    List<SpectreTexture> out = new List<SpectreTexture>(nameToUnit.length);
     nameToHandle.forEach((k, v) {
       int slot = nameToUnit[k];
       if (slot == null) {
         return;
       }
-      Texture handle = v;
+      SpectreTexture handle = v;
       out[slot] = handle;
     });
     return out;
