@@ -236,6 +236,7 @@ class SkyBoxExample extends JavelinApplication {
   }
 
   void onUpdate(GameLoop gameLoop) {
+    debugDrawManager.update(gameLoop.dt);
     cameraController.forward =
         gameLoop.keyboard.buttons[GameLoopKeyboard.W].down;
     cameraController.backward =
@@ -249,6 +250,9 @@ class SkyBoxExample extends JavelinApplication {
       cameraController.accumDY = gameLoop.mouse.dy;
     }
     cameraController.UpdateCamera(gameLoop.dt, camera);
+  }
+
+  void onRender(GameLoop gameLoop) {
     renderer.render(renderables, camera, renderer.frontBufferViewport);
   }
 

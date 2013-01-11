@@ -36,6 +36,7 @@ abstract class JavelinApplication {
   Future shutdown();
 
   void onUpdate(GameLoop gameLoop);
+  void onRender(GameLoop gameLoop);
   void onResize(GameLoop gameLoop);
 
   JavelinApplication(this.name, this.renderer, this.gameLoop, this.device,

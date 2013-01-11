@@ -40,12 +40,13 @@ class JavelinLauncher {
   void _hookApplication(JavelinApplication application) {
     gameLoop.onUpdate = application.onUpdate;
     gameLoop.onResize = application.onResize;
-
+    gameLoop.onRender = application.onRender;
   }
 
   void _unhookApplication() {
     gameLoop.onUpdate = null;
     gameLoop.onResize = null;
+    gameLoop.onRender = null;
   }
 
   Future<JavelinApplication> _launch(String applicationName) {
