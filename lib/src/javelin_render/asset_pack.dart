@@ -18,19 +18,4 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-library javelin_render;
-
-import 'dart:html';
-import 'package:vector_math/vector_math_browser.dart';
-import 'package:asset_pack/asset_pack.dart';
-import 'package:spectre/spectre.dart';
-import 'package:spectre/spectre_post.dart';
-
-part 'src/javelin_render/global_resources.dart';
-part 'src/javelin_render/material.dart';
-part 'src/javelin_render/material_constant.dart';
-part 'src/javelin_render/texture.dart';
-part 'src/javelin_render/renderable.dart';
-part 'src/javelin_render/layer.dart';
-part 'src/javelin_render/renderer.dart';
-part 'src/javelin_render/asset_pack.dart';
+part of javelin_render;

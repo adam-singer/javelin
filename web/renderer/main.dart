@@ -26,31 +26,6 @@ import 'package:game_loop/game_loop.dart';
 import 'package:asset_pack/asset_pack.dart';
 import 'package:spectre/spectre_asset_pack.dart';
 
-// Use until importer is hooked up.
-ShaderProgram _makeShaderProgram(GraphicsDevice device,
-                                 String name,
-                                 String vertexSource,
-                                 String fragmentSource) {
-  VertexShader vs = device.createVertexShader('$name[VS]');
-  FragmentShader fs = device.createFragmentShader('$name[FS]');
-  ShaderProgram sp = device.createShaderProgram(name);
-  vs.source = vertexSource;
-  if (vs.compiled == false) {
-    spectreLog.Error(vs.compileLog);
-  }
-  assert(vs.compiled == true);
-  fs.source = fragmentSource;
-  if (fs.compiled == false) {
-    spectreLog.Error(fs.compileLog);
-  }
-  assert(fs.compiled == true);
-  sp.vertexShader = vs;
-  sp.fragmentShader = fs;
-  sp.link();
-  assert(sp.linked == true);
-  return sp;
-}
-
 class SkyBoxExample extends JavelinApplication {
   final List<Renderable> renderables = new List<Renderable>();
   final Camera camera = new Camera();
@@ -80,15 +55,7 @@ class SkyBoxExample extends JavelinApplication {
   }
 
   Future unloadAssets() {
-    print('before unload:');
-    print('');
-    print('');
-    device.dumpChildren();
     assetManager.unloadPack('assets');
-    print('after unload:');
-    print('');
-    print('');
-    device.dumpChildren();
     return new Future.immediate(this);
   }
 
@@ -133,7 +100,7 @@ class SkyBoxExample extends JavelinApplication {
                 'type': 'pass',
                 'sort': 'none',
                 'clearColorTarget': true,
-                'clearColor': [1.0, 0.0, 0.0, 1.0],
+                'clearColor': [0.0, 0.0, 0.0, 1.0],
                 'clearDepthTarget': true,
                 'clearDepth': 1.0,
               },
@@ -172,19 +139,10 @@ class SkyBoxExample extends JavelinApplication {
   }
 
   void setupShaders() {
-    // Create shader programs here.
-    // TODO(johnmccutchan): Add shader program importer.
-    skyBoxShaderProgram = _makeShaderProgram(
-        device,
-        'skyBoxShader',
-        assetManager.assets.skyBoxVertexShader,
-        assetManager.assets.skyBoxFragmentShader);
+    skyBoxShaderProgram = assetManager.assets.skyBoxShader;
   }
 
   void teardownShaders() {
-    device.deleteDeviceChild(skyBoxShaderProgram.vertexShader);
-    device.deleteDeviceChild(skyBoxShaderProgram.fragmentShader);
-    device.deleteDeviceChild(skyBoxShaderProgram);
   }
 
   void setupMeshes() {
@@ -195,6 +153,7 @@ class SkyBoxExample extends JavelinApplication {
                                            'skyBoxMaterial',
                                            skyBoxShaderProgram);
     skyBoxMaterial.textures['skyBoxCubeMap'] = 'space';
+    skyBoxMaterial.rasterizerState.cullMode = CullMode.None;
     renderer.materials['skyBoxMaterial'] = skyBoxMaterial;
   }
 

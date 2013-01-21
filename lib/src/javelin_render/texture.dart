@@ -26,6 +26,6 @@ class Texture {
   SpectreTexture texture;
   SamplerState sampler;
   Texture(this.renderer, this.name, this.texture) {
-    sampler = renderer.device.createSamplerState('$name[SS]');
+    sampler = renderer.device.createSamplerState('$name');
   }
 }
