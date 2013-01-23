@@ -27,6 +27,8 @@ class Material {
     final ShaderProgram shader;
     final Map<String, MaterialConstant> constants =
         new Map<String, MaterialConstant>();
+    // Map from shader texture name to javelin texture name.
+    // cache texture unit here.
     final Map<String, String> textures = new Map<String, String>();
     final List<SpectreTexture> _textures = new List<SpectreTexture>();
     final List<SamplerState> _samplers = new List<SamplerState>();

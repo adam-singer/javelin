@@ -2,7 +2,8 @@ library javelin_game;
 
 import 'dart:html';
 import 'dart:mirrors';
-import 'dart:json';
+import 'dart:async';
+import 'dart:json' as JSON;
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';

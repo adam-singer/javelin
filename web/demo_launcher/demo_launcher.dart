@@ -24,6 +24,7 @@ library javelin_demo_launcher;
 
 import 'dart:html';
 import 'dart:math' as Math;
+import 'dart:async';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 import 'package:spectre/spectre_scene.dart';

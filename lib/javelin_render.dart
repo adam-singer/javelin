@@ -21,6 +21,7 @@
 library javelin_render;
 
 import 'dart:html';
+import 'dart:async';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:asset_pack/asset_pack.dart';
 import 'package:spectre/spectre.dart';

@@ -23,7 +23,8 @@
 library javelin;
 import 'dart:math' as Math;
 import 'dart:html';
-import 'dart:json';
+import 'dart:json' as JSON;
+import 'dart:async';
 import 'package:vector_math/vector_math_browser.dart';
 import 'package:spectre/spectre.dart';
 import 'package:game_loop/game_loop.dart';

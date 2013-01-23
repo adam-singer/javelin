@@ -26,9 +26,12 @@ class Renderer {
   final Map<String, Material> materials = new Map<String, Material>();
   final Map<String, Texture> textures = new Map<String, Texture>();
 
-  Viewport frontBufferViewport;
-  GlobalResources globalResources;
-  LayerConfig layerConfig;
+  Viewport _frontBufferViewport;
+  Viewport get frontBufferViewport => _frontBufferViewport;
+  GlobalResources _globalResources;
+  GlobalResources get globalResources => _globalResources;
+  LayerConfig _layerConfig;
+  LayerConfig get layerConfig => _layerConfig;
   SamplerState _npotSampler;
 
   void applyCameraUniforms() {
@@ -113,16 +116,16 @@ class Renderer {
   }
 
   Renderer(this.frontBuffer, this.device) {
-    globalResources = new GlobalResources(this, frontBuffer);
-    layerConfig = new LayerConfig(this);
+    _globalResources = new GlobalResources(this, frontBuffer);
+    _layerConfig = new LayerConfig(this);
     SpectrePost.init(device);
     _npotSampler = device.createSamplerState('_npotSampler');
     _npotSampler.wrapS = SamplerState.TextureWrapClampToEdge;
     _npotSampler.wrapT = SamplerState.TextureWrapClampToEdge;
     _npotSampler.minFilter = SamplerState.TextureMinFilterNearest;
     _npotSampler.magFilter = SamplerState.TextureMagFilterNearest;
-    frontBufferViewport = device.createViewport('Renderer.Viewport');
-    frontBufferViewport.width = frontBuffer.width;
-    frontBufferViewport.height = frontBuffer.height;
+    _frontBufferViewport = device.createViewport('Renderer.Viewport');
+    _frontBufferViewport.width = frontBuffer.width;
+    _frontBufferViewport.height = frontBuffer.height;
   }
 }
