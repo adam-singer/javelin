@@ -3,7 +3,7 @@ description: Data Driven Games
 version: 0.1.0
 authors:
 - John McCutchan <john@johnmccutchan.com>
-- Daniel Rodríguez <seth.illgard@gmail.com>
+- Daniel Rodriguez <seth.illgard@gmail.com>
 homepage: https://github.com/johnmccutchan/javelin
 dependencies:
   unittest: any
@@ -13,5 +13,5 @@ dependencies:
     git: https://github.com/johnmccutchan/DartVectorMath.git
   spectre:
     git: https://github.com/johnmccutchan/spectre.git
-  property_map: any
-
+  property_map:
+    git: https://github.com/sethillgard/property_map.git
