@@ -46,7 +46,7 @@ class GameObject implements Serializable {
 
   // Private properties
 
-  Set<Component> _componentSet;
+  List<Component> _components;
 
   List<Component> _componentsToInitialize;
   Set<GameObject> _childrenToRegister;
@@ -57,7 +57,7 @@ class GameObject implements Serializable {
     _children = new Set<GameObject>();
     _childrenToRegister = new Set<GameObject>();
     _data = new PropertyMap();
-    _componentSet = new Set();
+    _components = new List<Component>();
     _events = new EventListenerMap(this);
     //TODO(johnmccutchan): Initialize the transform
   }
@@ -67,7 +67,7 @@ class GameObject implements Serializable {
    * Interfaces and base clases may be used, unless exactType is true.
    */
   Component getComponent(String type, [bool exactType = false]) {
-    for(var component in _componentSet) {
+    for(var component in _components) {
       // TODO: Replace by an actual type check.
       if(component._type == type) {
         return component;
@@ -82,7 +82,7 @@ class GameObject implements Serializable {
    */
    List<Component> getComponents(String type, [bool exactType = false]) {
     var list = [];
-    for(var component in _componentSet) {
+    for(var component in _components) {
       // TODO: Replace by an actual type check.
       if(component._type == type) {
         list.add(component);
@@ -95,7 +95,7 @@ class GameObject implements Serializable {
     * Returns a list of all the components attached to this game object.
     */
    List<Component> getAllComponents() {
-    return new List.from(_componentSet);
+    return new List.from(_components);
   }
 
   /**
@@ -112,7 +112,7 @@ class GameObject implements Serializable {
     var component = Game.componentManager.createComponent(type, this, params);
     component._owner = this;
     component._initData = params;
-    _componentSet.add(component);
+    _components.add(component);
     // 2 cases, maybe we are already registered in the scene, in which case we
     // can initialize the component right away. Otherwise, lets wait for the
     // scene to notify us that we are added.
@@ -142,7 +142,7 @@ class GameObject implements Serializable {
    * be set to null because the Component is part of an object pool.
    * */
   void destroyComponent(Component component) {
-    if(!_componentSet.contains(component)) {
+    if(!_components.contains(component)) {
       throw 'Trying to remove a component (${component.runtimeType}) from a '
           'game object that does not own it.';
     }
@@ -150,7 +150,7 @@ class GameObject implements Serializable {
     component.free();
     component._owner = null;
     component.enabled = false;
-    _componentSet.remove(component);
+    _components.remove(component);
     Game.componentManager.destroyComponent(component);
     checkDependencies();
   }
@@ -196,7 +196,7 @@ class GameObject implements Serializable {
    * are satisfied.
    */
   bool checkDependencies() {
-    for(var component in _componentSet) {
+    for(var component in _components) {
       component.checkDependencies();
     }
   }
@@ -223,10 +223,9 @@ class GameObject implements Serializable {
 
   /// Do not manually call this. Call Scene.destroyGameObject instead.
   void _destroyAllComponents() {
-    // Destroy every component we have, be extra careful to not modify the
-    // lists of components as we iterate them.
-    while (_componentSet.length > 0) {
-      destroyComponent(_componentSet.iterator().next());
+    // Destroy every component we have.
+    while (_components.length > 0) {
+      destroyComponent(_components[0]);
     }
     _componentsToInitialize = null;
   }

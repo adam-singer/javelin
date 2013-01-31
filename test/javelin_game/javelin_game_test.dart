@@ -40,14 +40,7 @@ void main() {
       var go1 = new GameObject('duplicate_id');
       scene.root.addChild(go1);
       var go2 = new GameObject('duplicate_id');
-      try {
-        //We expect an exception on this line.
-        scene.root.addChild(go2);
-        expect(false, null, reason: 'Unreachable.');
-      }
-      catch (e) {
-        expect(e, isNotNull);
-      }
+      expect(() => scene.root.addChild(go2), throws);
     });
 
     test('Destroy game object', () {
@@ -211,14 +204,7 @@ void main() {
       var mine = go.attachComponent('MockComponent');
       var another = new GameObject();
       var notMine = another.attachComponent('MockComponent');
-      try {
-        //We expect an exception on this line.
-        go.destroyComponent(notMine);
-        expect(false, null, reason: 'Unreachable.');
-      }
-      catch (e) {
-        expect(e, isNotNull);
-      }
+      expect(() => go.destroyComponent(notMine), throws);
     });
 
     test('Check component dependencies', () {
@@ -228,70 +214,7 @@ void main() {
       var c2 = go.attachComponent('MockDependencyComponent');
 
       // Since c2 requires c1, destroying c2 will raise an exception.
-      try {
-        //We expect an exception on this line.
-        go.destroyComponent(c1);
-        expect(false, null, reason: 'Unreachable.');
-      }
-      catch (e) {
-        expect(e, isNotNull);
-      }
+      expect(() => go.destroyComponent(c1), throws);
     });
-  });
-
-  group('PropertyContainer tests: ', () {
-
-    PropertyMap data;
-
-    setUp(() {
-      data = new PropertyMap();
-    });
-
-    test('Map base test', () {
-      data.field = "value";
-      expect(data.field, data['field']);
-    });
-
-    test('List to PropertyList conversion', () {
-      data.list = ['a', 3];
-      expect(data.list, new isInstanceOf<PropertyList>());
-      expect(data.list, orderedEquals(['a', 3]));
-    });
-
-    test('Map to PropertyMap conversion', () {
-      data.map = {'a': 'aaa', 'b': 'bbb'};
-      expect(data.map, new isInstanceOf<PropertyMap>());
-      expect(data.map.keys, unorderedEquals(['a', 'b']));
-      expect(data.map.values, unorderedEquals(['aaa', 'bbb']));
-      expect(data.map.a, 'aaa');
-    });
-
-    test('Data types', () {
-      data.map = {'a': 'aaa', 'b': 'bbb'};
-      data.num = 5.34;
-      data.str = "String";
-      data.boolean = false;
-      data.none = null;
-      data.map = {};
-      data.map.list = [1,2,3,4,5];
-      data.map.list.add(6);
-      data.map.name = 'Dan';
-      expect(data.map.name, 'Dan');
-      expect(data.map.list, orderedEquals([1,2,3,4,5,6]));
-    });
-
-    test('Unsupported data types', () {
-      // StringBuffer is not Serializable and thus it's not supported.
-      try {
-        //We expect an exception on this line.
-        data.unsupportedType = new StringBuffer();
-        expect(false, null, reason: 'Unreachable.');
-      }
-      catch (e) {
-        expect(e, isNotNull);
-      }
-    });
-
-
   });
 }
