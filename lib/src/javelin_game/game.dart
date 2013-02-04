@@ -11,5 +11,10 @@ class Game {
   static init() {
     _instance = null;
     _componentManager = new ComponentManager();
+
+    // Tell PropertyMap to build a game object when it sees: _type_='GameObject'
+    PropertyMap.registerCustomDeserializer("GameObject", (data, config) {
+      return SceneDescriptor.createGameObjectFromPrototype(data);
+    });
   }
 }

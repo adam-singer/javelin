@@ -24,7 +24,7 @@ class Component implements Serializable {
   PropertyMap get data => _data;
   set data (Map<String, dynamic> value) {
     if(value is! PropertyMap) {
-      value = new PropertyMap.from(value);
+      value = PropertyMap.promote(value);
     }
     _data = value;
   }
@@ -83,15 +83,6 @@ class Component implements Serializable {
    * Serialize.
    */
   String toJson() {
-    SceneDescriptor.serializeComponent(this);
-  }
-
-  /**
-   * Deserialize.
-   */
-  void fromJson(dynamic json) {
-    throw 'Trying to deserialize a Component by calling fromJson() on it. '
-    'Components are special. Use '
-    'SceneDescriptor.attachComponentFromPrototype() instead.';
+    return SceneDescriptor.serializeComponent(this);
   }
 }

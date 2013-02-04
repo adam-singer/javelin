@@ -49,7 +49,7 @@ class SceneDescriptor {
     var mirror = reflect(component);
     var buffer = new StringBuffer();
     buffer.add('{');
-    buffer.add('"type":"${mirror.type.qualifiedName}",');
+    buffer.add('"_component_type_":"${mirror.type.qualifiedName}",');
     if (component._initData != null) {
       buffer.add('"initData":${component._initData.toJson()},');
     }
@@ -89,7 +89,7 @@ class SceneDescriptor {
    */
   static GameObject attachComponentFromPrototype(dynamic componentPrototype,
                                                  GameObject go) {
-    var type = componentPrototype['type'];
+    var type = componentPrototype['_component_type_'];
     var initData = componentPrototype['initData'];
     var data = componentPrototype['data'];
 

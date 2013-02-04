@@ -21,7 +21,7 @@ class GameObject implements Serializable {
   PropertyMap get data => _data;
   set data (Map<String, dynamic> value) {
     if(value is! PropertyMap) {
-      value = new PropertyMap.from(value);
+      value = PropertyMap.promote(value);
     }
     _data = value;
   }
@@ -106,7 +106,7 @@ class GameObject implements Serializable {
   Component attachComponent(String type, [List params]) {
     // If we werent provided with a PropertyList, make one.
     if (params != null && params is! PropertyList) {
-      params = new PropertyList.from(params);
+      params = PropertyMap.promote(params);
     }
 
     var component = Game.componentManager.createComponent(type, this, params);
@@ -211,7 +211,7 @@ class GameObject implements Serializable {
       for(var component in _componentsToInitialize) {
         var params = component._initData;
         if (params != null) {
-          component._initData = new PropertyList.from(params);
+          component._initData = PropertyMap.promote(params);
           component.init(params);
         }
         else {
@@ -235,14 +235,5 @@ class GameObject implements Serializable {
    */
   String toJson() {
     return SceneDescriptor.serializeGameObject(this);
-  }
-
-  /**
-   * Deserialize.
-   */
-  void fromJson(dynamic json) {
-    throw 'Trying to deserialize a GameObject by calling fromJson() on it. '
-          'GameObjects are special. Use '
-          'SceneDescriptor.createGameObjectFromPrototype() instead.';
   }
 }

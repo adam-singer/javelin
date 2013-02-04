@@ -10,12 +10,7 @@ class Scene {
 
   PropertyMap _data;
   PropertyMap get data => _data;
-  set data (Map<String, dynamic> value) {
-    if(value is! PropertyMap) {
-      value = new PropertyMap.from(value);
-    }
-    _data = value;
-  }
+  set data (Map<String, dynamic> value) => data = PropertyMap.promote(value);
 
   Scene(int maxGameObjects) {
   	// TODO: remove me once we have proper support for multiple scenes.
